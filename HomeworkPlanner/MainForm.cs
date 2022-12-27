@@ -9,11 +9,15 @@ namespace HomeworkPlanner
         public MainForm()
         {
             InitializeComponent();
-            SetUpPlanningPanel();
+            InitializePlanningPanel();
+            weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
         }
 
-        private void SetUpPlanningPanel()
+        private void InitializePlanningPanel()
         {
+            //Clear panel
+            PlanningPanel.Controls.Clear();
+
             //Set up columns and rows
             int colCount = GetDayCount(DaysToDisplay);
             int rowCount = FutureWeeks + 1;
@@ -46,6 +50,8 @@ namespace HomeworkPlanner
                     selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
                 }
                 selectedDay = selectedDay.AddDays(14);
+        }
+
         }
 
         private static DateTime GetSunday(DateTime dateTime)
@@ -82,6 +88,19 @@ namespace HomeworkPlanner
             tlp.Controls.Add(lbl, 0, 0);
 
             return tlp;
+        }
+
+        ToolStripMenuItem[] weekItems;
+
+        private void changeWeekCount(object sender, EventArgs e)
+        {
+            FutureWeeks = Convert.ToInt32(((ToolStripMenuItem)sender).Text) - 1;
+            for (int i = 0; i < weekItems.Length; i++)
+            {
+                weekItems[i].Checked = false;
+            }
+            weekItems[FutureWeeks].Checked = true;
+            InitializePlanningPanel();
         }
     }
 }
