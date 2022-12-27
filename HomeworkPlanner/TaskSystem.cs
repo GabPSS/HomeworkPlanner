@@ -98,27 +98,6 @@ namespace HomeworkPlanner
             Items.Add(item);
             LastIndex = newIndex;
         }
-
-        /// <summary>
-        /// Get all tasks planned for a certain date
-        /// </summary>
-        /// <param name="date">The date to look up for</param>
-        /// <returns>An array containing all tasks planned for the given date parameter</returns>
-        public Task[] GetTasksPlannedForDate(DateTime date)
-        {
-            List<Task> tasks = new();
-            for (int i = 0; i < Items.Count; i++)
-            {
-                if (Items[i].ExecDate != null)
-                {
-                    if (Items[i].ExecDate == date)
-                    {
-                        tasks.Add(Items[i]);
-                    }
-                }
-            }
-            return tasks.ToArray();
-        }
     }
 
     public class Subject
@@ -168,7 +147,41 @@ namespace HomeworkPlanner
             return output;
         }
 
-        //TODO: Implement all tasks for today, all tasks completed today, all tasks remaining for today (issue #6)
+        /// <summary>
+        /// Get all tasks planned for a certain date
+        /// </summary>
+        /// <param name="date">The date to look up for</param>
+        /// <returns>An array containing all tasks planned for the given date parameter</returns>
+        public Task[] GetTasksPlannedForDate(DateTime date)
+        {
+            List<Task> tasks = new();
+            for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
+            {
+                if (SaveFile.Tasks.Items[i].ExecDate != null)
+                {
+                    if (SaveFile.Tasks.Items[i].ExecDate == date)
+                    {
+                        tasks.Add(SaveFile.Tasks.Items[i]);
+                    }
+                }
+            }
+            return tasks.ToArray();
+        }
+
+        public static (Task[] completed, Task[] remaining) FilterTasks(Task[] tasks)
+        {
+            List<Task> completedTasks = new();
+            List<Task> remainingTasks = tasks.ToList();
+            for (int i = 0; i < tasks.Length;i++)
+            {
+                if (tasks[i].IsCompleted)
+                {
+                    completedTasks.Add(tasks[i]);
+                    remainingTasks.Remove(tasks[i]);
+                }
+            }
+            return (completedTasks.ToArray(),remainingTasks.ToArray());
+        }
     }
 
     public class TaskControl : Control
