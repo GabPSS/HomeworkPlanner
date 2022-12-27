@@ -41,6 +41,13 @@
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.weeksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.OneWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TwoWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ThreeWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FourWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FiveWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -51,8 +58,8 @@
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.PlanningPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip1.SuspendLayout();
@@ -69,6 +76,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -160,6 +168,63 @@
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.weeksToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewToolStripMenuItem.Text = "&View";
+            // 
+            // weeksToolStripMenuItem
+            // 
+            this.weeksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.OneWeekMenuItem,
+            this.TwoWeekMenuItem,
+            this.ThreeWeekMenuItem,
+            this.FourWeekMenuItem,
+            this.FiveWeekMenuItem});
+            this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weeksToolStripMenuItem.Text = "Weeks";
+            // 
+            // OneWeekMenuItem
+            // 
+            this.OneWeekMenuItem.Name = "OneWeekMenuItem";
+            this.OneWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OneWeekMenuItem.Text = "1";
+            this.OneWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
+            // TwoWeekMenuItem
+            // 
+            this.TwoWeekMenuItem.Name = "TwoWeekMenuItem";
+            this.TwoWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TwoWeekMenuItem.Text = "2";
+            this.TwoWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
+            // ThreeWeekMenuItem
+            // 
+            this.ThreeWeekMenuItem.Checked = true;
+            this.ThreeWeekMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ThreeWeekMenuItem.Name = "ThreeWeekMenuItem";
+            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ThreeWeekMenuItem.Text = "3";
+            this.ThreeWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
+            // FourWeekMenuItem
+            // 
+            this.FourWeekMenuItem.Name = "FourWeekMenuItem";
+            this.FourWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FourWeekMenuItem.Text = "4";
+            this.FourWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
+            // FiveWeekMenuItem
+            // 
+            this.FiveWeekMenuItem.Name = "FiveWeekMenuItem";
+            this.FiveWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FiveWeekMenuItem.Text = "5";
+            this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -248,16 +313,6 @@
             this.PlanningPanel.Size = new System.Drawing.Size(526, 404);
             this.PlanningPanel.TabIndex = 0;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 21);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "All tasks:";
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -274,6 +329,16 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.Size = new System.Drawing.Size(270, 404);
             this.tableLayoutPanel1.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 12F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 21);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "All tasks:";
             // 
             // button1
             // 
@@ -351,5 +416,12 @@
         private Label label1;
         private Button button1;
         private FlowLayoutPanel flowLayoutPanel1;
+        private ToolStripMenuItem viewToolStripMenuItem;
+        private ToolStripMenuItem weeksToolStripMenuItem;
+        private ToolStripMenuItem OneWeekMenuItem;
+        private ToolStripMenuItem TwoWeekMenuItem;
+        private ToolStripMenuItem ThreeWeekMenuItem;
+        private ToolStripMenuItem FourWeekMenuItem;
+        private ToolStripMenuItem FiveWeekMenuItem;
     }
 }
