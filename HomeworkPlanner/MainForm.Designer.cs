@@ -61,7 +61,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.TasksFLP = new System.Windows.Forms.FlowLayoutPanel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -319,7 +319,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.button1, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.TasksFLP, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -352,15 +352,16 @@
             this.button1.Text = "Create new task";
             this.button1.UseVisualStyleBackColor = true;
             // 
-            // flowLayoutPanel1
+            // TasksFLP
             // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 24);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(264, 340);
-            this.flowLayoutPanel1.TabIndex = 2;
+            this.TasksFLP.AutoScroll = true;
+            this.TasksFLP.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TasksFLP.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.TasksFLP.Location = new System.Drawing.Point(3, 24);
+            this.TasksFLP.Name = "TasksFLP";
+            this.TasksFLP.Size = new System.Drawing.Size(264, 340);
+            this.TasksFLP.TabIndex = 2;
+            this.TasksFLP.WrapContents = false;
             // 
             // MainForm
             // 
@@ -415,7 +416,7 @@
         private TableLayoutPanel tableLayoutPanel1;
         private Label label1;
         private Button button1;
-        private FlowLayoutPanel flowLayoutPanel1;
+        private FlowLayoutPanel TasksFLP;
         private ToolStripMenuItem viewToolStripMenuItem;
         private ToolStripMenuItem weeksToolStripMenuItem;
         private ToolStripMenuItem OneWeekMenuItem;

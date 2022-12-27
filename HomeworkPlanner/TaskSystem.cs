@@ -210,7 +210,7 @@ namespace HomeworkPlanner
         /// Defines if the control should be sized automatically
         /// </summary>
         [DefaultValue(true)]
-        public override bool AutoSize { get => base.AutoSize; set => base.AutoSize = value; }
+        public override bool AutoSize { get => base.AutoSize; set => base.AutoSize = value; } 
         protected override void OnPaint(PaintEventArgs e)
         {
             DrawControl(e.Graphics);

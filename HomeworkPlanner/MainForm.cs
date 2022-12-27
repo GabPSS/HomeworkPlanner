@@ -9,8 +9,12 @@ namespace HomeworkPlanner
         public MainForm()
         {
             InitializeComponent();
-            InitializePlanningPanel();
             weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
+
+            //Load tasks and set up controls
+            InitializeTaskSystem();
+            InitializePlanningPanel();
+            InitializeAllTasksPanel();
         }
 
         private void InitializePlanningPanel()
@@ -42,7 +46,7 @@ namespace HomeworkPlanner
                 {
                     if (DaysToDisplayData - i >= 0)
                     {
-                        TableLayoutPanel control = InitializePlanningDayControl(selectedDay.ToString("dd"));
+                        TableLayoutPanel control = InitializePlanningDayControl(selectedDay);
                         PlanningPanel.Controls.Add(control, col, row);
                         DaysToDisplayData -= i;
                         col--;
@@ -51,8 +55,51 @@ namespace HomeworkPlanner
                 }
                 selectedDay = selectedDay.AddDays(14);
         }
-
         }
+
+        private TableLayoutPanel InitializePlanningDayControl(DateTime day)
+        {
+            //Add main container
+            TableLayoutPanel tlp = new() { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill };
+            tlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            //Add top label
+            Label lbl = new()
+            {
+                Text = day.ToString("dd"),
+                Dock = DockStyle.Fill
+            };
+            tlp.Controls.Add(lbl, 0, 0);
+
+            //Add flowLayoutPanel
+            FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
+            tlp.Controls.Add(flp, 0, 1);
+
+            //Add tasks
+            Task[] dayTasks = TaskHost.GetTasksPlannedForDate(day);
+            foreach (Task task in dayTasks)
+            {
+                TaskControl ctrl = new(TaskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                flp.Controls.Add(ctrl);
+            }
+            return tlp;
+        }
+
+        private void InitializeAllTasksPanel()
+        {
+            //Clear panel
+            TasksFLP.Controls.Clear();
+
+            //Add controls for all tasks
+            foreach (Task task in TaskHost.SaveFile.Tasks.Items)
+            {
+                TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
+                TasksFLP.Controls.Add(testctrl);
+        }
+        }
+
+        #region Auxiliary methods for date calculation
 
         private static DateTime GetSunday(DateTime dateTime)
         {
@@ -76,19 +123,9 @@ namespace HomeworkPlanner
             return dayCount;
         }
 
-        private TableLayoutPanel InitializePlanningDayControl(string dayText)
-        {
-            TableLayoutPanel tlp = new() { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill };
-            tlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        #endregion
 
-            Label lbl = new Label();
-            lbl.Text = dayText;
-            lbl.Dock = DockStyle.Fill;
-            tlp.Controls.Add(lbl, 0, 0);
-
-            return tlp;
-        }
+        #region MenuItem option on changing number of weeks displayed
 
         ToolStripMenuItem[] weekItems;
 
@@ -102,5 +139,8 @@ namespace HomeworkPlanner
             weekItems[FutureWeeks].Checked = true;
             InitializePlanningPanel();
         }
+
+        #endregion
+
     }
 }
