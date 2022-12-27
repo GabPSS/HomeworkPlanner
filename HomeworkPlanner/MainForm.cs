@@ -17,6 +17,11 @@ namespace HomeworkPlanner
             InitializeAllTasksPanel();
         }
 
+        private void InitializeTaskSystem()
+        { 
+                throw new NotImplementedException();
+        }
+
         private void InitializePlanningPanel()
         {
             //Clear panel
