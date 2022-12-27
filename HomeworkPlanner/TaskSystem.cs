@@ -78,13 +78,9 @@ namespace HomeworkPlanner
                 {
                     return Properties.Resources.Important;
                 }
-                else if (IsImportant)
-                {
-                    return Properties.Resources.NewImportant;
-                }
                 else
                 {
-                    return IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New;
+                    return IsImportant ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
                 }
             }
         }
@@ -152,9 +148,9 @@ namespace HomeworkPlanner
         }
     }
 
-    public class TaskHandler
+    public class TaskHost
     {
-        public TaskHandler(SaveFile saveFile)
+        public TaskHost(SaveFile saveFile)
         {
             SaveFile = saveFile;
         }
@@ -171,6 +167,8 @@ namespace HomeworkPlanner
             }
             return output;
         }
+
+        //TODO: Implement all tasks for today, all tasks completed today, all tasks remaining for today (issue #6)
     }
 
     public class TaskControl : Control
@@ -178,7 +176,7 @@ namespace HomeworkPlanner
         public enum TaskDrawMode { Planner, TasksView }
 
         public TaskDrawMode DrawMode { get; set; } = TaskDrawMode.TasksView;
-        public TaskHandler TaskHandler { get; set; }
+        public TaskHost TaskHandler { get; set; }
         public Task SelectedTask { get; set; }
         public Font DefaultTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
         public Font DefaultDueFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10);
@@ -186,7 +184,7 @@ namespace HomeworkPlanner
 
         private Image Icon { get { return SelectedTask.GetIcon(); } }
         private Brush DrawingBrush { get { return new SolidBrush(ForeColor); } }
-        public TaskControl(TaskHandler taskHandler, Task selectedTask)
+        public TaskControl(TaskHost taskHandler, Task selectedTask)
         {
             TaskHandler = taskHandler;
             SelectedTask = selectedTask;
@@ -251,7 +249,7 @@ namespace HomeworkPlanner
         /// </summary>
         private Size MeasureControl(Graphics gfx)
         {
-            float width = 0, height = 0, imgwidth, imgheight, titleWidth, bodyWitdh = 0, txtheight = 0;
+            float width, height, imgwidth, imgheight, titleWidth, bodyWitdh = 0, txtheight = 0;
 
             imgwidth = 32;
             imgheight = 32;
