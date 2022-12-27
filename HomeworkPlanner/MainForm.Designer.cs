@@ -62,6 +62,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.TasksFLP = new System.Windows.Forms.FlowLayoutPanel();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -171,7 +172,8 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.weeksToolStripMenuItem});
+            this.weeksToolStripMenuItem,
+            this.refreshToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
@@ -191,14 +193,14 @@
             // OneWeekMenuItem
             // 
             this.OneWeekMenuItem.Name = "OneWeekMenuItem";
-            this.OneWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OneWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.OneWeekMenuItem.Text = "1";
             this.OneWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // TwoWeekMenuItem
             // 
             this.TwoWeekMenuItem.Name = "TwoWeekMenuItem";
-            this.TwoWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TwoWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.TwoWeekMenuItem.Text = "2";
             this.TwoWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -207,21 +209,21 @@
             this.ThreeWeekMenuItem.Checked = true;
             this.ThreeWeekMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ThreeWeekMenuItem.Name = "ThreeWeekMenuItem";
-            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.ThreeWeekMenuItem.Text = "3";
             this.ThreeWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FourWeekMenuItem
             // 
             this.FourWeekMenuItem.Name = "FourWeekMenuItem";
-            this.FourWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FourWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.FourWeekMenuItem.Text = "4";
             this.FourWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FiveWeekMenuItem
             // 
             this.FiveWeekMenuItem.Name = "FiveWeekMenuItem";
-            this.FiveWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FiveWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -363,6 +365,13 @@
             this.TasksFLP.TabIndex = 2;
             this.TasksFLP.WrapContents = false;
             // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -424,5 +433,6 @@
         private ToolStripMenuItem ThreeWeekMenuItem;
         private ToolStripMenuItem FourWeekMenuItem;
         private ToolStripMenuItem FiveWeekMenuItem;
+        private ToolStripMenuItem refreshToolStripMenuItem;
     }
 }

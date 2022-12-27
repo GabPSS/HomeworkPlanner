@@ -18,9 +18,9 @@ namespace HomeworkPlanner
         }
 
         private void InitializeTaskSystem()
-        { 
+        {
                 throw new NotImplementedException();
-        }
+            }
 
         private void InitializePlanningPanel()
         {
@@ -106,6 +106,12 @@ namespace HomeworkPlanner
         }
         }
 
+        void UpdatePanels()
+        {
+            InitializePlanningPanel();
+            InitializeAllTasksPanel();
+        }
+
         #region Auxiliary methods for date calculation
 
         private static DateTime GetSunday(DateTime dateTime)
@@ -149,5 +155,9 @@ namespace HomeworkPlanner
 
         #endregion
 
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePanels();
+        }
     }
 }
