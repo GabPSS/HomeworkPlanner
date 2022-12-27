@@ -88,6 +88,7 @@ namespace HomeworkPlanner
             foreach (Task task in dayTasks)
             {
                 TaskControl ctrl = new(TaskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                ctrl.Click += TaskControl_Click;
                 flp.Controls.Add(ctrl);
             }
             return tlp;
@@ -102,8 +103,28 @@ namespace HomeworkPlanner
             foreach (Task task in TaskHost.SaveFile.Tasks.Items)
             {
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
+                testctrl.Click += TaskControl_Click;
                 TasksFLP.Controls.Add(testctrl);
         }
+        }
+
+        private void TaskControl_Click(object? sender, EventArgs e)
+        {
+            Task originalTask = ((TaskControl)sender).SelectedTask;
+            TaskForm tForm = new TaskForm(TaskHost, originalTask);
+            if (tForm.ShowDialog() == DialogResult.OK)
+            {
+                int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
+                if (index != -1) 
+                {
+                    TaskHost.SaveFile.Tasks.Items[index] = tForm.ModifiedTask;
+                }
+                else
+                {
+                    TaskHost.SaveFile.Tasks.Add(tForm.ModifiedTask);
+                }
+            }
+
         }
 
         #region Auxiliary methods for date calculation
