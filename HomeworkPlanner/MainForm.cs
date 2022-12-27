@@ -12,7 +12,7 @@ namespace HomeworkPlanner
             SetUpPlanningPanel();
         }
 
-        void SetUpPlanningPanel()
+        private void SetUpPlanningPanel()
         {
             //Set up columns and rows
             int colCount = GetDayCount(DaysToDisplay);
@@ -31,14 +31,14 @@ namespace HomeworkPlanner
 
         }
 
-        static DateTime GetSunday(DateTime dateTime)
+        private static DateTime GetSunday(DateTime dateTime)
         {
             DayOfWeek dayOfWeek = dateTime.DayOfWeek;
 
             return dateTime.AddDays(0 - (double)dayOfWeek);
         }
 
-        static int GetDayCount(DaysToInclude data)
+        private static int GetDayCount(DaysToInclude data)
         {
             int numericData = (int)data;
             int dayCount = 0;
