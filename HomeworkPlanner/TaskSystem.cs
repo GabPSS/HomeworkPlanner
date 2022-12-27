@@ -13,9 +13,12 @@ namespace HomeworkPlanner
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
 
-        public static SaveFile? FromJSON(string JSON)
+        public static SaveFile FromJSON(string JSON)
         {
-            return JsonSerializer.Deserialize<SaveFile>(JSON);
+            SaveFile? output = JsonSerializer.Deserialize<SaveFile>(JSON);
+            if (output is null)
+                throw new JsonException();
+            return output;
         }
 
         public string MakeJSON()
