@@ -26,6 +26,7 @@ namespace HomeworkPlanner
         {
             //Clear panel
             PlanningPanel.Controls.Clear();
+            PlanningPanel.SuspendLayout();
 
             //Set up columns and rows
             int colCount = GetDayCount(DaysToDisplay);
@@ -60,6 +61,7 @@ namespace HomeworkPlanner
                 }
                 selectedDay = selectedDay.AddDays(14);
         }
+            PlanningPanel.ResumeLayout();
         }
 
         private TableLayoutPanel InitializePlanningDayControl(DateTime day)
