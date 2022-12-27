@@ -9,11 +9,24 @@ namespace HomeworkPlanner
         public MainForm()
         {
             InitializeComponent();
-            SetUpPlanningPanel();
+            weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
+
+            //Load tasks and set up controls
+            InitializeTaskSystem();
+            InitializePlanningPanel();
+            InitializeAllTasksPanel();
         }
 
-        private void SetUpPlanningPanel()
+        private void InitializeTaskSystem()
+        { 
+                throw new NotImplementedException();
+        }
+
+        private void InitializePlanningPanel()
         {
+            //Clear panel
+            PlanningPanel.Controls.Clear();
+
             //Set up columns and rows
             int colCount = GetDayCount(DaysToDisplay);
             int rowCount = FutureWeeks + 1;
@@ -29,7 +42,69 @@ namespace HomeworkPlanner
                 PlanningPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             }
 
+            DateTime selectedDay = GetSunday(DateTime.Today).AddDays(6);
+            for (int row = 0; row < rowCount; row++)
+            {
+                int col = colCount - 1;
+                int DaysToDisplayData = (int)DaysToDisplay;
+                for (int i = 64; i >= 1; i /= 2)
+                {
+                    if (DaysToDisplayData - i >= 0)
+                    {
+                        TableLayoutPanel control = InitializePlanningDayControl(selectedDay);
+                        PlanningPanel.Controls.Add(control, col, row);
+                        DaysToDisplayData -= i;
+                        col--;
+                    }
+                    selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
+                }
+                selectedDay = selectedDay.AddDays(14);
         }
+        }
+
+        private TableLayoutPanel InitializePlanningDayControl(DateTime day)
+        {
+            //Add main container
+            TableLayoutPanel tlp = new() { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill };
+            tlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            //Add top label
+            Label lbl = new()
+            {
+                Text = day.ToString("dd"),
+                Dock = DockStyle.Fill
+            };
+            tlp.Controls.Add(lbl, 0, 0);
+
+            //Add flowLayoutPanel
+            FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
+            tlp.Controls.Add(flp, 0, 1);
+
+            //Add tasks
+            Task[] dayTasks = TaskHost.GetTasksPlannedForDate(day);
+            foreach (Task task in dayTasks)
+            {
+                TaskControl ctrl = new(TaskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                flp.Controls.Add(ctrl);
+            }
+            return tlp;
+        }
+
+        private void InitializeAllTasksPanel()
+        {
+            //Clear panel
+            TasksFLP.Controls.Clear();
+
+            //Add controls for all tasks
+            foreach (Task task in TaskHost.SaveFile.Tasks.Items)
+            {
+                TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
+                TasksFLP.Controls.Add(testctrl);
+        }
+        }
+
+        #region Auxiliary methods for date calculation
 
         private static DateTime GetSunday(DateTime dateTime)
         {
@@ -52,5 +127,25 @@ namespace HomeworkPlanner
             }
             return dayCount;
         }
+
+        #endregion
+
+        #region MenuItem option on changing number of weeks displayed
+
+        ToolStripMenuItem[] weekItems;
+
+        private void changeWeekCount(object sender, EventArgs e)
+        {
+            FutureWeeks = Convert.ToInt32(((ToolStripMenuItem)sender).Text) - 1;
+            for (int i = 0; i < weekItems.Length; i++)
+            {
+                weekItems[i].Checked = false;
+            }
+            weekItems[FutureWeeks].Checked = true;
+            InitializePlanningPanel();
+        }
+
+        #endregion
+
     }
 }

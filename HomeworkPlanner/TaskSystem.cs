@@ -13,9 +13,12 @@ namespace HomeworkPlanner
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
 
-        public static SaveFile? FromJSON(string JSON)
+        public static SaveFile FromJSON(string JSON)
         {
-            return JsonSerializer.Deserialize<SaveFile>(JSON);
+            SaveFile? output = JsonSerializer.Deserialize<SaveFile>(JSON);
+            if (output is null)
+                throw new JsonException();
+            return output;
         }
 
         public string MakeJSON()
@@ -207,7 +210,7 @@ namespace HomeworkPlanner
         /// Defines if the control should be sized automatically
         /// </summary>
         [DefaultValue(true)]
-        public override bool AutoSize { get => base.AutoSize; set => base.AutoSize = value; }
+        public override bool AutoSize { get => base.AutoSize; set => base.AutoSize = value; } 
         protected override void OnPaint(PaintEventArgs e)
         {
             DrawControl(e.Graphics);
