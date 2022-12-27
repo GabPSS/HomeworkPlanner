@@ -5,7 +5,7 @@ namespace HomeworkPlanner
         public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
         public int FutureWeeks = 2;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
-
+        private TaskHost TaskHost;
         public MainForm()
         {
             InitializeComponent();
