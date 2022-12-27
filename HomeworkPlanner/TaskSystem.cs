@@ -27,7 +27,7 @@ namespace HomeworkPlanner
         }
     }
 
-    public class Task
+    public class Task : ICloneable
     {
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
@@ -65,6 +65,11 @@ namespace HomeworkPlanner
             }
         }
 
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
         public Image GetIcon()
         {
             if (IsCompleted)
@@ -97,7 +102,7 @@ namespace HomeworkPlanner
         public void Add(Task item)
         {
             int newIndex = LastIndex + 1;
-            item.TaskID = item.TaskID == -1 ? newIndex : item.TaskID;
+            item.TaskID = newIndex;
             Items.Add(item);
             LastIndex = newIndex;
         }
@@ -107,11 +112,16 @@ namespace HomeworkPlanner
     {
         public int SubjectID { get; set; }
         public string SubjectName { get; set; }
-        public const string DefaultMissingSubjectText = "(Unclassified)";
+        public const string DefaultMissingSubjectText = "(No subject)";
         public Subject(int subjectID, string subjectName)
         {
             SubjectID = subjectID;
             SubjectName = subjectName;
+        }
+
+        public override string ToString()
+        {
+            return SubjectName;
         }
     }
 
@@ -139,7 +149,7 @@ namespace HomeworkPlanner
         public SaveFile SaveFile { get; set; }
         public string GetSubject(int id)
         {
-            string output = "(Unclassified)";
+            string output = Subject.DefaultMissingSubjectText;
             for (int i = 0; i < SaveFile.Subjects.Items.Count; i++)
             {
                 if (SaveFile.Subjects.Items[i].SubjectID == id)
@@ -184,6 +194,18 @@ namespace HomeworkPlanner
                 }
             }
             return (completedTasks.ToArray(),remainingTasks.ToArray());
+        }
+
+        public int GetTaskIndexById(int id)
+        {
+            for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
+            {
+                if (SaveFile.Tasks.Items[i].TaskID== id)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 
