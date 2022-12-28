@@ -21,7 +21,7 @@ namespace HomeworkPlanner
         private void InitializeTaskSystem()
         {
                 throw new NotImplementedException();
-            }
+        }
 
         private void InitializePlanningPanel()
         {
@@ -61,7 +61,7 @@ namespace HomeworkPlanner
                     selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
                 }
                 selectedDay = selectedDay.AddDays(14);
-        }
+            }
             PlanningPanel.ResumeLayout();
         }
 
@@ -89,6 +89,7 @@ namespace HomeworkPlanner
             foreach (Task task in dayTasks)
             {
                 TaskControl ctrl = new(TaskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                ctrl.Click += TaskControl_Click;
                 flp.Controls.Add(ctrl);
             }
             return tlp;
@@ -103,8 +104,9 @@ namespace HomeworkPlanner
             foreach (Task task in TaskHost.SaveFile.Tasks.Items)
             {
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
+                testctrl.Click += TaskControl_Click;
                 TasksFLP.Controls.Add(testctrl);
-        }
+            }
         }
 
         private void InitializeStatusBar()
@@ -119,7 +121,8 @@ namespace HomeworkPlanner
             toolStripProgressBar1.Value = tasks.completed.Length;
         }
 
-        void UpdatePanels()
+        private void UpdatePanels()
+
         {
             InitializePlanningPanel();
             InitializeAllTasksPanel();
@@ -154,7 +157,7 @@ namespace HomeworkPlanner
 
         #region MenuItem option on changing number of weeks displayed
 
-        ToolStripMenuItem[] weekItems;
+        private readonly ToolStripMenuItem[] weekItems;
 
         private void changeWeekCount(object sender, EventArgs e)
         {
@@ -173,5 +176,62 @@ namespace HomeworkPlanner
         {
             UpdatePanels();
         }
+
+        #region Task addition and modification
+
+        private void AddTask()
+        {
+            TaskForm tform = new(TaskHost, new Task(), true);
+            if (tform.ShowDialog() == DialogResult.OK)
+            {
+                TaskHost.SaveFile.Tasks.Add(tform.UpdatedTask);
+                UpdatePanels();
+            }
+        }
+
+        private void TaskControl_Click(object? sender, EventArgs e)
+        {
+            Task originalTask = ((TaskControl)sender).SelectedTask;
+            TaskForm tForm = new(TaskHost, originalTask);
+            DialogResult dr = tForm.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
+                if (index != -1)
+                {
+                    TaskHost.SaveFile.Tasks.Items[index] = tForm.UpdatedTask;
+                }
+                else
+                {
+                    TaskHost.SaveFile.Tasks.Add(tForm.UpdatedTask);
+                }
+                UpdatePanels();
+            }
+            if (dr == DialogResult.Abort)
+            {
+                int index = TaskHost.GetTaskIndexById((int)originalTask.TaskID);
+                if (index != -1)
+                {
+                    TaskHost.SaveFile.Tasks.Items.RemoveAt(index);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete task, it could have already been deleted", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                UpdatePanels();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AddTask();
+        }
+
+        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            AddTask();
+        }
+
+        #endregion
     }
 }
