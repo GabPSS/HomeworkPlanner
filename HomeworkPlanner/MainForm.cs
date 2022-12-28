@@ -18,9 +18,9 @@ namespace HomeworkPlanner
         }
 
         private void InitializeTaskSystem()
-        { 
+        {
                 throw new NotImplementedException();
-        }
+            }
 
         private void InitializePlanningPanel()
         {
@@ -108,6 +108,12 @@ namespace HomeworkPlanner
         }
         }
 
+        void UpdatePanels()
+        {
+            InitializePlanningPanel();
+            InitializeAllTasksPanel();
+        }
+
         private void TaskControl_Click(object? sender, EventArgs e)
         {
             Task originalTask = ((TaskControl)sender).SelectedTask;
@@ -170,5 +176,9 @@ namespace HomeworkPlanner
 
         #endregion
 
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePanels();
+        }
     }
 }
