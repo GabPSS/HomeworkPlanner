@@ -20,7 +20,8 @@ namespace HomeworkPlanner
 
         private void InitializeTaskSystem()
         {
-                throw new NotImplementedException();
+            //TODO: Expand task init system (issue#8)
+            TaskHost = new(new());
         }
 
         private void InitializePlanningPanel()
