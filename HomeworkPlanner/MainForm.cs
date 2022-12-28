@@ -10,7 +10,7 @@ namespace HomeworkPlanner
         {
             InitializeComponent();
             weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
-            
+
             //Load tasks and set up controls
             if (saveFilePath != null)
             {
@@ -24,13 +24,13 @@ namespace HomeworkPlanner
 
         private void LoadSaveFile(string saveFilePath)
         {
-            TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)));
+            TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
             UpdatePanels();
         }
 
         private void InitializeNewTaskSystem()
         {
-            TaskHost = new(new());
+            TaskHost = new(new(), null);
             UpdatePanels();
         }
 
@@ -115,16 +115,16 @@ namespace HomeworkPlanner
             foreach (Task task in TaskHost.SaveFile.Tasks.Items)
             {
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
-                testctrl.Click += TaskControl_Click; 
+                testctrl.Click += TaskControl_Click;
                 TasksFLP.Controls.Add(testctrl);
             }
         }
 
         private void InitializeStatusBar()
         {
-            var alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
-            var tasks = TaskHost.FilterTasks(alltasks);
-            
+            Task[] alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
+            (Task[] completed, Task[] remaining) tasks = TaskHost.FilterTasks(alltasks);
+
             toolStripStatusLabel1.Text = "Scheduled today: " + alltasks.Length;
             toolStripStatusLabel2.Text = "Completed: " + tasks.completed.Length;
             toolStripStatusLabel3.Text = "Remaining: " + tasks.remaining.Length;
@@ -219,7 +219,7 @@ namespace HomeworkPlanner
             }
             if (dr == DialogResult.Abort)
             {
-                int index = TaskHost.GetTaskIndexById((int)originalTask.TaskID);
+                int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
                 if (index != -1)
                 {
                     TaskHost.SaveFile.Tasks.Items.RemoveAt(index);
@@ -251,7 +251,13 @@ namespace HomeworkPlanner
             UpdatePanels();
         }
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        #region File operations
+        private void New_Click(object sender, EventArgs e)
+        {
+            InitializeNewTaskSystem();
+        }
+
+        private void OpenFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new() { Title = "Select a save file...", Filter = "HomeworkPlanner files (*.hwpf)|*.hwpf" };
             if (ofd.ShowDialog() == DialogResult.OK)
@@ -260,19 +266,33 @@ namespace HomeworkPlanner
             }
         }
 
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAs_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new() { Title = "Save as...", Filter = "HomeworkPlanner files (*.hwpf)|*.hwpf" };
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                string data = TaskHost.SaveFile.MakeJSON();
-                File.WriteAllText(sfd.FileName, data);
+                WriteDataToFile(sfd.FileName);
             }
         }
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        private void Save_Click(object sender, EventArgs e)
         {
-            InitializeNewTaskSystem();
+            if (TaskHost.SaveFilePath != null)
+            {
+                WriteDataToFile(TaskHost.SaveFilePath);
+            }
+            else
+            {
+                SaveAs_Click(sender, EventArgs.Empty);
+            }
         }
+
+        private void WriteDataToFile(string fileName)
+        {
+            string data = TaskHost.SaveFile.MakeJSON();
+            File.WriteAllText(fileName, data);
+        }
+
+        #endregion
     }
 }

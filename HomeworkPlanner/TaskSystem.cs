@@ -142,10 +142,12 @@ namespace HomeworkPlanner
 
     public class TaskHost
     {
-        public TaskHost(SaveFile saveFile)
+        public TaskHost(SaveFile saveFile, string? saveFilePath = null)
         {
             SaveFile = saveFile;
+            SaveFilePath = saveFilePath;
         }
+        public string? SaveFilePath { get; set; }
         public SaveFile SaveFile { get; set; }
         public string GetSubject(int id)
         {
