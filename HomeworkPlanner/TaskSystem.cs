@@ -325,4 +325,15 @@ namespace HomeworkPlanner
             return MeasureControl(CreateGraphics());
         }
     }
+
+    public class SubjectControl : ListViewItem
+    {
+        public Subject SelectedSubject { get; set; }
+        
+        public SubjectControl(Subject subject)
+        {
+            SelectedSubject = subject;
+            Text = subject.SubjectName;
+        }
+    }
 }
