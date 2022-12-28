@@ -15,6 +15,7 @@ namespace HomeworkPlanner
             InitializeTaskSystem();
             InitializePlanningPanel();
             InitializeAllTasksPanel();
+            InitializeStatusBar();
         }
 
         private void InitializeTaskSystem()
@@ -106,10 +107,23 @@ namespace HomeworkPlanner
         }
         }
 
+        private void InitializeStatusBar()
+        {
+            var alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
+            var tasks = TaskHost.FilterTasks(alltasks);
+            
+            toolStripStatusLabel1.Text = "Scheduled today: " + alltasks.Length;
+            toolStripStatusLabel2.Text = "Completed: " + tasks.completed.Length;
+            toolStripStatusLabel3.Text = "Remaining: " + tasks.remaining.Length;
+            toolStripProgressBar1.Maximum = alltasks.Length;
+            toolStripProgressBar1.Value = tasks.completed.Length;
+        }
+
         void UpdatePanels()
         {
             InitializePlanningPanel();
             InitializeAllTasksPanel();
+            InitializeStatusBar();
         }
 
         #region Auxiliary methods for date calculation
