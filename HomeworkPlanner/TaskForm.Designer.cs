@@ -47,6 +47,7 @@
             this.IDLabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.RemoveBtn = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -231,7 +232,7 @@
             // IDLabel
             // 
             this.IDLabel.AutoSize = true;
-            this.IDLabel.Location = new System.Drawing.Point(12, 306);
+            this.IDLabel.Location = new System.Drawing.Point(93, 306);
             this.IDLabel.Name = "IDLabel";
             this.IDLabel.Size = new System.Drawing.Size(24, 15);
             this.IDLabel.TabIndex = 4;
@@ -257,6 +258,16 @@
             this.button2.Text = "&Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
+            // RemoveBtn
+            // 
+            this.RemoveBtn.DialogResult = System.Windows.Forms.DialogResult.Abort;
+            this.RemoveBtn.Location = new System.Drawing.Point(12, 302);
+            this.RemoveBtn.Name = "RemoveBtn";
+            this.RemoveBtn.Size = new System.Drawing.Size(75, 23);
+            this.RemoveBtn.TabIndex = 7;
+            this.RemoveBtn.Text = "Remove";
+            this.RemoveBtn.UseVisualStyleBackColor = true;
+            // 
             // TaskForm
             // 
             this.AcceptButton = this.button1;
@@ -264,6 +275,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
             this.ClientSize = new System.Drawing.Size(379, 334);
+            this.Controls.Add(this.RemoveBtn);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.IDLabel);
@@ -315,5 +327,6 @@
         private Label label5;
         private Button button1;
         private Button button2;
+        private Button RemoveBtn;
     }
 }

@@ -35,6 +35,11 @@ namespace HomeworkPlanner
                 DetailsMultilineTextBox.Lines = UpdatedTask.Description;
                 ImportantCheckBox.Checked = UpdatedTask.IsImportant;
             }
+            else
+            {
+                Text = "Add task";
+                RemoveBtn.Enabled = false;
+            }
 
             IDLabel.Text += UpdatedTask.TaskID == -1 ? (TaskHost.SaveFile.Tasks.LastIndex + 1) : UpdatedTask.TaskID;
             SubjectComboBox.Items.AddRange(TaskHost.SaveFile.Subjects.Items.ToArray());
@@ -88,8 +93,7 @@ namespace HomeworkPlanner
 
         private void SubjectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Subject? subject = SubjectComboBox.SelectedItem as Subject;
-            if (subject != null)
+            if (SubjectComboBox.SelectedItem is Subject subject)
             {
                 UpdatedTask.SubjectID = subject.SubjectID;
             }

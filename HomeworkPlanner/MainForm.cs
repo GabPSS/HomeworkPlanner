@@ -20,7 +20,7 @@ namespace HomeworkPlanner
         private void InitializeTaskSystem()
         {
                 throw new NotImplementedException();
-            }
+        }
 
         private void InitializePlanningPanel()
         {
@@ -60,7 +60,7 @@ namespace HomeworkPlanner
                     selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
                 }
                 selectedDay = selectedDay.AddDays(14);
-        }
+            }
             PlanningPanel.ResumeLayout();
         }
 
@@ -105,7 +105,7 @@ namespace HomeworkPlanner
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
                 testctrl.Click += TaskControl_Click;
                 TasksFLP.Controls.Add(testctrl);
-        }
+            }
         }
 
         private void UpdatePanels()
@@ -170,15 +170,16 @@ namespace HomeworkPlanner
             if (tform.ShowDialog() == DialogResult.OK)
             {
                 TaskHost.SaveFile.Tasks.Add(tform.UpdatedTask);
-            UpdatePanels();
+                UpdatePanels();
+            }
         }
-    }
 
         private void TaskControl_Click(object? sender, EventArgs e)
         {
             Task originalTask = ((TaskControl)sender).SelectedTask;
             TaskForm tForm = new(TaskHost, originalTask);
-            if (tForm.ShowDialog() == DialogResult.OK)
+            DialogResult dr = tForm.ShowDialog();
+            if (dr == DialogResult.OK)
             {
                 int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
                 if (index != -1)
@@ -188,6 +189,19 @@ namespace HomeworkPlanner
                 else
                 {
                     TaskHost.SaveFile.Tasks.Add(tForm.UpdatedTask);
+                }
+                UpdatePanels();
+            }
+            if (dr == DialogResult.Abort)
+            {
+                int index = TaskHost.GetTaskIndexById((int)originalTask.TaskID);
+                if (index != -1)
+                {
+                    TaskHost.SaveFile.Tasks.Items.RemoveAt(index);
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete task, it could have already been deleted", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 UpdatePanels();
             }
