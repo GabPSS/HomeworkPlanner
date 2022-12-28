@@ -201,6 +201,7 @@
             this.SubjectComboBox.Name = "SubjectComboBox";
             this.SubjectComboBox.Size = new System.Drawing.Size(281, 23);
             this.SubjectComboBox.TabIndex = 1;
+            this.SubjectComboBox.SelectedIndexChanged += new System.EventHandler(this.SubjectComboBox_SelectedIndexChanged);
             // 
             // TaskIconPictureBox
             // 

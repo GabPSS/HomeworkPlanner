@@ -48,6 +48,7 @@
             this.ThreeWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FourWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FiveWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -62,7 +63,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.TasksFLP = new System.Windows.Forms.FlowLayoutPanel();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -76,6 +78,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.tasksToolStripMenuItem,
             this.toolsToolStripMenuItem,
             this.viewToolStripMenuItem,
             this.helpToolStripMenuItem});
@@ -187,7 +190,7 @@
             this.FourWeekMenuItem,
             this.FiveWeekMenuItem});
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
-            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
             this.weeksToolStripMenuItem.Text = "Weeks";
             // 
             // OneWeekMenuItem
@@ -226,6 +229,13 @@
             this.FiveWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -353,6 +363,7 @@
             this.button1.TabIndex = 1;
             this.button1.Text = "Create new task";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // TasksFLP
             // 
@@ -365,12 +376,20 @@
             this.TasksFLP.TabIndex = 2;
             this.TasksFLP.WrapContents = false;
             // 
-            // refreshToolStripMenuItem
+            // tasksToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            this.tasksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newToolStripMenuItem1});
+            this.tasksToolStripMenuItem.Name = "tasksToolStripMenuItem";
+            this.tasksToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
+            this.tasksToolStripMenuItem.Text = "Tasks";
+            // 
+            // newToolStripMenuItem1
+            // 
+            this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Text = "New...";
+            this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
             // MainForm
             // 
@@ -434,5 +453,7 @@
         private ToolStripMenuItem FourWeekMenuItem;
         private ToolStripMenuItem FiveWeekMenuItem;
         private ToolStripMenuItem refreshToolStripMenuItem;
+        private ToolStripMenuItem tasksToolStripMenuItem;
+        private ToolStripMenuItem newToolStripMenuItem1;
     }
 }

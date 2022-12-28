@@ -108,29 +108,10 @@ namespace HomeworkPlanner
         }
         }
 
-        void UpdatePanels()
+        private void UpdatePanels()
         {
             InitializePlanningPanel();
             InitializeAllTasksPanel();
-        }
-
-        private void TaskControl_Click(object? sender, EventArgs e)
-        {
-            Task originalTask = ((TaskControl)sender).SelectedTask;
-            TaskForm tForm = new TaskForm(TaskHost, originalTask);
-            if (tForm.ShowDialog() == DialogResult.OK)
-            {
-                int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
-                if (index != -1) 
-                {
-                    TaskHost.SaveFile.Tasks.Items[index] = tForm.ModifiedTask;
-                }
-                else
-                {
-                    TaskHost.SaveFile.Tasks.Add(tForm.ModifiedTask);
-                }
-            }
-
         }
 
         #region Auxiliary methods for date calculation
@@ -161,7 +142,7 @@ namespace HomeworkPlanner
 
         #region MenuItem option on changing number of weeks displayed
 
-        ToolStripMenuItem[] weekItems;
+        private readonly ToolStripMenuItem[] weekItems;
 
         private void changeWeekCount(object sender, EventArgs e)
         {
@@ -180,5 +161,48 @@ namespace HomeworkPlanner
         {
             UpdatePanels();
         }
+
+        #region Task addition and modification
+
+        private void AddTask()
+        {
+            TaskForm tform = new(TaskHost, new Task(), true);
+            if (tform.ShowDialog() == DialogResult.OK)
+            {
+                TaskHost.SaveFile.Tasks.Add(tform.UpdatedTask);
+            UpdatePanels();
+        }
+    }
+
+        private void TaskControl_Click(object? sender, EventArgs e)
+        {
+            Task originalTask = ((TaskControl)sender).SelectedTask;
+            TaskForm tForm = new(TaskHost, originalTask);
+            if (tForm.ShowDialog() == DialogResult.OK)
+            {
+                int index = TaskHost.GetTaskIndexById(originalTask.TaskID);
+                if (index != -1)
+                {
+                    TaskHost.SaveFile.Tasks.Items[index] = tForm.UpdatedTask;
+                }
+                else
+                {
+                    TaskHost.SaveFile.Tasks.Add(tForm.UpdatedTask);
+                }
+                UpdatePanels();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AddTask();
+        }
+
+        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            AddTask();
+        }
+
+        #endregion
     }
 }

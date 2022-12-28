@@ -32,7 +32,7 @@ namespace HomeworkPlanner
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
         public string Name { get; set; }
-        public DateTime DueDate { get; set; }
+        public DateTime DueDate { get; set; } = DateTime.Today;
         public string[] Description { get; set; } = Array.Empty<string>();
         public DateTime? ExecDate { get; set; }
 
