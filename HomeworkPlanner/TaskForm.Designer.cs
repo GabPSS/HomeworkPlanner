@@ -196,7 +196,7 @@
             this.SubjectComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.SubjectComboBox.FormattingEnabled = true;
             this.SubjectComboBox.Items.AddRange(new object[] {
-            "(Create new...)",
+            "(Edit subjects...)",
             "(No subject)"});
             this.SubjectComboBox.Location = new System.Drawing.Point(58, 0);
             this.SubjectComboBox.Name = "SubjectComboBox";

@@ -41,8 +41,9 @@ namespace HomeworkPlanner
                 RemoveBtn.Enabled = false;
             }
 
+            //Update task id, subjects, icon
             IDLabel.Text += UpdatedTask.TaskID == -1 ? (TaskHost.SaveFile.Tasks.LastIndex + 1) : UpdatedTask.TaskID;
-            SubjectComboBox.Items.AddRange(TaskHost.SaveFile.Subjects.Items.ToArray());
+            UpdateSubjects();
             UpdateIcon();
 
 
@@ -58,10 +59,26 @@ namespace HomeworkPlanner
                     if (UpdatedTask.SubjectID == TaskHost.SaveFile.Subjects.Items[i].SubjectID)
                     {
                         SubjectComboBox.SelectedIndex = i + 2;
-
                     }
                 }
             }
+            if (SubjectComboBox.SelectedIndex == -1)
+            {
+                SubjectComboBox.SelectedIndex = 1;
+            }
+        }
+
+        private void UpdateSubjects()
+        {
+            //Remove old subjects
+            int count = SubjectComboBox.Items.Count;
+            for (int i = 2; i < count; i++)
+            {
+                SubjectComboBox.Items.RemoveAt(2);
+            }
+
+            //Add subjects
+            SubjectComboBox.Items.AddRange(TaskHost.SaveFile.Subjects.Items.ToArray());
         }
 
         private void UpdateIcon()
@@ -91,6 +108,8 @@ namespace HomeworkPlanner
             UpdateIcon();
         }
 
+        private int SubjectComboBoxSelectionIndex = 0;
+
         private void SubjectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SubjectComboBox.SelectedItem is Subject subject)
@@ -102,13 +121,18 @@ namespace HomeworkPlanner
                 switch (SubjectComboBox.SelectedIndex)
                 {
                     case 0:
-                        //TODO: Implement adding subjects
-                        throw new NotImplementedException();
+                        SubjectMgmtForm subjectForm = new(TaskHost);
+                        subjectForm.ShowDialog();
+                        UpdateSubjects();
+                        SubjectComboBox.DroppedDown = true;
+                        SubjectComboBox.SelectedIndex = SubjectComboBoxSelectionIndex < SubjectComboBox.Items.Count ? SubjectComboBoxSelectionIndex : 1;
+                        break;
                     case 1:
                         UpdatedTask.SubjectID = -1;
                         break;
                 }
             }
+            SubjectComboBoxSelectionIndex = SubjectComboBox.SelectedIndex;
         }
     }
 }

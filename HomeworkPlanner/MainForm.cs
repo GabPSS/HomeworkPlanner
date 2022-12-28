@@ -234,5 +234,12 @@ namespace HomeworkPlanner
         }
 
         #endregion
+
+        private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SubjectMgmtForm subjectMgmtForm = new(TaskHost);
+            subjectMgmtForm.ShowDialog();
+            UpdatePanels();
+        }
     }
 }
