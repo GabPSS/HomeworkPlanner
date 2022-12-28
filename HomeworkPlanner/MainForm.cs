@@ -6,22 +6,32 @@ namespace HomeworkPlanner
         public int FutureWeeks = 2;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
         private TaskHost TaskHost;
-        public MainForm()
+        public MainForm(string? saveFilePath = null)
         {
             InitializeComponent();
             weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
-
+            
             //Load tasks and set up controls
-            InitializeTaskSystem();
-            InitializePlanningPanel();
-            InitializeAllTasksPanel();
-            InitializeStatusBar();
+            if (saveFilePath != null)
+            {
+                LoadSaveFile(saveFilePath);
+            }
+            else
+            {
+                InitializeNewTaskSystem();
+            }
         }
 
-        private void InitializeTaskSystem()
+        private void LoadSaveFile(string saveFilePath)
         {
-            //TODO: Expand task init system (issue#8)
+            TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)));
+            UpdatePanels();
+        }
+
+        private void InitializeNewTaskSystem()
+        {
             TaskHost = new(new());
+            UpdatePanels();
         }
 
         private void InitializePlanningPanel()
@@ -123,7 +133,6 @@ namespace HomeworkPlanner
         }
 
         private void UpdatePanels()
-
         {
             InitializePlanningPanel();
             InitializeAllTasksPanel();
@@ -240,6 +249,30 @@ namespace HomeworkPlanner
             SubjectMgmtForm subjectMgmtForm = new(TaskHost);
             subjectMgmtForm.ShowDialog();
             UpdatePanels();
+        }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new() { Title = "Select a save file...", Filter = "HomeworkPlanner files (*.hwpf)|*.hwpf" };
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                LoadSaveFile(ofd.FileName);
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new() { Title = "Save as...", Filter = "HomeworkPlanner files (*.hwpf)|*.hwpf" };
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string data = TaskHost.SaveFile.MakeJSON();
+                File.WriteAllText(sfd.FileName, data);
+            }
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InitializeNewTaskSystem();
         }
     }
 }
