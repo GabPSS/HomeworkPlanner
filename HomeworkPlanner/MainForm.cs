@@ -157,6 +157,13 @@ namespace HomeworkPlanner
             //Add controls for all tasks
             foreach (Task task in TaskHost.SaveFile.Tasks.Items)
             {
+                if (task.IsCompleted)
+                {
+                    if (task.DateCompleted != DateTime.Today)
+                    {
+                        continue;
+                    }
+                }
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
                 testctrl.MouseDown += TaskControl_MouseOperation;
                 testctrl.MouseUp += TaskControl_DragConfirm;
