@@ -402,6 +402,8 @@ namespace HomeworkPlanner
         {
             string data = TaskHost.SaveFile.MakeJSON();
             File.WriteAllText(fileName, data);
+            TaskHost.SaveFilePath = fileName;
+            Modified = false;
         }
 
         #endregion
@@ -412,6 +414,31 @@ namespace HomeworkPlanner
             {
                 TaskHost.UnscheduleAllTasks();
                 UpdatePanels(true);
+            }
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Modified)
+            {
+                DialogResult dr = MessageBox.Show("Do you want to save \"" + (TaskHost.SaveFilePath == null ? "untitled" : TaskHost.SaveFilePath) + "\"?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                switch (dr)
+                {
+                    case DialogResult.Cancel:
+                        e.Cancel = true;
+                        break;
+                    case DialogResult.Yes:
+                        Save_Click(sender, EventArgs.Empty);
+                        break;
+                    case DialogResult.No:
+                        //do nothing
+                        break;
+                }
             }
         }
     }
