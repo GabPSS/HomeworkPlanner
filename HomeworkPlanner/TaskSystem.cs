@@ -45,7 +45,14 @@ namespace HomeworkPlanner
             }
             set
             {
-                DateCompleted = value ? DateTime.Today : null;
+                if (DateCompleted == null)
+                {
+                    DateCompleted = value ? DateTime.Today : null;
+                }
+                else
+                {
+                    DateCompleted = !value ? null : DateCompleted;
+                }
             }
         }
         public bool IsImportant { get; set; }
