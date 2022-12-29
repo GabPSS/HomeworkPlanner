@@ -25,12 +25,14 @@ namespace HomeworkPlanner
         private void LoadSaveFile(string saveFilePath)
         {
             TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
+            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + saveFilePath + "]";
             UpdatePanels();
         }
 
         private void InitializeNewTaskSystem()
         {
             TaskHost = new(new(), null);
+            Text = Application.ProductName + " " + Application.ProductVersion;
             UpdatePanels();
         }
 
@@ -153,10 +155,18 @@ namespace HomeworkPlanner
         {
             //Clear panel
             TasksFLP.Controls.Clear();
-
+            Task[] sortedArray = TaskHost.SortTasksByDueDate(TaskHost.SaveFile.Tasks.Items.ToArray());
+            
             //Add controls for all tasks
-            foreach (Task task in TaskHost.SaveFile.Tasks.Items)
+            foreach (Task task in sortedArray)
             {
+                if (task.IsCompleted)
+                {
+                    if (task.DateCompleted != DateTime.Today)
+                    {
+                        continue;
+                    }
+                }
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
                 testctrl.MouseDown += TaskControl_MouseOperation;
                 testctrl.MouseUp += TaskControl_DragConfirm;
