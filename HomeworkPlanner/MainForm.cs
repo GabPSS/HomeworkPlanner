@@ -54,7 +54,9 @@ namespace HomeworkPlanner
                 {
                     if (DaysToDisplayData - i >= 0)
                     {
-                        TableLayoutPanel control = InitializePlanningDayControl(selectedDay);
+                        PlanningDayPanel control = InitializePlanningDayControl(selectedDay);
+                        control.ControlMouseDown += TaskControl_MouseOperation;
+                        control.ControlMouseUp += TaskControl_DragConfirm;
                         PlanningPanel.Controls.Add(control, col, row);
                         DaysToDisplayData -= i;
                         col--;
@@ -66,34 +68,75 @@ namespace HomeworkPlanner
             PlanningPanel.ResumeLayout();
         }
 
-        private TableLayoutPanel InitializePlanningDayControl(DateTime day)
+        private class PlanningDayPanel : TableLayoutPanel
         {
-            //Add main container
-            TableLayoutPanel tlp = new() { ColumnCount = 1, RowCount = 2, Dock = DockStyle.Fill };
-            tlp.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-
-            //Add top label
-            Label lbl = new()
+            public DateTime SelectedDay;
+            public PlanningDayPanel(DateTime day, TaskHost taskHost)
             {
-                Text = day.ToString("dd"),
-                Dock = DockStyle.Fill
-            };
-            tlp.Controls.Add(lbl, 0, 0);
+                SelectedDay = day;
+                //Add main container
+                ColumnCount = 1; RowCount = 2; Dock = DockStyle.Fill;
+                RowStyles.Add(new RowStyle(SizeType.AutoSize));
+                RowStyles.Add(new RowStyle(SizeType.Percent, 100));
 
-            //Add flowLayoutPanel
-            FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
-            tlp.Controls.Add(flp, 0, 1);
+                //Add top label
+                Label lbl = new()
+                {
+                    Text = day.ToString("dd"),
+                    Dock = DockStyle.Fill
+                };
+                Controls.Add(lbl, 0, 0);
 
-            //Add tasks
-            Task[] dayTasks = TaskHost.GetTasksPlannedForDate(day);
-            foreach (Task task in dayTasks)
-            {
-                TaskControl ctrl = new(TaskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
-                ctrl.Click += TaskControl_Click;
-                flp.Controls.Add(ctrl);
+                //Add flowLayoutPanel
+                FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
+                Controls.Add(flp, 0, 1);
+
+                //Add tasks
+                Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
+                foreach (Task task in dayTasks)
+                {
+                    TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                    ctrl.MouseDown += Ctrl_MouseDown;
+                    ctrl.MouseUp += Ctrl_MouseUp;
+                    flp.Controls.Add(ctrl);
+                }
             }
-            return tlp;
+
+            private void Ctrl_MouseUp(object? sender, MouseEventArgs e)
+            {
+                OnControlMouseUp(sender, e);
+            }
+
+            private void Ctrl_MouseDown(object? sender, MouseEventArgs e)
+            {
+                OnControlMouseDown(sender,e);
+            }
+
+            public event MouseEventHandler ControlMouseDown;
+            public event MouseEventHandler ControlMouseUp;
+
+            protected virtual void OnControlMouseDown(object? sender, MouseEventArgs e)
+            {
+                MouseEventHandler temp = ControlMouseDown;
+                if (temp != null)
+                {
+                    temp(sender,e);
+                }
+            }
+
+            protected virtual void OnControlMouseUp(object? sender, MouseEventArgs e)
+            {
+                MouseEventHandler temp = ControlMouseUp;
+                if (temp != null)
+                {
+                    temp(sender, e);
+                }
+            }
+        }
+
+        private PlanningDayPanel InitializePlanningDayControl(DateTime day)
+        {
+            return new PlanningDayPanel(day, TaskHost);
         }
 
         private void InitializeAllTasksPanel()
@@ -105,8 +148,62 @@ namespace HomeworkPlanner
             foreach (Task task in TaskHost.SaveFile.Tasks.Items)
             {
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
-                testctrl.Click += TaskControl_Click; 
+                testctrl.MouseDown += TaskControl_MouseOperation;
+                testctrl.MouseUp += TaskControl_DragConfirm;
                 TasksFLP.Controls.Add(testctrl);
+            }
+        }
+
+        private void TaskControl_DragConfirm(object? sender, MouseEventArgs e)
+        {
+            if (sender != null)
+            {
+                TaskControl task = ((TaskControl)sender);
+                if (task.IsDragging)
+                {
+                    Point mousepos = Cursor.Position;
+                    Control control = this;
+                    for (int i = 1; i <= 4; i++)
+                    {
+                        control = control.GetChildAtPoint(control.PointToClient(mousepos));
+                        if (control.GetType() == typeof(PlanningDayPanel))
+                        {
+                            task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
+                            UpdatePanels();
+                            Cursor = Cursors.Default;
+                            return;
+                        }
+                        if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
+                        {
+                            task.SelectedTask.ExecDate = null;
+                            UpdatePanels();
+                            Cursor = Cursors.Default;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void TaskControl_MouseOperation(object? sender, MouseEventArgs e)
+        {
+            if (sender != null)
+            {
+                TaskControl task = ((TaskControl)sender);
+                if (e.Button == MouseButtons.Middle)
+                {
+                    task.IsDragging = true;
+                    Cursor = new Cursor("drag_task.cur");
+                }
+                else if (e.Button == MouseButtons.Right)
+                {
+                    TaskControl_Click(sender, e);
+                }
+                else
+                {
+                    task.SelectedTask.IsCompleted = !task.SelectedTask.IsCompleted;
+                    UpdatePanels();
+                }
             }
         }
 
@@ -114,7 +211,7 @@ namespace HomeworkPlanner
         {
             var alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
             var tasks = TaskHost.FilterTasks(alltasks);
-            
+
             toolStripStatusLabel1.Text = "Scheduled today: " + alltasks.Length;
             toolStripStatusLabel2.Text = "Completed: " + tasks.completed.Length;
             toolStripStatusLabel3.Text = "Remaining: " + tasks.remaining.Length;
