@@ -7,20 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using HomeworkPlanner.TaskControls;
 
 namespace HomeworkPlanner
 {
     public partial class SubjectMgmtForm : Form
     {
+        #region Properties
         public TaskHost TaskHost { get; set; }
         public SubjectList SubjectList { get { return TaskHost.SaveFile.Subjects; } }
+        #endregion
+        #region Form init functions
         public SubjectMgmtForm(TaskHost taskHost)
         {
             InitializeComponent();
             TaskHost = taskHost;
             UpdateSubjects();
         }
-
         public void UpdateSubjects()
         {
             listView1.Items.Clear();
@@ -30,25 +33,13 @@ namespace HomeworkPlanner
                 listView1.Items.Add(ctrl);
             }
         }
-
+        #endregion
+        #region Subject management buttons
         private void addSubject(object sender, EventArgs e)
         {
             SubjectList.Add(textBox1.Text);
             UpdateSubjects();
         }
-
-        private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
-        {
-            if (e.Label != null)
-            {
-                SubjectList.Items[e.Item].SubjectName = e.Label;
-            }
-            else
-            {
-                e.CancelEdit = true;
-            }
-        }
-
         private void editSubjectButtonClick(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count > 0)
@@ -56,13 +47,6 @@ namespace HomeworkPlanner
                 listView1.SelectedItems[0].BeginEdit();
             }
         }
-
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            button3.Enabled = listView1.SelectedIndices.Count > 0;
-            button4.Enabled = listView1.SelectedIndices.Count > 0;
-        }
-
         private void deleteButtonClick(object sender, EventArgs e)
         {
             if (listView1.SelectedItems.Count > 1)
@@ -78,5 +62,24 @@ namespace HomeworkPlanner
             }
             UpdateSubjects();
         }
+        #endregion
+        #region ListView functions
+        private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            if (e.Label != null)
+            {
+                SubjectList.Items[e.Item].SubjectName = e.Label;
+            }
+            else
+            {
+                e.CancelEdit = true;
+            }
+        }
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            button3.Enabled = listView1.SelectedIndices.Count > 0;
+            button4.Enabled = listView1.SelectedIndices.Count > 0;
+        }
+        #endregion
     }
 }
