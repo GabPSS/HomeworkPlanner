@@ -209,6 +209,14 @@ namespace HomeworkPlanner
             }
             return -1;
         }
+    
+        public void UnscheduleAllTasks()
+        {
+            for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
+            {
+                SaveFile.Tasks.Items[i].ExecDate = null;
+            }
+        }
     }
 
     public class TaskControl : Control
