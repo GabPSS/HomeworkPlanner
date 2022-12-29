@@ -1,12 +1,17 @@
+using HomeworkPlanner.TaskControls;
+
 namespace HomeworkPlanner
 {
     public partial class MainForm : Form
     {
+        #region Properties and variables
         public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
-        public int FutureWeeks = 2;
+        public int FutureWeeks { get; set; } = 2;
         public bool Modified = false;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
         private TaskHost TaskHost;
+        #endregion
+        #region Main Constructor
         public MainForm(string? saveFilePath = null)
         {
             InitializeComponent();
@@ -22,7 +27,8 @@ namespace HomeworkPlanner
                 InitializeNewTaskSystem();
             }
         }
-
+        #endregion
+        #region Task system initialization
         private void LoadSaveFile(string saveFilePath)
         {
             TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
@@ -38,7 +44,8 @@ namespace HomeworkPlanner
             UpdatePanels();
             Modified = false;
         }
-
+        #endregion
+        #region Visual initialization and updates
         private void InitializePlanningPanel()
         {
             //Clear panel
@@ -82,78 +89,6 @@ namespace HomeworkPlanner
             }
             PlanningPanel.ResumeLayout();
         }
-
-        private class PlanningDayPanel : TableLayoutPanel
-        {
-            public DateTime SelectedDay;
-            public PlanningDayPanel(DateTime day, TaskHost taskHost)
-            {
-                SelectedDay = day;
-                //Add main container
-                ColumnCount = 1; RowCount = 2; Dock = DockStyle.Fill;
-                RowStyles.Add(new RowStyle(SizeType.AutoSize));
-                RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-
-                //Add top label
-                Label lbl = new()
-                {
-                    Text = day.ToString("dd"),
-                    Dock = DockStyle.Fill
-                };
-                Controls.Add(lbl, 0, 0);
-
-                //Add flowLayoutPanel
-                FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
-                Controls.Add(flp, 0, 1);
-
-                //Add tasks
-                Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
-                foreach (Task task in dayTasks)
-                {
-                    TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
-                    ctrl.MouseDown += Ctrl_MouseDown;
-                    ctrl.MouseUp += Ctrl_MouseUp;
-                    flp.Controls.Add(ctrl);
-                }
-            }
-
-            private void Ctrl_MouseUp(object? sender, MouseEventArgs e)
-            {
-                OnControlMouseUp(sender, e);
-            }
-
-            private void Ctrl_MouseDown(object? sender, MouseEventArgs e)
-            {
-                OnControlMouseDown(sender,e);
-            }
-
-            public event MouseEventHandler ControlMouseDown;
-            public event MouseEventHandler ControlMouseUp;
-
-            protected virtual void OnControlMouseDown(object? sender, MouseEventArgs e)
-            {
-                MouseEventHandler temp = ControlMouseDown;
-                if (temp != null)
-                {
-                    temp(sender,e);
-                }
-            }
-
-            protected virtual void OnControlMouseUp(object? sender, MouseEventArgs e)
-            {
-                MouseEventHandler temp = ControlMouseUp;
-                if (temp != null)
-                {
-                    temp(sender, e);
-                }
-            }
-        }
-
-        private PlanningDayPanel InitializePlanningDayControl(DateTime day)
-        {
-            return new PlanningDayPanel(day, TaskHost);
-        }
-
         private void InitializeAllTasksPanel()
         {
             //Clear panel
@@ -176,7 +111,30 @@ namespace HomeworkPlanner
                 TasksFLP.Controls.Add(testctrl);
             }
         }
+        private void InitializeStatusBar()
+        {
+            Task[] alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
+            (Task[] completed, Task[] remaining) tasks = TaskHost.FilterTasks(alltasks);
 
+            toolStripStatusLabel1.Text = "Scheduled today: " + alltasks.Length;
+            toolStripStatusLabel2.Text = "Completed: " + tasks.completed.Length;
+            toolStripStatusLabel3.Text = "Remaining: " + tasks.remaining.Length;
+            toolStripProgressBar1.Maximum = alltasks.Length;
+            toolStripProgressBar1.Value = tasks.completed.Length;
+        }
+        private PlanningDayPanel InitializePlanningDayControl(DateTime day)
+        {
+            return new PlanningDayPanel(day, TaskHost);
+        }
+        private void UpdatePanels(bool changePerformed = false)
+        {
+            InitializePlanningPanel();
+            InitializeAllTasksPanel();
+            InitializeStatusBar();
+            Modified = changePerformed ? true : Modified;
+        }
+        #endregion
+        #region TaskControl mouse interaction
         private void TaskControl_DragConfirm(object? sender, MouseEventArgs e)
         {
             if (sender != null)
@@ -229,27 +187,7 @@ namespace HomeworkPlanner
                 }
             }
         }
-
-        private void InitializeStatusBar()
-        {
-            Task[] alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
-            (Task[] completed, Task[] remaining) tasks = TaskHost.FilterTasks(alltasks);
-
-            toolStripStatusLabel1.Text = "Scheduled today: " + alltasks.Length;
-            toolStripStatusLabel2.Text = "Completed: " + tasks.completed.Length;
-            toolStripStatusLabel3.Text = "Remaining: " + tasks.remaining.Length;
-            toolStripProgressBar1.Maximum = alltasks.Length;
-            toolStripProgressBar1.Value = tasks.completed.Length;
-        }
-
-        private void UpdatePanels(bool changePerformed = false)
-        {
-            InitializePlanningPanel();
-            InitializeAllTasksPanel();
-            InitializeStatusBar();
-            Modified = changePerformed ? true : Modified;
-        }
-
+        #endregion
         #region Auxiliary methods for date calculation
 
         private static DateTime GetSunday(DateTime dateTime)
@@ -275,7 +213,6 @@ namespace HomeworkPlanner
         }
 
         #endregion
-
         #region MenuItem option on changing number of weeks displayed
 
         private readonly ToolStripMenuItem[] weekItems;
@@ -292,12 +229,6 @@ namespace HomeworkPlanner
         }
 
         #endregion
-
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            UpdatePanels();
-        }
-
         #region Task addition and modification
 
         private void AddTask()
@@ -354,14 +285,30 @@ namespace HomeworkPlanner
         }
 
         #endregion
-
+        #region Menu item functions
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdatePanels();
+        }
         private void customizeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SubjectMgmtForm subjectMgmtForm = new(TaskHost);
             subjectMgmtForm.ShowDialog();
             UpdatePanels(true);
         }
-
+        private void unscheduleAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to unschedule all tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.UnscheduleAllTasks();
+                UpdatePanels(true);
+            }
+        }
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+        #endregion
         #region File operations
         private void New_Click(object sender, EventArgs e)
         {
@@ -407,21 +354,7 @@ namespace HomeworkPlanner
         }
 
         #endregion
-
-        private void unscheduleAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Are you sure you want to unschedule all tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                TaskHost.UnscheduleAllTasks();
-                UpdatePanels(true);
-            }
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
+        #region Closing handling function
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (Modified)
@@ -441,5 +374,6 @@ namespace HomeworkPlanner
                 }
             }
         }
+        #endregion
     }
 }

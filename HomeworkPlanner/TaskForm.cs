@@ -12,10 +12,12 @@ namespace HomeworkPlanner
 {
     public partial class TaskForm : Form
     {
+        #region Properties, variables and constructor
         public bool AddTaskMode { get; set; }
         public Task SelectedTask { get; }
         public Task UpdatedTask { get; }
         public TaskHost TaskHost { get; set; }
+        private int SubjectComboBoxSelectionIndex = 0;
         public TaskForm(TaskHost taskHost, Task displayingTask, bool addView = false)
         {
             InitializeComponent();
@@ -25,7 +27,8 @@ namespace HomeworkPlanner
             TaskHost = taskHost;
             LoadTask();
         }
-
+        #endregion
+        #region Task and subject loading
         public void LoadTask()
         {
             if (!AddTaskMode)
@@ -85,7 +88,8 @@ namespace HomeworkPlanner
         {
             TaskIconPictureBox.Image = UpdatedTask.GetIcon();
         }
-
+        #endregion
+        #region Form control update assignments
         private void TaskBodyTextBox_TextChanged(object sender, EventArgs e)
         {
             UpdatedTask.Name = TaskBodyTextBox.Text;
@@ -107,9 +111,7 @@ namespace HomeworkPlanner
             UpdatedTask.IsImportant = ImportantCheckBox.Checked;
             UpdateIcon();
         }
-
-        private int SubjectComboBoxSelectionIndex = 0;
-
+        #region Subject updating functions
         private void SubjectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SubjectComboBox.SelectedItem is Subject subject)
@@ -134,5 +136,7 @@ namespace HomeworkPlanner
             }
             SubjectComboBoxSelectionIndex = SubjectComboBox.SelectedIndex;
         }
+        #endregion
+        #endregion
     }
 }
