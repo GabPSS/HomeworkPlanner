@@ -40,6 +40,8 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.unscheduleAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -65,8 +67,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.TasksFLP = new System.Windows.Forms.FlowLayoutPanel();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.unscheduleAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -154,8 +154,10 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // tasksToolStripMenuItem
             // 
@@ -170,9 +172,21 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(151, 22);
             this.newToolStripMenuItem1.Text = "New...";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(148, 6);
+            // 
+            // unscheduleAllToolStripMenuItem
+            // 
+            this.unscheduleAllToolStripMenuItem.Name = "unscheduleAllToolStripMenuItem";
+            this.unscheduleAllToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
+            this.unscheduleAllToolStripMenuItem.Text = "Unschedule all";
+            this.unscheduleAllToolStripMenuItem.Click += new System.EventHandler(this.unscheduleAllToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -400,18 +414,6 @@
             this.TasksFLP.TabIndex = 2;
             this.TasksFLP.WrapContents = false;
             // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
-            // 
-            // unscheduleAllToolStripMenuItem
-            // 
-            this.unscheduleAllToolStripMenuItem.Name = "unscheduleAllToolStripMenuItem";
-            this.unscheduleAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.unscheduleAllToolStripMenuItem.Text = "Unschedule all";
-            this.unscheduleAllToolStripMenuItem.Click += new System.EventHandler(this.unscheduleAllToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -423,6 +425,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Main form";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
