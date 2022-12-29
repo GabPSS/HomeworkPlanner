@@ -1,4 +1,5 @@
 using HomeworkPlanner.TaskControls;
+using System.Diagnostics;
 
 namespace HomeworkPlanner
 {
@@ -375,5 +376,26 @@ namespace HomeworkPlanner
             }
         }
         #endregion
+        #region Getting help
+        private void GetHelp()
+        {
+            Process.Start(new ProcessStartInfo(Properties.Settings.Default.GetHelpWebsite) { UseShellExecute = true});
+        }
+
+        private void getHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetHelp();
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            GetHelp();
+        }
+        #endregion
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutForm().ShowDialog();
+        }
     }
 }
