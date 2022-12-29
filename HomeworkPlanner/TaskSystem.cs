@@ -218,6 +218,7 @@ namespace HomeworkPlanner
         public TaskDrawMode DrawMode { get; set; } = TaskDrawMode.TasksView;
         public TaskHost TaskHandler { get; set; }
         public Task SelectedTask { get; set; }
+        public bool IsDragging = false;
         public Font DefaultTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
         public Font DefaultDueFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10);
         public Font DefaultDescFont { get; set; } = new Font(FontFamily.GenericSansSerif, 8);
