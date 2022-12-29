@@ -217,6 +217,18 @@ namespace HomeworkPlanner
                 SaveFile.Tasks.Items[i].ExecDate = null;
             }
         }
+
+        public static Task[] SortTasksByDueDate(Task[] tasks)
+        {
+            List<Task> tasksList = tasks.ToList() ;
+            tasksList.Sort(CompareTasksByDueDate);
+            return tasksList.ToArray();
+        }
+
+        private static int CompareTasksByDueDate(Task x, Task y)
+        {
+            return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1;
+        }
     }
 
     public class TaskControl : Control
