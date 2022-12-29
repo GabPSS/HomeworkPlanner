@@ -25,12 +25,14 @@ namespace HomeworkPlanner
         private void LoadSaveFile(string saveFilePath)
         {
             TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
+            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + saveFilePath + "]";
             UpdatePanels();
         }
 
         private void InitializeNewTaskSystem()
         {
             TaskHost = new(new(), null);
+            Text = Application.ProductName + " " + Application.ProductVersion;
             UpdatePanels();
         }
 
