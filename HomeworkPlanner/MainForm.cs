@@ -4,6 +4,7 @@ namespace HomeworkPlanner
     {
         public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
         public int FutureWeeks = 2;
+        public bool Modified = false;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
         private TaskHost TaskHost;
         public MainForm(string? saveFilePath = null)
@@ -27,6 +28,7 @@ namespace HomeworkPlanner
             TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
             Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + saveFilePath + "]";
             UpdatePanels();
+            Modified = false;
         }
 
         private void InitializeNewTaskSystem()
@@ -34,6 +36,7 @@ namespace HomeworkPlanner
             TaskHost = new(new(), null);
             Text = Application.ProductName + " " + Application.ProductVersion;
             UpdatePanels();
+            Modified = false;
         }
 
         private void InitializePlanningPanel()
@@ -189,14 +192,14 @@ namespace HomeworkPlanner
                         if (control.GetType() == typeof(PlanningDayPanel))
                         {
                             task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
-                            UpdatePanels();
+                            UpdatePanels(true);
                             Cursor = Cursors.Default;
                             return;
                         }
                         if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
                         {
                             task.SelectedTask.ExecDate = null;
-                            UpdatePanels();
+                            UpdatePanels(true);
                             Cursor = Cursors.Default;
                             return;
                         }
@@ -222,7 +225,7 @@ namespace HomeworkPlanner
                 else
                 {
                     task.SelectedTask.IsCompleted = !task.SelectedTask.IsCompleted;
-                    UpdatePanels();
+                    UpdatePanels(true);
                 }
             }
         }
@@ -239,11 +242,12 @@ namespace HomeworkPlanner
             toolStripProgressBar1.Value = tasks.completed.Length;
         }
 
-        private void UpdatePanels()
+        private void UpdatePanels(bool changePerformed = false)
         {
             InitializePlanningPanel();
             InitializeAllTasksPanel();
             InitializeStatusBar();
+            Modified = changePerformed ? true : Modified;
         }
 
         #region Auxiliary methods for date calculation
@@ -302,7 +306,7 @@ namespace HomeworkPlanner
             if (tform.ShowDialog() == DialogResult.OK)
             {
                 TaskHost.SaveFile.Tasks.Add(tform.UpdatedTask);
-                UpdatePanels();
+                UpdatePanels(true);
             }
         }
 
@@ -322,7 +326,7 @@ namespace HomeworkPlanner
                 {
                     TaskHost.SaveFile.Tasks.Add(tForm.UpdatedTask);
                 }
-                UpdatePanels();
+                UpdatePanels(true);
             }
             if (dr == DialogResult.Abort)
             {
@@ -335,7 +339,7 @@ namespace HomeworkPlanner
                 {
                     MessageBox.Show("Failed to delete task, it could have already been deleted", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                UpdatePanels();
+                UpdatePanels(true);
             }
         }
 
@@ -355,7 +359,7 @@ namespace HomeworkPlanner
         {
             SubjectMgmtForm subjectMgmtForm = new(TaskHost);
             subjectMgmtForm.ShowDialog();
-            UpdatePanels();
+            UpdatePanels(true);
         }
 
         #region File operations
@@ -407,7 +411,7 @@ namespace HomeworkPlanner
             if (MessageBox.Show("Are you sure you want to unschedule all tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 TaskHost.UnscheduleAllTasks();
-                UpdatePanels();
+                UpdatePanels(true);
             }
         }
     }
