@@ -241,5 +241,14 @@ namespace HomeworkPlanner
             subjectMgmtForm.ShowDialog();
             UpdatePanels();
         }
+
+        private void unscheduleAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to unschedule all tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.UnscheduleAllTasks();
+                UpdatePanels();
+            }
+        }
     }
 }

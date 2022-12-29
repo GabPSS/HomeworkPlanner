@@ -65,6 +65,8 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.TasksFLP = new System.Windows.Forms.FlowLayoutPanel();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.unscheduleAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -154,7 +156,9 @@
             // tasksToolStripMenuItem
             // 
             this.tasksToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem1});
+            this.newToolStripMenuItem1,
+            this.toolStripSeparator1,
+            this.unscheduleAllToolStripMenuItem});
             this.tasksToolStripMenuItem.Name = "tasksToolStripMenuItem";
             this.tasksToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.tasksToolStripMenuItem.Text = "Tasks";
@@ -162,7 +166,7 @@
             // newToolStripMenuItem1
             // 
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem1.Text = "New...";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
@@ -178,14 +182,14 @@
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // viewToolStripMenuItem
@@ -392,6 +396,18 @@
             this.TasksFLP.TabIndex = 2;
             this.TasksFLP.WrapContents = false;
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            // 
+            // unscheduleAllToolStripMenuItem
+            // 
+            this.unscheduleAllToolStripMenuItem.Name = "unscheduleAllToolStripMenuItem";
+            this.unscheduleAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.unscheduleAllToolStripMenuItem.Text = "Unschedule all";
+            this.unscheduleAllToolStripMenuItem.Click += new System.EventHandler(this.unscheduleAllToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -456,5 +472,7 @@
         private ToolStripMenuItem refreshToolStripMenuItem;
         private ToolStripMenuItem tasksToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem1;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem unscheduleAllToolStripMenuItem;
     }
 }
