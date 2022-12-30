@@ -147,6 +147,8 @@ namespace HomeworkPlanner.TaskControls
     {
         #region Default constructor and variable
         public DateTime SelectedDay;
+        public bool IsCancelled = false;
+        private CancelledDay CancelledDay;
         public PlanningDayPanel(DateTime day, TaskHost taskHost)
         {
             SelectedDay = day;
@@ -168,19 +170,52 @@ namespace HomeworkPlanner.TaskControls
             FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
             Controls.Add(flp, 0, 1);
             flp.SuspendLayout();
+
+            //Check cancelled day
+            CancelledDay? cDay = taskHost.SaveFile.CancelledDays.GetObjectByDate(day);
+
+            if (cDay != null)
+            {
+                IsCancelled = true;
+                CancelledDay = cDay;
+                BackColor = Color.Pink;
+                Label cancelLbl = new()
+                {
+                    Text = "Cancelled. Reason:\n\n" + cDay.Message,
+                    AutoSize = false,
+                    Dock = DockStyle.Fill
+                };
+                Controls.Remove(flp);
+                Controls.Add(cancelLbl,0,1);
+                cancelLbl.Click += CancelledDay_Click;
+                Click += CancelledDay_Click;
+            }
+
             //Add tasks
             Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
             foreach (Task task in dayTasks)
             {
-                TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
-                ctrl.MouseDown += Ctrl_MouseDown;
-                ctrl.MouseUp += Ctrl_MouseUp;
-                flp.Controls.Add(ctrl);
+                if (IsCancelled)
+                {
+                    task.ExecDate = null; 
+                }
+                else
+                {
+                    TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                    ctrl.MouseDown += Ctrl_MouseDown;
+                    ctrl.MouseUp += Ctrl_MouseUp;
+                    flp.Controls.Add(ctrl);
+                }
             }
             flp.ResumeLayout();
         }
+
         #endregion
         #region TaskControl event assignments
+        private void CancelledDay_Click(object? sender, EventArgs e)
+        {
+            OnCancelledDayClick(sender);
+        }
         private void Ctrl_MouseUp(object? sender, MouseEventArgs e)
         {
             OnControlMouseUp(sender, e);
@@ -192,8 +227,20 @@ namespace HomeworkPlanner.TaskControls
         }
         #endregion
         #region Event definitions
+        public class CancelledDayEventArgs : EventArgs
+        {
+            public CancelledDay SelectedCancelledDay { get; set; }
+
+            public CancelledDayEventArgs(CancelledDay cancelledDay)
+            {
+                SelectedCancelledDay = cancelledDay;
+            }
+        }
+
+        public delegate void CancelledDayEventHandler(object sender, CancelledDayEventArgs e);
         public event MouseEventHandler ControlMouseDown;
         public event MouseEventHandler ControlMouseUp;
+        public event CancelledDayEventHandler CancelledDayClick;
         protected virtual void OnControlMouseDown(object? sender, MouseEventArgs e)
         {
             MouseEventHandler temp = ControlMouseDown;
@@ -208,6 +255,14 @@ namespace HomeworkPlanner.TaskControls
             if (temp != null)
             {
                 temp(sender, e);
+            }
+        }
+        protected virtual void OnCancelledDayClick(object? sender)
+        {
+            CancelledDayEventHandler temp = CancelledDayClick;
+            if (temp != null)
+            {
+                temp(sender, new CancelledDayEventArgs(CancelledDay));
             }
         }
         #endregion
