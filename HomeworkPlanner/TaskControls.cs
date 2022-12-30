@@ -143,6 +143,7 @@ namespace HomeworkPlanner.TaskControls
     {
         #region Default constructor and variable
         public DateTime SelectedDay;
+        public bool IsCancelled = false;
         public PlanningDayPanel(DateTime day, TaskHost taskHost)
         {
             SelectedDay = day;
@@ -162,6 +163,23 @@ namespace HomeworkPlanner.TaskControls
             //Add flowLayoutPanel
             FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
             Controls.Add(flp, 0, 1);
+
+            //Check cancelled day
+            CancelledDay? cDay = taskHost.SaveFile.CancelledDays.GetObjectByDate(day);
+
+            if (cDay != null)
+            {
+                IsCancelled = true;
+                BackColor = Color.Pink;
+                Label cancelLbl = new()
+                {
+                    Text = "Cancelled. Reason:\n\n" + cDay.Message,
+                    AutoSize = false,
+                    Dock = DockStyle.Fill
+                };
+                Controls.Remove(flp);
+                Controls.Add(cancelLbl,0,1);
+            }
 
             //Add tasks
             Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);

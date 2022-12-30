@@ -510,7 +510,13 @@ namespace HomeworkPlanner
 
         private void dayCancellingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new DayCancelForm().ShowDialog();
+            DayCancelForm dayCancelForm = new();
+            if (dayCancelForm.ShowDialog() == DialogResult.OK)
+            {
+                TaskHost.SaveFile.CancelledDays.Add(new() { Date = dayCancelForm.Date, Message = dayCancelForm.Message });
+                MessageBox.Show("Cancelled day added successfully!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UpdatePanels(true);
+            }
         }
     }
 }
