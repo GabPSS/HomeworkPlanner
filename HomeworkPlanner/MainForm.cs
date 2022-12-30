@@ -1,3 +1,4 @@
+using HomeworkPlanner.Properties;
 using HomeworkPlanner.TaskControls;
 using System.Diagnostics;
 
@@ -147,6 +148,7 @@ namespace HomeworkPlanner
                         PlanningDayPanel control = InitializePlanningDayControl(selectedDay);
                         control.ControlMouseDown += TaskControl_MouseOperation;
                         control.ControlMouseUp += TaskControl_DragConfirm;
+                        control.CancelledDayClick += PlanningDay_CancelledDayClick;
                         PlanningPanel.Controls.Add(control, col, row);
                         DaysToDisplayData -= i;
                         col--;
@@ -157,6 +159,17 @@ namespace HomeworkPlanner
             }
             PlanningPanel.ResumeLayout();
         }
+
+        private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
+        {
+            if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+            {
+                TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
+                UpdatePanels();
+            }
+
+        }
+
         private void InitializeAllTasksPanel()
         {
             //Clear panel
@@ -217,10 +230,13 @@ namespace HomeworkPlanner
                         control = control.GetChildAtPoint(control.PointToClient(mousepos));
                         if (control.GetType() == typeof(PlanningDayPanel))
                         {
-                            task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
-                            UpdatePanels(true);
-                            Cursor = Cursors.Default;
-                            return;
+                            if (!((PlanningDayPanel)control).IsCancelled)
+                            {
+                                task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
+                                UpdatePanels(true);
+                                Cursor = Cursors.Default;
+                                return;
+                            }
                         }
                         if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
                         {
@@ -505,6 +521,17 @@ namespace HomeworkPlanner
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             LoadSaveFile(((RecentFileListViewItem)listView1.SelectedItems[0]).FilePath);
+        }
+
+        private void dayCancellingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DayCancelForm dayCancelForm = new();
+            if (dayCancelForm.ShowDialog() == DialogResult.OK)
+            {
+                TaskHost.SaveFile.CancelledDays.Add(new() { Date = dayCancelForm.Date, Message = dayCancelForm.Message });
+                MessageBox.Show("Cancelled day added successfully!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                UpdatePanels(true);
+            }
         }
 
         private void removeCompletedTasksToolStripMenuItem_Click(object sender, EventArgs e)
