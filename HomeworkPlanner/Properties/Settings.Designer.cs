@@ -44,5 +44,17 @@ namespace HomeworkPlanner.Properties {
                 this["RecentFiles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool EnableRecentFiles {
+            get {
+                return ((bool)(this["EnableRecentFiles"]));
+            }
+            set {
+                this["EnableRecentFiles"] = value;
+            }
+        }
     }
 }

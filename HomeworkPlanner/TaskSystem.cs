@@ -93,6 +93,12 @@ namespace HomeworkPlanner
         {
             return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1;
         }
+
+        public void RemoveTasksPriorTo(DateTime date)
+        {
+            SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.DateCompleted < date);
+            SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.IsScheduled && x.ExecDate < date);
+        }
     }
     public class SaveFile
     {
@@ -100,9 +106,11 @@ namespace HomeworkPlanner
         {
             Tasks = new();
             Subjects = new();
+            CancelledDays = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
+        public CancelledDayList CancelledDays { get; set; }
 
         public static SaveFile FromJSON(string JSON)
         {
@@ -143,6 +151,18 @@ namespace HomeworkPlanner
             Items.Add(new Subject(newIndex, subject));
             LastIndex = newIndex;
             return newIndex;
+        }
+    }
+    public class CancelledDayList : List<CancelledDay>
+    {
+        public CancelledDay? GetObjectByDate(DateTime date)
+        {
+            CancelledDay? output = null;
+            for (int i = 0; i < Count; i++)
+            {
+                output = this[i].Date.Date == date.Date ? this[i] : output;
+            }
+            return output;
         }
     }
     #endregion
@@ -235,6 +255,11 @@ namespace HomeworkPlanner
         {
             return SubjectName;
         }
+    }
+    public class CancelledDay
+    {
+        public DateTime Date { get; set; }
+        public string Message { get; set; }
     }
     #endregion
 }
