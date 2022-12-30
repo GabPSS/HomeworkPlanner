@@ -30,11 +30,14 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("No recent plans to display");
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearRecentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.noFilesToDisplayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -113,6 +116,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.recentFilesToolStripMenuItem,
             this.toolStripSeparator,
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
@@ -141,6 +145,36 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenFile_Click);
+            // 
+            // recentFilesToolStripMenuItem
+            // 
+            this.recentFilesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.clearRecentsToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.noFilesToDisplayToolStripMenuItem});
+            this.recentFilesToolStripMenuItem.Name = "recentFilesToolStripMenuItem";
+            this.recentFilesToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.recentFilesToolStripMenuItem.Text = "Recent files";
+            this.recentFilesToolStripMenuItem.DropDownOpened += new System.EventHandler(this.recentFilesToolStripMenuItem_DropDownOpened);
+            // 
+            // clearRecentsToolStripMenuItem
+            // 
+            this.clearRecentsToolStripMenuItem.Name = "clearRecentsToolStripMenuItem";
+            this.clearRecentsToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.clearRecentsToolStripMenuItem.Text = "Clear recents";
+            this.clearRecentsToolStripMenuItem.Click += new System.EventHandler(this.clearRecentsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(165, 6);
+            // 
+            // noFilesToDisplayToolStripMenuItem
+            // 
+            this.noFilesToDisplayToolStripMenuItem.Enabled = false;
+            this.noFilesToDisplayToolStripMenuItem.Name = "noFilesToDisplayToolStripMenuItem";
+            this.noFilesToDisplayToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.noFilesToDisplayToolStripMenuItem.Text = "No files to display";
             // 
             // toolStripSeparator
             // 
@@ -578,8 +612,6 @@
             this.listView1.BackColor = System.Drawing.SystemColors.Control;
             this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
             this.listView1.Location = new System.Drawing.Point(30, 44);
             this.listView1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 20);
             this.listView1.Name = "listView1";
@@ -684,5 +716,9 @@
         private ImageList welcomeScreenIcons;
         private Label label3;
         private ListView listView1;
+        private ToolStripMenuItem recentFilesToolStripMenuItem;
+        private ToolStripMenuItem noFilesToDisplayToolStripMenuItem;
+        private ToolStripMenuItem clearRecentsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }
