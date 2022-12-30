@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            System.Windows.Forms.ListViewItem listViewItem1 = new System.Windows.Forms.ListViewItem("No recent plans to display");
+            System.Windows.Forms.ListViewItem listViewItem2 = new System.Windows.Forms.ListViewItem("No recent plans to display");
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -82,6 +82,8 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.dayCancellingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -209,6 +211,8 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dayCancellingToolStripMenuItem,
+            this.toolStripSeparator3,
             this.customizeToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
@@ -218,14 +222,14 @@
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // viewToolStripMenuItem
@@ -246,7 +250,7 @@
             this.FourWeekMenuItem,
             this.FiveWeekMenuItem});
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
-            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.weeksToolStripMenuItem.Text = "Weeks";
             // 
             // OneWeekMenuItem
@@ -289,7 +293,7 @@
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -579,7 +583,7 @@
             this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listView1.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
-            listViewItem1});
+            listViewItem2});
             this.listView1.Location = new System.Drawing.Point(30, 44);
             this.listView1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 20);
             this.listView1.Name = "listView1";
@@ -596,6 +600,18 @@
             this.welcomeScreenIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("welcomeScreenIcons.ImageStream")));
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
+            // 
+            // dayCancellingToolStripMenuItem
+            // 
+            this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
+            this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -684,5 +700,7 @@
         private ImageList welcomeScreenIcons;
         private Label label3;
         private ListView listView1;
+        private ToolStripMenuItem dayCancellingToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
     }
 }

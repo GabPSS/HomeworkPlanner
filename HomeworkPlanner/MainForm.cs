@@ -1,3 +1,4 @@
+using HomeworkPlanner.Properties;
 using HomeworkPlanner.TaskControls;
 using System.Diagnostics;
 
@@ -505,6 +506,11 @@ namespace HomeworkPlanner
         private void listView1_ItemActivate(object sender, EventArgs e)
         {
             LoadSaveFile(((RecentFileListViewItem)listView1.SelectedItems[0]).FilePath);
+        }
+
+        private void dayCancellingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new DayCancelForm().ShowDialog();
         }
     }
 }
