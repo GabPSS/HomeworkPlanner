@@ -144,6 +144,7 @@ namespace HomeworkPlanner.TaskControls
         #region Default constructor and variable
         public DateTime SelectedDay;
         public bool IsCancelled = false;
+        private CancelledDay CancelledDay;
         public PlanningDayPanel(DateTime day, TaskHost taskHost)
         {
             SelectedDay = day;
@@ -170,6 +171,7 @@ namespace HomeworkPlanner.TaskControls
             if (cDay != null)
             {
                 IsCancelled = true;
+                CancelledDay = cDay;
                 BackColor = Color.Pink;
                 Label cancelLbl = new()
                 {
@@ -179,6 +181,8 @@ namespace HomeworkPlanner.TaskControls
                 };
                 Controls.Remove(flp);
                 Controls.Add(cancelLbl,0,1);
+                cancelLbl.Click += CancelledDay_Click;
+                Click += CancelledDay_Click;
             }
 
             //Add tasks
@@ -198,8 +202,13 @@ namespace HomeworkPlanner.TaskControls
                 }
             }
         }
+
         #endregion
         #region TaskControl event assignments
+        private void CancelledDay_Click(object? sender, EventArgs e)
+        {
+            OnCancelledDayClick(sender);
+        }
         private void Ctrl_MouseUp(object? sender, MouseEventArgs e)
         {
             OnControlMouseUp(sender, e);
@@ -211,8 +220,20 @@ namespace HomeworkPlanner.TaskControls
         }
         #endregion
         #region Event definitions
+        public class CancelledDayEventArgs : EventArgs
+        {
+            public CancelledDay SelectedCancelledDay { get; set; }
+
+            public CancelledDayEventArgs(CancelledDay cancelledDay)
+            {
+                SelectedCancelledDay = cancelledDay;
+            }
+        }
+
+        public delegate void CancelledDayEventHandler(object sender, CancelledDayEventArgs e);
         public event MouseEventHandler ControlMouseDown;
         public event MouseEventHandler ControlMouseUp;
+        public event CancelledDayEventHandler CancelledDayClick;
         protected virtual void OnControlMouseDown(object? sender, MouseEventArgs e)
         {
             MouseEventHandler temp = ControlMouseDown;
@@ -227,6 +248,14 @@ namespace HomeworkPlanner.TaskControls
             if (temp != null)
             {
                 temp(sender, e);
+            }
+        }
+        protected virtual void OnCancelledDayClick(object? sender)
+        {
+            CancelledDayEventHandler temp = CancelledDayClick;
+            if (temp != null)
+            {
+                temp(sender, new CancelledDayEventArgs(CancelledDay));
             }
         }
         #endregion

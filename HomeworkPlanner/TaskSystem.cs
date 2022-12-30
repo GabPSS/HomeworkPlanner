@@ -255,6 +255,5 @@ namespace HomeworkPlanner
         public DateTime Date { get; set; }
         public string Message { get; set; }
     }
-
     #endregion
 }

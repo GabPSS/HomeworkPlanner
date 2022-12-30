@@ -148,6 +148,7 @@ namespace HomeworkPlanner
                         PlanningDayPanel control = InitializePlanningDayControl(selectedDay);
                         control.ControlMouseDown += TaskControl_MouseOperation;
                         control.ControlMouseUp += TaskControl_DragConfirm;
+                        control.CancelledDayClick += PlanningDay_CancelledDayClick;
                         PlanningPanel.Controls.Add(control, col, row);
                         DaysToDisplayData -= i;
                         col--;
@@ -158,6 +159,17 @@ namespace HomeworkPlanner
             }
             PlanningPanel.ResumeLayout();
         }
+
+        private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
+        {
+            if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+            {
+                TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
+                UpdatePanels();
+            }
+
+        }
+
         private void InitializeAllTasksPanel()
         {
             //Clear panel
