@@ -491,6 +491,10 @@ namespace HomeworkPlanner
                 RecentFileListViewItem item = new() { FilePath = list[i], Text = list[i], ImageIndex = 0 };
                 listView1.Items.Add(item);
             }
+            if (list.Count != 0)
+            {
+                listView1.Items.RemoveAt(0);
+            }
         }
 
         private class RecentFileListViewItem : ListViewItem
