@@ -42,6 +42,7 @@ namespace HomeworkPlanner
             {
                 Text = "Add task";
                 RemoveBtn.Enabled = false;
+                DueDateTimePicker.Value = DateTime.Today.AddDays(1);
             }
 
             //Update task id, subjects, icon

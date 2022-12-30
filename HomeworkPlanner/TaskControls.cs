@@ -50,13 +50,14 @@ namespace HomeworkPlanner.TaskControls
         #region Graphics-handling functions
         private void DrawControl(Graphics gfx)
         {
+            int imgDimension = 32;
             gfx.Clear(BackColor);
-            gfx.DrawImage(Icon, 0, 0, 32, 32);
+            gfx.DrawImage(Icon, 0, 0, imgDimension, imgDimension);
 
             SizeF TitleMeasurement = gfx.MeasureString(GetTitle(), DefaultTitleFont);
-            gfx.DrawString(GetTitle(), DefaultTitleFont, DrawingBrush, 34, 0);
+            gfx.DrawString(GetTitle(), DefaultTitleFont, DrawingBrush, imgDimension + 2, 0);
             float text_y = TitleMeasurement.Height + 3;
-            float text_x = 34;
+            float text_x = imgDimension + 2;
             switch (DrawMode)
             {
                 case TaskDrawMode.Planner:

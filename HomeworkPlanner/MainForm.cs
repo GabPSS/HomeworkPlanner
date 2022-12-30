@@ -10,38 +10,77 @@ namespace HomeworkPlanner
         public int FutureWeeks { get; set; } = 2;
         public bool Modified = false;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
-        private TaskHost TaskHost;
+        private TaskHost TaskHost { get; set; }
+        private bool _HomeDisplaying = true;
+        public bool HomeDisplaying { get { return _HomeDisplaying; }
+            set
+            {
+                if (!value && _HomeDisplaying == true)
+                {
+                    _HomeDisplaying = false;
+                    Controls.Remove(tableLayoutPanel2);
+                    UpdateTaskHostFunctions(!value);
+                }
+            }
+        }
         #endregion
         #region Main Constructor
         public MainForm(string? saveFilePath = null)
         {
             InitializeComponent();
             weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
-
-            //Load tasks and set up controls
+            Text = Application.ProductName + " " + Application.ProductVersion;
             if (saveFilePath != null)
             {
                 LoadSaveFile(saveFilePath);
             }
             else
             {
-                InitializeNewTaskSystem();
+                UpdateTaskHostFunctions(false);
             }
         }
         #endregion
+
+        #region Home panel handling
+
+        public void UpdateTaskHostFunctions(bool enable)
+        {
+            saveToolStripMenuItem.Enabled = enable;
+            saveAsToolStripMenuItem.Enabled = enable;
+
+            tasksToolStripMenuItem.Visible = enable;
+            newToolStripMenuItem1.Enabled = enable;
+            unscheduleAllToolStripMenuItem.Enabled = enable;
+
+            customizeToolStripMenuItem.Enabled = enable;
+            viewToolStripMenuItem.Visible = enable;
+            weeksToolStripMenuItem.Enabled = enable;
+            refreshToolStripMenuItem.Enabled = enable;
+            statusStrip1.Visible = enable;
+        }
+
+        #endregion
+
         #region Task system initialization
         private void LoadSaveFile(string saveFilePath)
         {
+            HomeDisplaying = false;
             TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
-            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + saveFilePath + "]";
+            UpdateFilePathTitle();
             UpdatePanels();
             Modified = false;
         }
 
+        private void UpdateFilePathTitle()
+        {
+            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + TaskHost.SaveFilePath + "]";
+        }
+
         private void InitializeNewTaskSystem()
         {
+            HomeDisplaying = false;
             TaskHost = new(new(), null);
-            Text = Application.ProductName + " " + Application.ProductVersion;
+            Text = Application.ProductName + " " + Application.ProductVersion + " - [untitled.hwpf]";
             UpdatePanels();
             Modified = false;
         }
@@ -351,6 +390,7 @@ namespace HomeworkPlanner
             string data = TaskHost.SaveFile.MakeJSON();
             File.WriteAllText(fileName, data);
             TaskHost.SaveFilePath = fileName;
+            UpdateFilePathTitle();
             Modified = false;
         }
 
@@ -396,6 +436,22 @@ namespace HomeworkPlanner
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new AboutForm().ShowDialog();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            InitializeNewTaskSystem();
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            OpenFile_Click(sender, e);
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //TODO: Implement options menu item
+            throw new NotImplementedException();
         }
     }
 }
