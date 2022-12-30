@@ -19,8 +19,11 @@ namespace HomeworkPlanner.TaskControls
         public Task SelectedTask { get; set; }
         public bool IsDragging = false;
         public Font DefaultTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
+        public Font DefaultCompletedTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Strikeout);
         public Font DefaultDueFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10);
         public Font DefaultDescFont { get; set; } = new Font(FontFamily.GenericSansSerif, 8);
+        public Font DefaultCompletedDescFont { get; set; } = new Font(FontFamily.GenericSansSerif, 8,FontStyle.Strikeout);
+        public Font DefaultCompletedFont { get; set; } = new Font(FontFamily.GenericSansSerif,10, FontStyle.Strikeout);
         /// <summary>
         /// Defines if the control should be sized automatically
         /// </summary>
@@ -54,22 +57,21 @@ namespace HomeworkPlanner.TaskControls
             gfx.Clear(BackColor);
             gfx.DrawImage(Icon, 0, 0, imgDimension, imgDimension);
 
-            SizeF TitleMeasurement = gfx.MeasureString(GetTitle(), DefaultTitleFont);
-            gfx.DrawString(GetTitle(), DefaultTitleFont, DrawingBrush, imgDimension + 2, 0);
+            SizeF TitleMeasurement = gfx.MeasureString(GetTitle(), SelectedTask.IsCompleted ? DefaultCompletedTitleFont : DefaultTitleFont);
+            gfx.DrawString(GetTitle(), SelectedTask.IsCompleted ? DefaultCompletedTitleFont : DefaultTitleFont, DrawingBrush, imgDimension + 2, 0);
             float text_y = TitleMeasurement.Height + 3;
             float text_x = imgDimension + 2;
             switch (DrawMode)
             {
                 case TaskDrawMode.Planner:
-                    gfx.DrawString("Due: " + SelectedTask.DueDate.ToString("dd/MM"), DefaultDueFont, DrawingBrush, text_x, text_y);
+                    gfx.DrawString("Due: " + SelectedTask.DueDate.ToString("dd/MM"), SelectedTask.IsCompleted ? DefaultCompletedFont : DefaultDueFont, DrawingBrush, text_x, text_y);
                     break;
                 case TaskDrawMode.TasksView:
-                    //List<SizeF> Items = new List<SizeF>();
                     float descTextHeight = gfx.MeasureString("This is a test string", DefaultDescFont).Height;
                     for (int i = 0; i < SelectedTask.Description.Length; i++)
                     {
                         //TODO: Implement text wrapping
-                        gfx.DrawString(SelectedTask.Description[i], DefaultDescFont, DrawingBrush, text_x, text_y);
+                        gfx.DrawString(SelectedTask.Description[i], SelectedTask.IsCompleted ? DefaultCompletedDescFont : DefaultDescFont, DrawingBrush, text_x, text_y);
                         text_y += descTextHeight + 2;
                     }
                     break;
@@ -102,6 +104,8 @@ namespace HomeworkPlanner.TaskControls
                     {
                         //TODO: Implement text wrapping
                         txtheight += descTextHeight + 2;
+                        float tmp_text_width = gfx.MeasureString(SelectedTask.Description[i], DefaultDescFont).Width;
+                        bodyWitdh = tmp_text_width > bodyWitdh ? tmp_text_width : bodyWitdh;
                     }
                     break;
             }
@@ -154,15 +158,16 @@ namespace HomeworkPlanner.TaskControls
             //Add top label
             Label lbl = new()
             {
-                Text = day.ToString("dd"),
-                Dock = DockStyle.Fill
+                Text = day.ToString("dd/MMM"),
+                Dock = DockStyle.Fill,
+                Font = day == DateTime.Today ? new Font(Font, FontStyle.Bold) : Font
             };
             Controls.Add(lbl, 0, 0);
 
             //Add flowLayoutPanel
             FlowLayoutPanel flp = new() { Dock = DockStyle.Fill, FlowDirection = FlowDirection.TopDown, AutoScroll = true, WrapContents = false };
             Controls.Add(flp, 0, 1);
-
+            flp.SuspendLayout();
             //Add tasks
             Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
             foreach (Task task in dayTasks)
@@ -172,6 +177,7 @@ namespace HomeworkPlanner.TaskControls
                 ctrl.MouseUp += Ctrl_MouseUp;
                 flp.Controls.Add(ctrl);
             }
+            flp.ResumeLayout();
         }
         #endregion
         #region TaskControl event assignments
