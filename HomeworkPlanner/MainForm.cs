@@ -218,10 +218,13 @@ namespace HomeworkPlanner
                         control = control.GetChildAtPoint(control.PointToClient(mousepos));
                         if (control.GetType() == typeof(PlanningDayPanel))
                         {
-                            task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
-                            UpdatePanels(true);
-                            Cursor = Cursors.Default;
-                            return;
+                            if (!((PlanningDayPanel)control).IsCancelled)
+                            {
+                                task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
+                                UpdatePanels(true);
+                                Cursor = Cursors.Default;
+                                return;
+                            }
                         }
                         if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
                         {

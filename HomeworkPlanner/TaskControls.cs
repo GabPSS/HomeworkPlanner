@@ -185,10 +185,17 @@ namespace HomeworkPlanner.TaskControls
             Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
             foreach (Task task in dayTasks)
             {
-                TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
-                ctrl.MouseDown += Ctrl_MouseDown;
-                ctrl.MouseUp += Ctrl_MouseUp;
-                flp.Controls.Add(ctrl);
+                if (IsCancelled)
+                {
+                    task.ExecDate = null; 
+                }
+                else
+                {
+                    TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
+                    ctrl.MouseDown += Ctrl_MouseDown;
+                    ctrl.MouseUp += Ctrl_MouseUp;
+                    flp.Controls.Add(ctrl);
+                }
             }
         }
         #endregion
