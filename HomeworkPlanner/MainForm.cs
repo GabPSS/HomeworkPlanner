@@ -85,19 +85,22 @@ namespace HomeworkPlanner
 
         private void UpdateRecentFiles(string filePath, bool remove = false)
         {
-            if (Properties.Settings.Default.RecentFiles.Contains(filePath))
+            if (Properties.Settings.Default.EnableRecentFiles)
             {
-                Properties.Settings.Default.RecentFiles.Remove(filePath);
-                if (!remove)
+                if (Properties.Settings.Default.RecentFiles.Contains(filePath))
+                {
+                    Properties.Settings.Default.RecentFiles.Remove(filePath);
+                    if (!remove)
+                    {
+                        Properties.Settings.Default.RecentFiles.Add(filePath);
+                    }
+                }
+                else
                 {
                     Properties.Settings.Default.RecentFiles.Add(filePath);
                 }
+                Properties.Settings.Default.Save();
             }
-            else
-            {
-                Properties.Settings.Default.RecentFiles.Add(filePath);
-            }
-            Properties.Settings.Default.Save();
         }
 
         private void UpdateFilePathTitle()
