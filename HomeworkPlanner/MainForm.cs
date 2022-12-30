@@ -1,4 +1,5 @@
 using HomeworkPlanner.TaskControls;
+using System.Diagnostics;
 
 namespace HomeworkPlanner
 {
@@ -9,38 +10,105 @@ namespace HomeworkPlanner
         public int FutureWeeks { get; set; } = 2;
         public bool Modified = false;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
-        private TaskHost TaskHost;
+        private TaskHost TaskHost { get; set; }
+        private bool _HomeDisplaying = true;
+        public bool HomeDisplaying { get { return _HomeDisplaying; }
+            set
+            {
+                if (!value && _HomeDisplaying == true)
+                {
+                    _HomeDisplaying = false;
+                    Controls.Remove(tableLayoutPanel2);
+                    UpdateTaskHostFunctions(!value);
+                }
+            }
+        }
         #endregion
         #region Main Constructor
         public MainForm(string? saveFilePath = null)
         {
             InitializeComponent();
             weekItems = new ToolStripMenuItem[] { OneWeekMenuItem, TwoWeekMenuItem, ThreeWeekMenuItem, FourWeekMenuItem, FiveWeekMenuItem };
-
-            //Load tasks and set up controls
+            Text = Application.ProductName + " " + Application.ProductVersion;
             if (saveFilePath != null)
             {
                 LoadSaveFile(saveFilePath);
             }
             else
             {
-                InitializeNewTaskSystem();
+                //Initialize home panel
+                UpdateTaskHostFunctions(false);
+                UpdateRecentFilesList();
             }
         }
         #endregion
+
+        #region Home panel handling
+
+        public void UpdateTaskHostFunctions(bool enable)
+        {
+            saveToolStripMenuItem.Enabled = enable;
+            saveAsToolStripMenuItem.Enabled = enable;
+
+            tasksToolStripMenuItem.Visible = enable;
+            newToolStripMenuItem1.Enabled = enable;
+            unscheduleAllToolStripMenuItem.Enabled = enable;
+
+            customizeToolStripMenuItem.Enabled = enable;
+            viewToolStripMenuItem.Visible = enable;
+            weeksToolStripMenuItem.Enabled = enable;
+            refreshToolStripMenuItem.Enabled = enable;
+            statusStrip1.Visible = enable;
+        }
+
+        #endregion
+
         #region Task system initialization
         private void LoadSaveFile(string saveFilePath)
         {
-            TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
-            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + saveFilePath + "]";
-            UpdatePanels();
-            Modified = false;
+            if (File.Exists(saveFilePath))
+            {
+                HomeDisplaying = false;
+                TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
+                UpdateRecentFiles(saveFilePath);
+                UpdateFilePathTitle();
+                UpdatePanels();
+                Modified = false;
+            }
+            else
+            {
+                MessageBox.Show("Couldn't open file \"" + saveFilePath + "\": File not found","File not found",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateRecentFiles(saveFilePath,false);
+            }
+        }
+
+        private void UpdateRecentFiles(string filePath, bool remove = false)
+        {
+            if (Properties.Settings.Default.RecentFiles.Contains(filePath))
+            {
+                Properties.Settings.Default.RecentFiles.Remove(filePath);
+                if (!remove)
+                {
+                    Properties.Settings.Default.RecentFiles.Add(filePath);
+                }
+            }
+            else
+            {
+                Properties.Settings.Default.RecentFiles.Add(filePath);
+            }
+            Properties.Settings.Default.Save();
+        }
+
+        private void UpdateFilePathTitle()
+        {
+            Text = Application.ProductName+ " " + Application.ProductVersion + " - [" + TaskHost.SaveFilePath + "]";
         }
 
         private void InitializeNewTaskSystem()
         {
+            HomeDisplaying = false;
             TaskHost = new(new(), null);
-            Text = Application.ProductName + " " + Application.ProductVersion;
+            Text = Application.ProductName + " " + Application.ProductVersion + " - [untitled.hwpf]";
             UpdatePanels();
             Modified = false;
         }
@@ -350,6 +418,7 @@ namespace HomeworkPlanner
             string data = TaskHost.SaveFile.MakeJSON();
             File.WriteAllText(fileName, data);
             TaskHost.SaveFilePath = fileName;
+            UpdateFilePathTitle();
             Modified = false;
         }
 
@@ -375,5 +444,63 @@ namespace HomeworkPlanner
             }
         }
         #endregion
+        #region Getting help
+        private void GetHelp()
+        {
+            Process.Start(new ProcessStartInfo(Properties.Settings.Default.GetHelpWebsite) { UseShellExecute = true});
+        }
+
+        private void getHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            GetHelp();
+        }
+
+        private void linkLabel4_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            GetHelp();
+        }
+        #endregion
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutForm().ShowDialog();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            InitializeNewTaskSystem();
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            OpenFile_Click(sender, e);
+        }
+
+        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            //TODO: Implement options menu item
+            throw new NotImplementedException();
+        }
+
+        private void UpdateRecentFilesList()
+        {
+            List<string> list = Properties.Settings.Default.RecentFiles.Cast<string>().ToList();
+            list.Reverse();
+            for (int i = 0; i < list.Count; i++)
+            {
+                RecentFileListViewItem item = new() { FilePath = list[i], Text = list[i], ImageIndex = 0 };
+                listView1.Items.Add(item);
+            }
+        }
+
+        private class RecentFileListViewItem : ListViewItem
+        {
+            public string FilePath { get; set; }
+        }
+
+        private void listView1_ItemActivate(object sender, EventArgs e)
+        {
+            LoadSaveFile(((RecentFileListViewItem)listView1.SelectedItems[0]).FilePath);
+        }
     }
 }
