@@ -215,21 +215,26 @@ namespace HomeworkPlanner
                     for (int i = 1; i <= 4; i++)
                     {
                         control = control.GetChildAtPoint(control.PointToClient(mousepos));
-                        if (control.GetType() == typeof(PlanningDayPanel))
+                        if (control != null)
                         {
-                            task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
-                            UpdatePanels(true);
-                            Cursor = Cursors.Default;
-                            return;
+                            if (control.GetType() == typeof(PlanningDayPanel))
+                            {
+                                task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
+                                break;
+                            }
+                            if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
+                            {
+                                task.SelectedTask.ExecDate = null;
+                                break;
+                            }
                         }
-                        if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
+                        else
                         {
-                            task.SelectedTask.ExecDate = null;
-                            UpdatePanels(true);
-                            Cursor = Cursors.Default;
-                            return;
+                            break;
                         }
                     }
+                    UpdatePanels(true);
+                    Cursor = Cursors.Default;
                 }
             }
         }
