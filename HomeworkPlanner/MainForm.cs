@@ -36,7 +36,9 @@ namespace HomeworkPlanner
             }
             else
             {
+                //Initialize home panel
                 UpdateTaskHostFunctions(false);
+                UpdateRecentFilesList();
             }
         }
         #endregion
@@ -64,11 +66,37 @@ namespace HomeworkPlanner
         #region Task system initialization
         private void LoadSaveFile(string saveFilePath)
         {
-            HomeDisplaying = false;
-            TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
-            UpdateFilePathTitle();
-            UpdatePanels();
-            Modified = false;
+            if (File.Exists(saveFilePath))
+            {
+                HomeDisplaying = false;
+                TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
+                UpdateRecentFiles(saveFilePath);
+                UpdateFilePathTitle();
+                UpdatePanels();
+                Modified = false;
+            }
+            else
+            {
+                MessageBox.Show("Couldn't open file \"" + saveFilePath + "\": File not found","File not found",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                UpdateRecentFiles(saveFilePath,false);
+            }
+        }
+
+        private void UpdateRecentFiles(string filePath, bool remove = false)
+        {
+            if (Properties.Settings.Default.RecentFiles.Contains(filePath))
+            {
+                Properties.Settings.Default.RecentFiles.Remove(filePath);
+                if (!remove)
+                {
+                    Properties.Settings.Default.RecentFiles.Add(filePath);
+                }
+            }
+            else
+            {
+                Properties.Settings.Default.RecentFiles.Add(filePath);
+            }
+            Properties.Settings.Default.Save();
         }
 
         private void UpdateFilePathTitle()
@@ -452,6 +480,27 @@ namespace HomeworkPlanner
         {
             //TODO: Implement options menu item
             throw new NotImplementedException();
+        }
+
+        private void UpdateRecentFilesList()
+        {
+            List<string> list = Properties.Settings.Default.RecentFiles.Cast<string>().ToList();
+            list.Reverse();
+            for (int i = 0; i < list.Count; i++)
+            {
+                RecentFileListViewItem item = new() { FilePath = list[i], Text = list[i], ImageIndex = 0 };
+                listView1.Items.Add(item);
+            }
+        }
+
+        private class RecentFileListViewItem : ListViewItem
+        {
+            public string FilePath { get; set; }
+        }
+
+        private void listView1_ItemActivate(object sender, EventArgs e)
+        {
+            LoadSaveFile(((RecentFileListViewItem)listView1.SelectedItems[0]).FilePath);
         }
     }
 }

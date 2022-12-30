@@ -72,12 +72,14 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this.label4 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
             this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -472,10 +474,12 @@
             // tableLayoutPanel3
             // 
             this.tableLayoutPanel3.ColumnCount = 2;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this.label4, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanel1, 0, 1);
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 68.18182F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 31.81818F));
+            this.tableLayoutPanel3.Controls.Add(this.flowLayoutPanel1, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this.label4, 1, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label3, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.listView1, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(1, 94);
             this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -486,17 +490,6 @@
             this.tableLayoutPanel3.Size = new System.Drawing.Size(798, 309);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(30, 20);
-            this.label4.Margin = new System.Windows.Forms.Padding(30, 20, 3, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(86, 21);
-            this.label4.TabIndex = 1;
-            this.label4.Text = "Get started";
-            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoSize = true;
@@ -506,7 +499,7 @@
             this.flowLayoutPanel1.Controls.Add(this.linkLabel3);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel4);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(30, 44);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(574, 44);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(112, 60);
@@ -555,6 +548,44 @@
             this.linkLabel4.TabStop = true;
             this.linkLabel4.Text = "Get help";
             this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label4.Location = new System.Drawing.Point(574, 20);
+            this.label4.Margin = new System.Windows.Forms.Padding(30, 20, 3, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(86, 21);
+            this.label4.TabIndex = 1;
+            this.label4.Text = "Get started";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label3.Location = new System.Drawing.Point(30, 20);
+            this.label3.Margin = new System.Windows.Forms.Padding(30, 20, 3, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(98, 21);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Recent plans";
+            // 
+            // listView1
+            // 
+            this.listView1.AutoArrange = false;
+            this.listView1.BackColor = System.Drawing.SystemColors.Control;
+            this.listView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listView1.Location = new System.Drawing.Point(30, 44);
+            this.listView1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 20);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(511, 245);
+            this.listView1.SmallImageList = this.welcomeScreenIcons;
+            this.listView1.TabIndex = 3;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.List;
+            this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
             // 
             // welcomeScreenIcons
             // 
@@ -648,5 +679,7 @@
         private ToolStripMenuItem getHelpToolStripMenuItem;
         private LinkLabel linkLabel4;
         private ImageList welcomeScreenIcons;
+        private Label label3;
+        private ListView listView1;
     }
 }
