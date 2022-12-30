@@ -533,5 +533,14 @@ namespace HomeworkPlanner
                 UpdatePanels(true);
             }
         }
+
+        private void removeCompletedTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("This option will remove all tasks completed prior to today\nAre you sure you want to continue? This action cannot be undone", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.RemoveTasksPriorTo(DateTime.Today);
+                UpdatePanels();
+            }
+        }
     }
 }
