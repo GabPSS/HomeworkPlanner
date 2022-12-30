@@ -122,8 +122,8 @@ namespace HomeworkPlanner
         private void InitializePlanningPanel()
         {
             //Clear panel
-            PlanningPanel.Controls.Clear();
             PlanningPanel.SuspendLayout();
+            PlanningPanel.Controls.Clear();
 
             //Set up columns and rows
             int colCount = GetDayCount(DaysToDisplay);
@@ -249,9 +249,9 @@ namespace HomeworkPlanner
                         {
                             break;
                         }
-                        UpdatePanels(true);
-                        Cursor = Cursors.Default;
                     }
+                    UpdatePanels(true);
+                    Cursor = Cursors.Default;
                 }
             }
         }
