@@ -93,6 +93,12 @@ namespace HomeworkPlanner
         {
             return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1;
         }
+
+        public void RemoveTasksPriorTo(DateTime date)
+        {
+            SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.DateCompleted < date);
+            SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.IsScheduled && x.ExecDate < date);
+        }
     }
     public class SaveFile
     {
