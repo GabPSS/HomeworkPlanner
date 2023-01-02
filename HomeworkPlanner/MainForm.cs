@@ -584,12 +584,6 @@ namespace HomeworkPlanner
             OpenFile_Click(sender, e);
         }
 
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //TODO: Implement options menu item
-            throw new NotImplementedException();
-        }
-
         private void listView1_OpenRecentFile(object sender, EventArgs e)
         {
             if (listView1.SelectedItems[0] != NoRecentFilesLVI)
@@ -657,9 +651,9 @@ namespace HomeworkPlanner
 
         private void removeCompletedTasksToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("This option will remove all tasks completed prior to today\nAre you sure you want to continue? This action cannot be undone", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("This option will remove all tasks marked as completed\nAre you sure you want to continue? This action cannot be undone", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                TaskHost.RemoveTasksPriorTo(DateTime.Today);
+                TaskHost.RemoveCompletedTasks();
                 UpdatePanels();
             }
         }
@@ -722,11 +716,24 @@ namespace HomeworkPlanner
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("This action will attempt to repair slow save files by removing old tasks and resetting task IDs\nThis action cannot be easily undone, make sure you back up before proceeding\n\nDo you want to continue?", "Repair", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("This action will attempt to declutter big or slow save files by removing old tasks and resetting task IDs\nThis action cannot be easily undone, make sure you back up before proceeding\n\nDo you want to continue?", "Cleanup", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 TaskHost.Repair();
                 UpdatePanels(true);
             }
+        }
+
+        private void removeAllTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                if (MessageBox.Show("This action will REMOVE ALL TASKS independant of due date, completion or other values\nThis action cannot be undone\nPress \"Yes\" three times to confirm\n\nMessage " + i + " of 3", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                {
+                    return;
+                }
+            }
+            TaskHost.RemoveAllTasks();
+            UpdatePanels();
         }
     }
 }
