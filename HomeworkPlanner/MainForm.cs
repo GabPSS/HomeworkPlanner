@@ -7,10 +7,10 @@ namespace HomeworkPlanner
     public partial class MainForm : Form
     {
         #region Properties and variables
-        public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
-        public int FutureWeeks { get; set; } = 2;
+        
+        public int FutureWeeks { get { return TaskHost.SaveFile.Settings.FutureWeeks; } set { TaskHost.SaveFile.Settings.FutureWeeks = value; } }
         public bool Modified = false;
-        public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public DaysToInclude DaysToDisplay { get { return TaskHost.SaveFile.Settings.DaysToDisplay; } set { TaskHost.SaveFile.Settings.DaysToDisplay = value; } }
         private TaskHost TaskHost { get; set; }
         private readonly ListViewItem NoRecentFilesLVI = new() { Text = "No recent files to display" };
         private bool _HomeDisplaying = true;
