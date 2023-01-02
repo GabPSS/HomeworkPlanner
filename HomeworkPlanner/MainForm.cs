@@ -183,7 +183,7 @@ namespace HomeworkPlanner
             PlanningPanel.Controls.Clear();
 
             //Set up columns and rows
-            int colCount = GetDayCount(DaysToDisplay);
+            int colCount = HelperFunctions.GetDayCount(DaysToDisplay);
             int rowCount = FutureWeeks + 1;
 
             PlanningPanel.ColumnCount = colCount;
@@ -197,7 +197,7 @@ namespace HomeworkPlanner
                 PlanningPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             }
 
-            DateTime selectedDay = GetSunday(DateTime.Today).AddDays(6);
+            DateTime selectedDay = HelperFunctions.GetSunday(DateTime.Today).AddDays(6);
             for (int row = 0; row < rowCount; row++)
             {
                 int col = colCount - 1;
@@ -366,31 +366,6 @@ namespace HomeworkPlanner
             }
 
         }
-        #endregion
-        #region Auxiliary methods for date calculation
-
-        private static DateTime GetSunday(DateTime dateTime)
-        {
-            DayOfWeek dayOfWeek = dateTime.DayOfWeek;
-
-            return dateTime.AddDays(0 - (double)dayOfWeek);
-        }
-
-        private static int GetDayCount(DaysToInclude data)
-        {
-            int numericData = (int)data;
-            int dayCount = 0;
-            for (int i = 64; i >= 1; i /= 2)
-            {
-                if (numericData - i >= 0)
-                {
-                    dayCount++;
-                    numericData -= i;
-                }
-            }
-            return dayCount;
-        }
-
         #endregion
         #region MenuItem option on changing number of weeks displayed
 

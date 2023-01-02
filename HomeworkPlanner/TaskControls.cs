@@ -193,9 +193,10 @@ namespace HomeworkPlanner.TaskControls
 
             //Add tasks
             Task[] dayTasks = taskHost.GetTasksPlannedForDate(day);
+            DateTime minDate = HelperFunctions.GetSunday(DateTime.Today);
             foreach (Task task in dayTasks)
             {
-                if (IsCancelled)
+                if (IsCancelled || task.ExecDate < minDate)
                 {
                     task.ExecDate = null; 
                 }
