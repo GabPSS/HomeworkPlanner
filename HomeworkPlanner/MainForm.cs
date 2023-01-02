@@ -323,7 +323,7 @@ namespace HomeworkPlanner
 
         private void AddTask()
         {
-            TaskForm tform = new(TaskHost, new Task(), true);
+            TaskForm tform = new(TaskHost, new Task(), true) { StartPosition = FormStartPosition.CenterParent};
             if (tform.ShowDialog() == DialogResult.OK)
             {
                 TaskHost.SaveFile.Tasks.Add(tform.UpdatedTask);
@@ -334,7 +334,7 @@ namespace HomeworkPlanner
         private void TaskControl_Click(object? sender, EventArgs e)
         {
             Task originalTask = ((TaskControl)sender).SelectedTask;
-            TaskForm tForm = new(TaskHost, originalTask);
+            TaskForm tForm = new(TaskHost, originalTask) { StartPosition = FormStartPosition.CenterParent};
             DialogResult dr = tForm.ShowDialog();
             if (dr == DialogResult.OK)
             {
