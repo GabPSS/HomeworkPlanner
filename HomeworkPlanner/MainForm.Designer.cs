@@ -60,7 +60,6 @@
             this.ThreeWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FourWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FiveWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.weekDaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sundayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mondayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +68,9 @@
             this.thursdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fridayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saturdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayPreviousTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.getHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,7 +98,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -274,26 +275,26 @@
             // dayCancellingToolStripMenuItem
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
-            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(157, 6);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // viewToolStripMenuItem
@@ -302,7 +303,8 @@
             this.weeksToolStripMenuItem,
             this.weekDaysToolStripMenuItem,
             this.toolStripSeparator5,
-            this.refreshToolStripMenuItem});
+            this.refreshToolStripMenuItem,
+            this.displayPreviousTasksToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
@@ -316,7 +318,7 @@
             this.FourWeekMenuItem,
             this.FiveWeekMenuItem});
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
-            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.weeksToolStripMenuItem.Text = "Weeks";
             // 
             // OneWeekMenuItem
@@ -356,14 +358,6 @@
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // weekDaysToolStripMenuItem
             // 
             this.weekDaysToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -375,7 +369,7 @@
             this.fridayToolStripMenuItem,
             this.saturdayToolStripMenuItem});
             this.weekDaysToolStripMenuItem.Name = "weekDaysToolStripMenuItem";
-            this.weekDaysToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weekDaysToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.weekDaysToolStripMenuItem.Text = "Week days";
             // 
             // sundayToolStripMenuItem
@@ -426,6 +420,26 @@
             this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.saturdayToolStripMenuItem.Text = "Saturday";
             this.saturdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(186, 6);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // displayPreviousTasksToolStripMenuItem
+            // 
+            this.displayPreviousTasksToolStripMenuItem.Name = "displayPreviousTasksToolStripMenuItem";
+            this.displayPreviousTasksToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.displayPreviousTasksToolStripMenuItem.Text = "Display previous tasks";
+            this.displayPreviousTasksToolStripMenuItem.Click += new System.EventHandler(this.displayPreviousTasksToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -729,11 +743,6 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -838,5 +847,6 @@
         private ToolStripMenuItem fridayToolStripMenuItem;
         private ToolStripMenuItem saturdayToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem displayPreviousTasksToolStripMenuItem;
     }
 }

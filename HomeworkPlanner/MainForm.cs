@@ -75,6 +75,7 @@ namespace HomeworkPlanner
                 UpdateRecentFiles(saveFilePath);
                 UpdateFilePathTitle();
                 UpdatePanels();
+                UpdateMenus();
                 Modified = false;
             }
             else
@@ -187,7 +188,10 @@ namespace HomeworkPlanner
                 {
                     if (task.DateCompleted != DateTime.Today)
                     {
-                        continue;
+                        if (!TaskHost.SaveFile.Settings.DisplayPreviousTasks)
+                        {
+                            continue;
+                        }
                     }
                 }
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
@@ -216,7 +220,6 @@ namespace HomeworkPlanner
             InitializePlanningPanel();
             InitializeAllTasksPanel();
             InitializeStatusBar();
-            UpdateWeekDaysMenu();
             Modified = changePerformed ? true : Modified;
         }
         #endregion
@@ -616,7 +619,7 @@ namespace HomeworkPlanner
             }
             DaysToDisplay = (DaysToInclude)data;
             UpdateWeekDaysMenu();
-            InitializePlanningPanel();
+            UpdatePanels(true);
         }
 
         void UpdateWeekDaysMenu()
@@ -673,5 +676,24 @@ namespace HomeworkPlanner
         }
 
         #endregion
+
+        void UpdateMenus()
+        {
+            UpdateWeekDaysMenu();
+            UpdateMenuOptions();
+        }
+
+        private void UpdateMenuOptions(bool changePerformed = false)
+        {
+            displayPreviousTasksToolStripMenuItem.Checked = TaskHost.SaveFile.Settings.DisplayPreviousTasks;
+            Modified = changePerformed ? true : Modified;
+        }
+
+        private void displayPreviousTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            displayPreviousTasksToolStripMenuItem.Checked = !displayPreviousTasksToolStripMenuItem.Checked;
+            TaskHost.SaveFile.Settings.DisplayPreviousTasks = displayPreviousTasksToolStripMenuItem.Checked;
+            UpdatePanels(true);
+        }
     }
 }
