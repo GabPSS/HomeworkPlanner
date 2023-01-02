@@ -284,13 +284,13 @@ namespace HomeworkPlanner
                 {
                     return Properties.Resources.Overdue;
                 }
-                else if (IsScheduled && IsImportant || IsScheduled && DueDate <= DateTime.Today.AddDays(1))
+                else if (IsScheduled && IsImportant)
                 {
                     return Properties.Resources.Important;
                 }
                 else
                 {
-                    return IsImportant || DueDate <= DateTime.Today.AddDays(1) ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
+                    return IsImportant ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
                 }
             }
         }
