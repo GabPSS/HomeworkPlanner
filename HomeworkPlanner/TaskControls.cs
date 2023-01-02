@@ -267,4 +267,9 @@ namespace HomeworkPlanner.TaskControls
         }
         #endregion
     }
+
+    internal class RecentFileListViewItem : ListViewItem
+    {
+        public string FilePath { get; set; }
+    }
 }

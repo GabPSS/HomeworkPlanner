@@ -270,6 +270,7 @@ namespace HomeworkPlanner
     {
         public int FutureWeeks { get; set; } = 2;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public bool DisplayPreviousTasks { get; set; } = false;
     }
     #endregion
 }
