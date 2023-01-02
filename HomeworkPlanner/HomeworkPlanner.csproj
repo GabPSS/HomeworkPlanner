@@ -18,13 +18,11 @@ You should have received a copy of the GNU General Public License along with thi
     <Title>HomeworkPlanner - Task planning system</Title>
     <Authors>Gabriel P.</Authors>
     <Version>1.0.0-alpha.1</Version>
+    <ApplicationIcon>Resources\DesktopIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\Desktop\DesktopIcon.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <Content Include="Resources\DesktopIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +52,10 @@ You should have received a copy of the GNU General Public License along with thi
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\DesktopIcon.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

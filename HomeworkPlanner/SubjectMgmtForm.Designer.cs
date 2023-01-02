@@ -187,6 +187,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SubjectMgmtForm";
+            this.ShowIcon = false;
             this.Text = "Subject preferences";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

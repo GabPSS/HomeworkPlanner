@@ -287,6 +287,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "TaskForm";
+            this.ShowIcon = false;
             this.Text = "View task";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
