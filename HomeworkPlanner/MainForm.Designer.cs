@@ -60,7 +60,6 @@
             this.ThreeWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FourWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FiveWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.weekDaysToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sundayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mondayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,6 +68,9 @@
             this.thursdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fridayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saturdayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.displayPreviousTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.getHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,13 +92,13 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-            this.linkLabel3 = new System.Windows.Forms.LinkLabel();
             this.linkLabel4 = new System.Windows.Forms.LinkLabel();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.removeAllTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -229,7 +231,9 @@
             this.newToolStripMenuItem1,
             this.toolStripSeparator1,
             this.unscheduleAllToolStripMenuItem,
-            this.removeCompletedTasksToolStripMenuItem});
+            this.removeCompletedTasksToolStripMenuItem,
+            this.toolStripSeparator6,
+            this.removeAllTasksToolStripMenuItem});
             this.tasksToolStripMenuItem.Name = "tasksToolStripMenuItem";
             this.tasksToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.tasksToolStripMenuItem.Text = "Tasks";
@@ -294,7 +298,8 @@
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.optionsToolStripMenuItem.Text = "&Options";
+            this.optionsToolStripMenuItem.Text = "&Cleanup...";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -302,7 +307,8 @@
             this.weeksToolStripMenuItem,
             this.weekDaysToolStripMenuItem,
             this.toolStripSeparator5,
-            this.refreshToolStripMenuItem});
+            this.refreshToolStripMenuItem,
+            this.displayPreviousTasksToolStripMenuItem});
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
@@ -316,7 +322,7 @@
             this.FourWeekMenuItem,
             this.FiveWeekMenuItem});
             this.weeksToolStripMenuItem.Name = "weeksToolStripMenuItem";
-            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weeksToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.weeksToolStripMenuItem.Text = "Weeks";
             // 
             // OneWeekMenuItem
@@ -356,14 +362,6 @@
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
-            // refreshToolStripMenuItem
-            // 
-            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.refreshToolStripMenuItem.Text = "Refresh";
-            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
-            // 
             // weekDaysToolStripMenuItem
             // 
             this.weekDaysToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -375,7 +373,7 @@
             this.fridayToolStripMenuItem,
             this.saturdayToolStripMenuItem});
             this.weekDaysToolStripMenuItem.Name = "weekDaysToolStripMenuItem";
-            this.weekDaysToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.weekDaysToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.weekDaysToolStripMenuItem.Text = "Week days";
             // 
             // sundayToolStripMenuItem
@@ -426,6 +424,26 @@
             this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.saturdayToolStripMenuItem.Text = "Saturday";
             this.saturdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(186, 6);
+            // 
+            // refreshToolStripMenuItem
+            // 
+            this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
+            this.refreshToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.refreshToolStripMenuItem.Text = "Refresh";
+            this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // displayPreviousTasksToolStripMenuItem
+            // 
+            this.displayPreviousTasksToolStripMenuItem.Name = "displayPreviousTasksToolStripMenuItem";
+            this.displayPreviousTasksToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.displayPreviousTasksToolStripMenuItem.Text = "Display previous tasks";
+            this.displayPreviousTasksToolStripMenuItem.Click += new System.EventHandler(this.displayPreviousTasksToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -631,13 +649,12 @@
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.Controls.Add(this.linkLabel1);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel2);
-            this.flowLayoutPanel1.Controls.Add(this.linkLabel3);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel4);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(574, 44);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(112, 60);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(112, 45);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // linkLabel1
@@ -662,21 +679,10 @@
             this.linkLabel2.Text = "Open existing plan";
             this.linkLabel2.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel2_LinkClicked);
             // 
-            // linkLabel3
-            // 
-            this.linkLabel3.AutoSize = true;
-            this.linkLabel3.Location = new System.Drawing.Point(3, 30);
-            this.linkLabel3.Name = "linkLabel3";
-            this.linkLabel3.Size = new System.Drawing.Size(49, 15);
-            this.linkLabel3.TabIndex = 2;
-            this.linkLabel3.TabStop = true;
-            this.linkLabel3.Text = "Settings";
-            this.linkLabel3.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel3_LinkClicked);
-            // 
             // linkLabel4
             // 
             this.linkLabel4.AutoSize = true;
-            this.linkLabel4.Location = new System.Drawing.Point(3, 45);
+            this.linkLabel4.Location = new System.Drawing.Point(3, 30);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(51, 15);
             this.linkLabel4.TabIndex = 3;
@@ -720,7 +726,7 @@
             this.listView1.TabIndex = 3;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
-            this.listView1.ItemActivate += new System.EventHandler(this.listView1_ItemActivate);
+            this.listView1.ItemActivate += new System.EventHandler(this.listView1_OpenRecentFile);
             // 
             // welcomeScreenIcons
             // 
@@ -729,10 +735,17 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
-            // toolStripSeparator5
+            // toolStripSeparator6
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(212, 6);
+            // 
+            // removeAllTasksToolStripMenuItem
+            // 
+            this.removeAllTasksToolStripMenuItem.Name = "removeAllTasksToolStripMenuItem";
+            this.removeAllTasksToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.removeAllTasksToolStripMenuItem.Text = "Remove all tasks";
+            this.removeAllTasksToolStripMenuItem.Click += new System.EventHandler(this.removeAllTasksToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -816,7 +829,6 @@
         private FlowLayoutPanel flowLayoutPanel1;
         private LinkLabel linkLabel1;
         private LinkLabel linkLabel2;
-        private LinkLabel linkLabel3;
         private ToolStripMenuItem getHelpToolStripMenuItem;
         private LinkLabel linkLabel4;
         private ImageList welcomeScreenIcons;
@@ -838,5 +850,8 @@
         private ToolStripMenuItem fridayToolStripMenuItem;
         private ToolStripMenuItem saturdayToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator5;
+        private ToolStripMenuItem displayPreviousTasksToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator6;
+        private ToolStripMenuItem removeAllTasksToolStripMenuItem;
     }
 }

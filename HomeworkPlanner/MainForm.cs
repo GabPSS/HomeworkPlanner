@@ -7,10 +7,10 @@ namespace HomeworkPlanner
     public partial class MainForm : Form
     {
         #region Properties and variables
-        public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
-        public int FutureWeeks { get; set; } = 2;
+        
+        public int FutureWeeks { get { return TaskHost.SaveFile.Settings.FutureWeeks; } set { TaskHost.SaveFile.Settings.FutureWeeks = value; } }
         public bool Modified = false;
-        public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public DaysToInclude DaysToDisplay { get { return TaskHost.SaveFile.Settings.DaysToDisplay; } set { TaskHost.SaveFile.Settings.DaysToDisplay = value; } }
         private TaskHost TaskHost { get; set; }
         private readonly ListViewItem NoRecentFilesLVI = new() { Text = "No recent files to display" };
         private bool _HomeDisplaying = true;
@@ -40,7 +40,7 @@ namespace HomeworkPlanner
             {
                 //Initialize home panel
                 UpdateTaskHostFunctions(false);
-                UpdateRecentFilesList();
+                UpdateRecentFilesListView();
             }
         }
         #endregion
@@ -56,11 +56,35 @@ namespace HomeworkPlanner
             newToolStripMenuItem1.Enabled = enable;
             unscheduleAllToolStripMenuItem.Enabled = enable;
 
+            toolsToolStripMenuItem.Visible = enable;
+            dayCancellingToolStripMenuItem.Enabled = enable;
+            optionsToolStripMenuItem.Enabled = enable;
+
             customizeToolStripMenuItem.Enabled = enable;
             viewToolStripMenuItem.Visible = enable;
             weeksToolStripMenuItem.Enabled = enable;
             refreshToolStripMenuItem.Enabled = enable;
             statusStrip1.Visible = enable;
+        }
+
+        private void UpdateRecentFilesListView()
+        {
+            listView1.Clear();
+
+            List<string> list = Properties.Settings.Default.RecentFiles.Cast<string>().ToList();
+            list.Reverse();
+            if (list.Count > 0)
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    RecentFileListViewItem item = new() { FilePath = list[i], Text = list[i], ImageIndex = 0 };
+                    listView1.Items.Add(item);
+                }
+            }
+            else
+            {
+                listView1.Items.Add(NoRecentFilesLVI);
+            }
         }
 
         #endregion
@@ -74,7 +98,9 @@ namespace HomeworkPlanner
                 TaskHost = new(SaveFile.FromJSON(File.ReadAllText(saveFilePath)), saveFilePath);
                 UpdateRecentFiles(saveFilePath);
                 UpdateFilePathTitle();
+                UpdateMenus();
                 UpdatePanels();
+                UpdateMenus();
                 Modified = false;
             }
             else
@@ -114,19 +140,50 @@ namespace HomeworkPlanner
             HomeDisplaying = false;
             TaskHost = new(new(), null);
             Text = Application.ProductName + " " + Application.ProductVersion + " - [untitled.hwpf]";
+            UpdateMenus();
             UpdatePanels();
             Modified = false;
         }
         #endregion
         #region Visual initialization and updates
-        private void InitializePlanningPanel()
+        
+        //Main update methods
+        /// <summary>
+        /// Update all panes with latest task data -- call whenever tasks are updated
+        /// </summary>
+        /// <param name="changePerformed"></param>
+        private void UpdatePanels(bool changePerformed = false)
+        {
+            UpdatePlanningPanel();
+            UpdateAllTasksPanel();
+            UpdateStatusBar();
+            HandleChangePerformed(changePerformed);
+        }
+        /// <summary>
+        /// Update all menus with latest info - call whenever menu options are changed
+        /// </summary>
+        /// <param name="changePerformed"></param>
+        private void UpdateMenus(bool changePerformed = false)
+        {
+            UpdateWeekCountMenu();
+            UpdateWeekDaysMenu(changePerformed);
+            UpdateSmallMenuOptions(changePerformed);
+        }
+        /// <summary>
+        /// Handles performed changes -- only to be called from an Update method
+        /// </summary>
+        /// <param name="changePerformed"></param>
+        private void HandleChangePerformed(bool changePerformed) => Modified = changePerformed ? true : Modified;
+
+        //Panels and status bar - UpdatePanels
+        private void UpdatePlanningPanel()
         {
             //Clear panel
             PlanningPanel.SuspendLayout();
             PlanningPanel.Controls.Clear();
 
             //Set up columns and rows
-            int colCount = GetDayCount(DaysToDisplay);
+            int colCount = HelperFunctions.GetDayCount(DaysToDisplay);
             int rowCount = FutureWeeks + 1;
 
             PlanningPanel.ColumnCount = colCount;
@@ -140,7 +197,7 @@ namespace HomeworkPlanner
                 PlanningPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             }
 
-            DateTime selectedDay = GetSunday(DateTime.Today).AddDays(6);
+            DateTime selectedDay = HelperFunctions.GetSunday(DateTime.Today).AddDays(6);
             for (int row = 0; row < rowCount; row++)
             {
                 int col = colCount - 1;
@@ -149,7 +206,7 @@ namespace HomeworkPlanner
                 {
                     if (DaysToDisplayData - i >= 0)
                     {
-                        PlanningDayPanel control = InitializePlanningDayControl(selectedDay);
+                        PlanningDayPanel control = new PlanningDayPanel(selectedDay, TaskHost);
                         control.ControlMouseDown += TaskControl_MouseOperation;
                         control.ControlMouseUp += TaskControl_DragConfirm;
                         control.CancelledDayClick += PlanningDay_CancelledDayClick;
@@ -163,18 +220,7 @@ namespace HomeworkPlanner
             }
             PlanningPanel.ResumeLayout();
         }
-
-        private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
-        {
-            if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
-            {
-                TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
-                UpdatePanels();
-            }
-
-        }
-
-        private void InitializeAllTasksPanel()
+        private void UpdateAllTasksPanel()
         {
             //Clear panel
             TasksFLP.Controls.Clear();
@@ -187,7 +233,10 @@ namespace HomeworkPlanner
                 {
                     if (task.DateCompleted != DateTime.Today)
                     {
-                        continue;
+                        if (!TaskHost.SaveFile.Settings.DisplayPreviousTasks)
+                        {
+                            continue;
+                        }
                     }
                 }
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
@@ -196,7 +245,7 @@ namespace HomeworkPlanner
                 TasksFLP.Controls.Add(testctrl);
             }
         }
-        private void InitializeStatusBar()
+        private void UpdateStatusBar()
         {
             Task[] alltasks = TaskHost.GetTasksPlannedForDate(DateTime.Today);
             (Task[] completed, Task[] remaining) tasks = TaskHost.FilterTasks(alltasks);
@@ -207,20 +256,51 @@ namespace HomeworkPlanner
             toolStripProgressBar1.Maximum = alltasks.Length;
             toolStripProgressBar1.Value = tasks.completed.Length;
         }
-        private PlanningDayPanel InitializePlanningDayControl(DateTime day)
+
+        //Menus - UpdateMenus
+        private void UpdateWeekCountMenu()
         {
-            return new PlanningDayPanel(day, TaskHost);
+            for (int i = 0; i < weekItems.Length; i++)
+            {
+                weekItems[i].Checked = false;
+            }
+            weekItems[FutureWeeks].Checked = true;
         }
-        private void UpdatePanels(bool changePerformed = false)
+        private void UpdateWeekDaysMenu(bool changePerformed = false)
         {
-            InitializePlanningPanel();
-            InitializeAllTasksPanel();
-            InitializeStatusBar();
-            UpdateWeekDaysMenu();
-            Modified = changePerformed ? true : Modified;
+            int data = (int)DaysToDisplay;
+            var menus = weekDaysToolStripMenuItem.DropDownItems;
+
+            //Uncheck all
+            for (int i = 0; i < menus.Count; i++)
+            {
+                ((ToolStripMenuItem)menus[i]).Checked = false;
+            }
+
+            //Check only the ones that correspond to a week day displayed;
+            int weekDay = 6;
+            for (int i = 64; i >= 1; i /= 2)
+            {
+                if (data - i >= 0)
+                {
+                    ((ToolStripMenuItem)menus[weekDay]).Checked = true;
+                    data -= i;
+                }
+                weekDay--;
+            }
+
+            //Handle changes
+            HandleChangePerformed(changePerformed);
         }
+        private void UpdateSmallMenuOptions(bool changePerformed = false)
+        {
+            //Set check state
+            displayPreviousTasksToolStripMenuItem.Checked = TaskHost.SaveFile.Settings.DisplayPreviousTasks;
+            HandleChangePerformed(changePerformed);
+        }
+
         #endregion
-        #region TaskControl mouse interaction
+        #region Control mouse interaction
         private void TaskControl_DragConfirm(object? sender, MouseEventArgs e)
         {
             if (sender != null)
@@ -256,7 +336,6 @@ namespace HomeworkPlanner
                 }
             }
         }
-
         private void TaskControl_MouseOperation(object? sender, MouseEventArgs e)
         {
             if (sender != null)
@@ -278,31 +357,15 @@ namespace HomeworkPlanner
                 }
             }
         }
-        #endregion
-        #region Auxiliary methods for date calculation
-
-        private static DateTime GetSunday(DateTime dateTime)
+        private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
         {
-            DayOfWeek dayOfWeek = dateTime.DayOfWeek;
-
-            return dateTime.AddDays(0 - (double)dayOfWeek);
-        }
-
-        private static int GetDayCount(DaysToInclude data)
-        {
-            int numericData = (int)data;
-            int dayCount = 0;
-            for (int i = 64; i >= 1; i /= 2)
+            if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
-                if (numericData - i >= 0)
-                {
-                    dayCount++;
-                    numericData -= i;
-                }
+                TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
+                UpdatePanels();
             }
-            return dayCount;
-        }
 
+        }
         #endregion
         #region MenuItem option on changing number of weeks displayed
 
@@ -311,12 +374,8 @@ namespace HomeworkPlanner
         private void changeWeekCount(object sender, EventArgs e)
         {
             FutureWeeks = Convert.ToInt32(((ToolStripMenuItem)sender).Text) - 1;
-            for (int i = 0; i < weekItems.Length; i++)
-            {
-                weekItems[i].Checked = false;
-            }
-            weekItems[FutureWeeks].Checked = true;
-            InitializePlanningPanel();
+            UpdateWeekCountMenu();
+            UpdatePlanningPanel();
         }
 
         #endregion
@@ -442,6 +501,7 @@ namespace HomeworkPlanner
             File.WriteAllText(fileName, data);
             TaskHost.SaveFilePath = fileName;
             UpdateFilePathTitle();
+            UpdateRecentFiles(fileName);
             Modified = false;
         }
 
@@ -499,38 +559,7 @@ namespace HomeworkPlanner
             OpenFile_Click(sender, e);
         }
 
-        private void linkLabel3_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            //TODO: Implement options menu item
-            throw new NotImplementedException();
-        }
-
-        private void UpdateRecentFilesList()
-        {
-            listView1.Clear();
-
-            List<string> list = Properties.Settings.Default.RecentFiles.Cast<string>().ToList();
-            list.Reverse();
-            if (list.Count > 0)
-            {
-                for (int i = 0; i < list.Count; i++)
-                {
-                    RecentFileListViewItem item = new() { FilePath = list[i], Text = list[i], ImageIndex = 0 };
-                    listView1.Items.Add(item);
-                }
-            }
-            else
-            {
-                listView1.Items.Add(NoRecentFilesLVI);
-            }
-        }
-
-        private class RecentFileListViewItem : ListViewItem
-        {
-            public string FilePath { get; set; }
-        }
-
-        private void listView1_ItemActivate(object sender, EventArgs e)
+        private void listView1_OpenRecentFile(object sender, EventArgs e)
         {
             if (listView1.SelectedItems[0] != NoRecentFilesLVI)
             {
@@ -578,6 +607,10 @@ namespace HomeworkPlanner
         {
             Properties.Settings.Default.RecentFiles.Clear();
             Properties.Settings.Default.Save();
+            if (HomeDisplaying)
+            {
+                UpdateRecentFilesListView();
+            }
         }
 
         private void dayCancellingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -593,9 +626,9 @@ namespace HomeworkPlanner
 
         private void removeCompletedTasksToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("This option will remove all tasks completed prior to today\nAre you sure you want to continue? This action cannot be undone", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("This option will remove all tasks marked as completed\nAre you sure you want to continue? This action cannot be undone", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
-                TaskHost.RemoveTasksPriorTo(DateTime.Today);
+                TaskHost.RemoveCompletedTasks();
                 UpdatePanels();
             }
         }
@@ -616,35 +649,10 @@ namespace HomeworkPlanner
             }
             DaysToDisplay = (DaysToInclude)data;
             UpdateWeekDaysMenu();
-            InitializePlanningPanel();
+            UpdatePanels(true);
         }
 
-        void UpdateWeekDaysMenu()
-        {
-            int data = (int)DaysToDisplay;
-
-            var menus = weekDaysToolStripMenuItem.DropDownItems;
-
-            //Uncheck all
-            for (int i = 0; i < menus.Count; i++)
-            {
-                ((ToolStripMenuItem)menus[i]).Checked = false;
-            }
-
-            //Check only the ones that correspond to a week day displayed;
-            int weekDay = 6;
-            for (int i = 64; i >= 1; i /= 2)
-            {
-                if (data - i >= 0)
-                {
-                    ((ToolStripMenuItem)menus[weekDay]).Checked = true;
-                    data -= i;
-                }
-                weekDay--;
-            }
-            
-        }
-
+        
         private void weekday_change_click(object sender, EventArgs e)
         {
             DaysToInclude day;
@@ -673,5 +681,34 @@ namespace HomeworkPlanner
         }
 
         #endregion
+        
+        private void displayPreviousTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TaskHost.SaveFile.Settings.DisplayPreviousTasks = !displayPreviousTasksToolStripMenuItem.Checked;
+            UpdatePanels(true);
+            UpdateSmallMenuOptions(true);
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("This action will attempt to declutter big or slow save files by removing old tasks and resetting task IDs\nThis action cannot be easily undone, make sure you back up before proceeding\n\nDo you want to continue?", "Cleanup", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.Repair();
+                UpdatePanels(true);
+            }
+        }
+
+        private void removeAllTasksToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int i = 1; i <= 3; i++)
+            {
+                if (MessageBox.Show("This action will REMOVE ALL TASKS independant of due date, completion or other values\nThis action cannot be undone\nPress \"Yes\" three times to confirm\n\nMessage " + i + " of 3", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                {
+                    return;
+                }
+            }
+            TaskHost.RemoveAllTasks();
+            UpdatePanels();
+        }
     }
 }

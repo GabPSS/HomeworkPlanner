@@ -94,10 +94,61 @@ namespace HomeworkPlanner
             return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1;
         }
 
+        public void RemoveCompletedTasks() => SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted);
+
+        public void RemoveAllTasks()
+        {
+            SaveFile.Tasks = new();
+        }
+
         public void RemoveTasksPriorTo(DateTime date)
         {
             SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.DateCompleted < date);
             SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.IsScheduled && x.ExecDate < date);
+        }
+
+        public void ResetTaskIDs()
+        {
+            int i;
+            for (i = 0; i < SaveFile.Tasks.Items.Count; i++)
+            {
+                SaveFile.Tasks.Items[i].TaskID = i;
+            }
+            SaveFile.Tasks.LastIndex = i-1;
+        }
+
+        public void ResetSubjectIDs()
+        {
+            int new_sid;
+            for (new_sid = 0; new_sid < SaveFile.Subjects.Items.Count; new_sid++)
+            {
+                int old_sid = SaveFile.Subjects.Items[new_sid].SubjectID;
+
+                for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
+                {
+                    if (SaveFile.Tasks.Items[i].SubjectID == old_sid)
+                    {
+                        SaveFile.Tasks.Items[i].SubjectID = new_sid;
+                    }
+                }
+
+                SaveFile.Subjects.Items[new_sid].SubjectID = new_sid;
+            }
+
+            SaveFile.Subjects.LastIndex = new_sid-1;
+        }
+
+        public void Repair()
+        {
+            RemoveTasksPriorTo(DateTime.Today);
+            RemoveCancelledDaysPriorTo(DateTime.Today);
+            ResetTaskIDs();
+            ResetSubjectIDs();
+        }
+
+        private void RemoveCancelledDaysPriorTo(DateTime date)
+        {
+            SaveFile.CancelledDays.RemoveAll(x => x.Date < date);
         }
     }
     public class SaveFile
@@ -107,10 +158,12 @@ namespace HomeworkPlanner
             Tasks = new();
             Subjects = new();
             CancelledDays = new();
+            Settings = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
         public CancelledDayList CancelledDays { get; set; }
+        public SaveSettings Settings { get; set; }
 
         public static SaveFile FromJSON(string JSON)
         {
@@ -169,9 +222,11 @@ namespace HomeworkPlanner
     #region Main objects
     public class Task: ICloneable
     {
+        public const string UntitledTaskText = "Untitled task";
+
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
-        public string Name { get; set; }
+        public string Name { get; set; } = UntitledTaskText;
         public DateTime DueDate { get; set; } = DateTime.Today;
         public string[] Description { get; set; } = Array.Empty<string>();
         public DateTime? ExecDate { get; set; }
@@ -260,6 +315,15 @@ namespace HomeworkPlanner
     {
         public DateTime Date { get; set; }
         public string Message { get; set; }
+    }
+    #endregion
+    #region Settings objects
+    public enum DaysToInclude { Sunday = 1, Monday = 2, Tuesday = 4, Wednesday = 8, Thursday = 16, Friday = 32, Saturday = 64 }
+    public class SaveSettings
+    {
+        public int FutureWeeks { get; set; } = 2;
+        public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public bool DisplayPreviousTasks { get; set; } = false;
     }
     #endregion
 }

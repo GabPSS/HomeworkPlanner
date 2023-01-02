@@ -33,7 +33,7 @@ namespace HomeworkPlanner
         {
             if (!AddTaskMode)
             {
-                TaskBodyTextBox.Text = UpdatedTask.Name;
+                TaskBodyTextBox.Text = UpdatedTask.Name == Task.UntitledTaskText ? "" : UpdatedTask.Name;
                 DueDateTimePicker.Value = UpdatedTask.DueDate;
                 DetailsMultilineTextBox.Lines = UpdatedTask.Description;
                 ImportantCheckBox.Checked = UpdatedTask.IsImportant;
@@ -93,7 +93,7 @@ namespace HomeworkPlanner
         #region Form control update assignments
         private void TaskBodyTextBox_TextChanged(object sender, EventArgs e)
         {
-            UpdatedTask.Name = TaskBodyTextBox.Text;
+            UpdatedTask.Name = TaskBodyTextBox.Text.Trim() == "" ? Task.UntitledTaskText : TaskBodyTextBox.Text.Trim();
         }
 
         private void DueDateTimePicker_ValueChanged(object sender, EventArgs e)
