@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License along with thi
     <Copyright>Copyright (C) Gabriel P. 2022</Copyright>
     <Title>HomeworkPlanner - Task planning system</Title>
     <Authors>Gabriel P.</Authors>
-    <Version>0.2.0</Version>
+    <Version>1.0.0-alpha.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
