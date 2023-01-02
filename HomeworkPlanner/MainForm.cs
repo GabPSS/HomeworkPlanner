@@ -96,6 +96,7 @@ namespace HomeworkPlanner
                 UpdateFilePathTitle();
                 UpdateMenus();
                 UpdatePanels();
+                UpdateMenus();
                 Modified = false;
             }
             else
