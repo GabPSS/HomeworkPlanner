@@ -48,6 +48,8 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.unscheduleAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeCompletedTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.removeAllTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dayCancellingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -97,8 +99,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
-            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.removeAllTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -121,7 +121,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(804, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -264,6 +264,18 @@
             this.removeCompletedTasksToolStripMenuItem.Text = "Remove completed tasks...";
             this.removeCompletedTasksToolStripMenuItem.Click += new System.EventHandler(this.removeCompletedTasksToolStripMenuItem_Click);
             // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(212, 6);
+            // 
+            // removeAllTasksToolStripMenuItem
+            // 
+            this.removeAllTasksToolStripMenuItem.Name = "removeAllTasksToolStripMenuItem";
+            this.removeAllTasksToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.removeAllTasksToolStripMenuItem.Text = "Remove all tasks";
+            this.removeAllTasksToolStripMenuItem.Click += new System.EventHandler(this.removeAllTasksToolStripMenuItem_Click);
+            // 
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -278,26 +290,26 @@
             // dayCancellingToolStripMenuItem
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
-            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(157, 6);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
             this.optionsToolStripMenuItem.Text = "&Cleanup...";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -477,9 +489,9 @@
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel4,
             this.toolStripProgressBar1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 439);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(804, 22);
             this.statusStrip1.TabIndex = 1;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -504,7 +516,7 @@
             // toolStripStatusLabel4
             // 
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(347, 17);
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(351, 17);
             this.toolStripStatusLabel4.Spring = true;
             // 
             // toolStripProgressBar1
@@ -526,8 +538,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
-            this.splitContainer1.Size = new System.Drawing.Size(800, 404);
-            this.splitContainer1.SplitterDistance = 510;
+            this.splitContainer1.Size = new System.Drawing.Size(804, 415);
+            this.splitContainer1.SplitterDistance = 512;
             this.splitContainer1.TabIndex = 2;
             // 
             // PlanningPanel
@@ -540,7 +552,7 @@
             this.PlanningPanel.Name = "PlanningPanel";
             this.PlanningPanel.RowCount = 1;
             this.PlanningPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.PlanningPanel.Size = new System.Drawing.Size(510, 404);
+            this.PlanningPanel.Size = new System.Drawing.Size(512, 415);
             this.PlanningPanel.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -557,7 +569,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(286, 404);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(288, 415);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // label1
@@ -574,7 +586,7 @@
             // 
             this.button1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.button1.AutoSize = true;
-            this.button1.Location = new System.Drawing.Point(90, 370);
+            this.button1.Location = new System.Drawing.Point(91, 381);
             this.button1.Name = "button1";
             this.button1.Padding = new System.Windows.Forms.Padding(3);
             this.button1.Size = new System.Drawing.Size(106, 31);
@@ -590,7 +602,7 @@
             this.TasksFLP.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.TasksFLP.Location = new System.Drawing.Point(3, 24);
             this.TasksFLP.Name = "TasksFLP";
-            this.TasksFLP.Size = new System.Drawing.Size(280, 340);
+            this.TasksFLP.Size = new System.Drawing.Size(282, 351);
             this.TasksFLP.TabIndex = 2;
             this.TasksFLP.WrapContents = false;
             // 
@@ -607,7 +619,7 @@
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(800, 404);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(804, 415);
             this.tableLayoutPanel2.TabIndex = 3;
             // 
             // label2
@@ -620,7 +632,7 @@
             this.label2.Margin = new System.Windows.Forms.Padding(0);
             this.label2.Name = "label2";
             this.label2.Padding = new System.Windows.Forms.Padding(30);
-            this.label2.Size = new System.Drawing.Size(798, 92);
+            this.label2.Size = new System.Drawing.Size(802, 92);
             this.label2.TabIndex = 0;
             this.label2.Text = "Welcome";
             // 
@@ -640,7 +652,7 @@
             this.tableLayoutPanel3.RowCount = 2;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(798, 309);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(802, 320);
             this.tableLayoutPanel3.TabIndex = 1;
             // 
             // flowLayoutPanel1
@@ -651,7 +663,7 @@
             this.flowLayoutPanel1.Controls.Add(this.linkLabel2);
             this.flowLayoutPanel1.Controls.Add(this.linkLabel4);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(574, 44);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(576, 44);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(112, 45);
@@ -694,7 +706,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(574, 20);
+            this.label4.Location = new System.Drawing.Point(576, 20);
             this.label4.Margin = new System.Windows.Forms.Padding(30, 20, 3, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(86, 21);
@@ -721,7 +733,7 @@
             this.listView1.Location = new System.Drawing.Point(30, 44);
             this.listView1.Margin = new System.Windows.Forms.Padding(30, 3, 3, 20);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(511, 245);
+            this.listView1.Size = new System.Drawing.Size(513, 256);
             this.listView1.SmallImageList = this.welcomeScreenIcons;
             this.listView1.TabIndex = 3;
             this.listView1.UseCompatibleStateImageBehavior = false;
@@ -735,29 +747,18 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
-            // toolStripSeparator6
-            // 
-            this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(212, 6);
-            // 
-            // removeAllTasksToolStripMenuItem
-            // 
-            this.removeAllTasksToolStripMenuItem.Name = "removeAllTasksToolStripMenuItem";
-            this.removeAllTasksToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.removeAllTasksToolStripMenuItem.Text = "Remove all tasks";
-            this.removeAllTasksToolStripMenuItem.Click += new System.EventHandler(this.removeAllTasksToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(804, 461);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
+            this.MinimumSize = new System.Drawing.Size(820, 500);
             this.Name = "MainForm";
             this.Text = "Main form";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
