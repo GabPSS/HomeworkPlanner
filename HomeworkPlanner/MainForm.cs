@@ -633,6 +633,10 @@ namespace HomeworkPlanner
         {
             Properties.Settings.Default.RecentFiles.Clear();
             Properties.Settings.Default.Save();
+            if (HomeDisplaying)
+            {
+                UpdateRecentFilesListView();
+            }
         }
 
         private void dayCancellingToolStripMenuItem_Click(object sender, EventArgs e)
