@@ -99,6 +99,50 @@ namespace HomeworkPlanner
             SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.DateCompleted < date);
             SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted && x.IsScheduled && x.ExecDate < date);
         }
+
+        public void ResetTaskIDs()
+        {
+            int i;
+            for (i = 0; i < SaveFile.Tasks.Items.Count; i++)
+            {
+                SaveFile.Tasks.Items[i].TaskID = i;
+            }
+            SaveFile.Tasks.LastIndex = i-1;
+        }
+
+        public void ResetSubjectIDs()
+        {
+            int new_sid;
+            for (new_sid = 0; new_sid < SaveFile.Subjects.Items.Count; new_sid++)
+            {
+                int old_sid = SaveFile.Subjects.Items[new_sid].SubjectID;
+
+                for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
+                {
+                    if (SaveFile.Tasks.Items[i].SubjectID == old_sid)
+                    {
+                        SaveFile.Tasks.Items[i].SubjectID = new_sid;
+                    }
+                }
+
+                SaveFile.Subjects.Items[new_sid].SubjectID = new_sid;
+            }
+
+            SaveFile.Subjects.LastIndex = new_sid-1;
+        }
+
+        public void Repair()
+        {
+            RemoveTasksPriorTo(DateTime.Today);
+            RemoveCancelledDaysPriorTo(DateTime.Today);
+            ResetTaskIDs();
+            ResetSubjectIDs();
+        }
+
+        private void RemoveCancelledDaysPriorTo(DateTime date)
+        {
+            SaveFile.CancelledDays.RemoveAll(x => x.Date < date);
+        }
     }
     public class SaveFile
     {

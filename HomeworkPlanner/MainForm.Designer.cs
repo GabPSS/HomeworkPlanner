@@ -275,27 +275,28 @@
             // dayCancellingToolStripMenuItem
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
-            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.optionsToolStripMenuItem.Text = "&Options";
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.optionsToolStripMenuItem.Text = "&Repair...";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // viewToolStripMenuItem
             // 

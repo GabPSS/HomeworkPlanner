@@ -56,6 +56,10 @@ namespace HomeworkPlanner
             newToolStripMenuItem1.Enabled = enable;
             unscheduleAllToolStripMenuItem.Enabled = enable;
 
+            toolsToolStripMenuItem.Visible = enable;
+            dayCancellingToolStripMenuItem.Enabled = enable;
+            optionsToolStripMenuItem.Enabled = enable;
+
             customizeToolStripMenuItem.Enabled = enable;
             viewToolStripMenuItem.Visible = enable;
             weeksToolStripMenuItem.Enabled = enable;
@@ -522,6 +526,7 @@ namespace HomeworkPlanner
             File.WriteAllText(fileName, data);
             TaskHost.SaveFilePath = fileName;
             UpdateFilePathTitle();
+            UpdateRecentFiles(fileName);
             Modified = false;
         }
 
@@ -713,6 +718,15 @@ namespace HomeworkPlanner
             TaskHost.SaveFile.Settings.DisplayPreviousTasks = !displayPreviousTasksToolStripMenuItem.Checked;
             UpdatePanels(true);
             UpdateSmallMenuOptions(true);
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("This action will attempt to repair slow save files by removing old tasks and resetting task IDs\nThis action cannot be easily undone, make sure you back up before proceeding\n\nDo you want to continue?", "Repair", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.Repair();
+                UpdatePanels(true);
+            }
         }
     }
 }
