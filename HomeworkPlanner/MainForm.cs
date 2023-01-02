@@ -216,6 +216,7 @@ namespace HomeworkPlanner
             InitializePlanningPanel();
             InitializeAllTasksPanel();
             InitializeStatusBar();
+            UpdateWeekDaysMenu();
             Modified = changePerformed ? true : Modified;
         }
         #endregion
@@ -598,5 +599,79 @@ namespace HomeworkPlanner
                 UpdatePanels();
             }
         }
+
+        #region Handles changing week days displayed
+
+        void HandleDayChange(DaysToInclude day, ToolStripMenuItem item)
+        {
+            item.Checked = !item.Checked;
+            int data = (int)DaysToDisplay;
+            if (item.Checked)
+            {
+                data += (int)day;
+            }
+            else
+            {
+                data -= (int)day;
+            }
+            DaysToDisplay = (DaysToInclude)data;
+            UpdateWeekDaysMenu();
+            InitializePlanningPanel();
+        }
+
+        void UpdateWeekDaysMenu()
+        {
+            int data = (int)DaysToDisplay;
+
+            var menus = weekDaysToolStripMenuItem.DropDownItems;
+
+            //Uncheck all
+            for (int i = 0; i < menus.Count; i++)
+            {
+                ((ToolStripMenuItem)menus[i]).Checked = false;
+            }
+
+            //Check only the ones that correspond to a week day displayed;
+            int weekDay = 6;
+            for (int i = 64; i >= 1; i /= 2)
+            {
+                if (data - i >= 0)
+                {
+                    ((ToolStripMenuItem)menus[weekDay]).Checked = true;
+                    data -= i;
+                }
+                weekDay--;
+            }
+            
+        }
+
+        private void weekday_change_click(object sender, EventArgs e)
+        {
+            DaysToInclude day;
+            ToolStripMenuItem tsmi = (ToolStripMenuItem)sender;
+            switch (tsmi.Text)
+            {
+                case "Sunday":
+                    day = DaysToInclude.Sunday; break;
+                case "Monday":
+                    day = DaysToInclude.Monday; break;
+                case "Tuesday":
+                    day = DaysToInclude.Tuesday; break;
+                case "Wednesday":
+                    day = DaysToInclude.Wednesday; break;
+                case "Thursday":
+                    day = DaysToInclude.Thursday; break;
+                case "Friday":
+                    day = DaysToInclude.Friday; break;
+                case "Saturday":
+                    day = DaysToInclude.Saturday; break;
+                default:
+                    return;
+            }
+
+            HandleDayChange(day, tsmi);
+        }
+
+        #endregion
     }
 }
