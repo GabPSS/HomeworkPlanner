@@ -171,9 +171,11 @@ namespace HomeworkPlanner
     #region Main objects
     public class Task: ICloneable
     {
+        public const string UntitledTaskText = "Untitled task";
+
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
-        public string Name { get; set; }
+        public string Name { get; set; } = UntitledTaskText;
         public DateTime DueDate { get; set; } = DateTime.Today;
         public string[] Description { get; set; } = Array.Empty<string>();
         public DateTime? ExecDate { get; set; }
