@@ -107,10 +107,12 @@ namespace HomeworkPlanner
             Tasks = new();
             Subjects = new();
             CancelledDays = new();
+            Settings = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
         public CancelledDayList CancelledDays { get; set; }
+        public SaveSettings Settings { get; set; }
 
         public static SaveFile FromJSON(string JSON)
         {
@@ -260,6 +262,11 @@ namespace HomeworkPlanner
     {
         public DateTime Date { get; set; }
         public string Message { get; set; }
+    }
+    #endregion
+    #region Settings objects
+    public class SaveSettings
+    {
     }
     #endregion
 }
