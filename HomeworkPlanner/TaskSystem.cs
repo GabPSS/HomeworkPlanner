@@ -184,6 +184,9 @@ namespace HomeworkPlanner
         public int LastIndex { get; set; } = -1;
         public List<Task> Items { get; set; } = new();
 
+        /// <summary>
+        /// Adds a task to Items collection reassigning the ID appropriately
+        /// </summary>
         public void Add(Task item)
         {
             int newIndex = LastIndex + 1;
@@ -293,6 +296,11 @@ namespace HomeworkPlanner
                     return IsImportant ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
     public class Subject
