@@ -65,6 +65,8 @@ namespace HomeworkPlanner
             weeksToolStripMenuItem.Enabled = enable;
             refreshToolStripMenuItem.Enabled = enable;
             statusStrip1.Visible = enable;
+
+            button1.Enabled = enable;
         }
 
         private void UpdateRecentFilesListView()
