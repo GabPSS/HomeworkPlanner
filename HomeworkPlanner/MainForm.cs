@@ -51,8 +51,10 @@ namespace HomeworkPlanner
         {
             saveToolStripMenuItem.Enabled = enable;
             saveAsToolStripMenuItem.Enabled = enable;
+            importToolStripMenuItem1.Enabled = enable;
 
             tasksToolStripMenuItem.Visible = enable;
+            importToolStripMenuItem.Enabled = enable;
             newToolStripMenuItem1.Enabled = enable;
             unscheduleAllToolStripMenuItem.Enabled = enable;
 
@@ -710,5 +712,15 @@ namespace HomeworkPlanner
             TaskHost.RemoveAllTasks();
             UpdatePanels();
         }
+
+        private void importToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (new ImportDialog(TaskHost).ShowDialog() == DialogResult.OK)
+            {
+                UpdatePanels(true);
+                UpdateMenus(true);
+            }
+        }
+
     }
 }
