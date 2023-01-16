@@ -697,7 +697,7 @@
             this.linkLabel4.Location = new System.Drawing.Point(3, 30);
             this.linkLabel4.Name = "linkLabel4";
             this.linkLabel4.Size = new System.Drawing.Size(51, 15);
-            this.linkLabel4.TabIndex = 3;
+            this.linkLabel4.TabIndex = 2;
             this.linkLabel4.TabStop = true;
             this.linkLabel4.Text = "Get help";
             this.linkLabel4.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel4_LinkClicked);

@@ -98,7 +98,7 @@
             this.panel2.Location = new System.Drawing.Point(3, 196);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(342, 25);
-            this.panel2.TabIndex = 0;
+            this.panel2.TabIndex = 7;
             // 
             // ImportantCheckBox
             // 
@@ -106,7 +106,7 @@
             this.ImportantCheckBox.Location = new System.Drawing.Point(58, 3);
             this.ImportantCheckBox.Name = "ImportantCheckBox";
             this.ImportantCheckBox.Size = new System.Drawing.Size(79, 19);
-            this.ImportantCheckBox.TabIndex = 0;
+            this.ImportantCheckBox.TabIndex = 8;
             this.ImportantCheckBox.Text = "Important";
             this.ImportantCheckBox.UseVisualStyleBackColor = true;
             this.ImportantCheckBox.CheckedChanged += new System.EventHandler(this.ImportantCheckBox_CheckedChanged);
@@ -120,7 +120,7 @@
             this.panel3.Location = new System.Drawing.Point(3, 70);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(342, 120);
-            this.panel3.TabIndex = 0;
+            this.panel3.TabIndex = 5;
             // 
             // DetailsMultilineTextBox
             // 
@@ -129,7 +129,7 @@
             this.DetailsMultilineTextBox.Multiline = true;
             this.DetailsMultilineTextBox.Name = "DetailsMultilineTextBox";
             this.DetailsMultilineTextBox.Size = new System.Drawing.Size(281, 114);
-            this.DetailsMultilineTextBox.TabIndex = 2;
+            this.DetailsMultilineTextBox.TabIndex = 6;
             this.DetailsMultilineTextBox.TextChanged += new System.EventHandler(this.DetailsMultilineTextBox_TextChanged);
             // 
             // label5
@@ -150,7 +150,7 @@
             this.panel4.Location = new System.Drawing.Point(3, 35);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(342, 29);
-            this.panel4.TabIndex = 0;
+            this.panel4.TabIndex = 3;
             // 
             // DueDateTimePicker
             // 
@@ -159,7 +159,7 @@
             this.DueDateTimePicker.Location = new System.Drawing.Point(58, 3);
             this.DueDateTimePicker.Name = "DueDateTimePicker";
             this.DueDateTimePicker.Size = new System.Drawing.Size(281, 23);
-            this.DueDateTimePicker.TabIndex = 2;
+            this.DueDateTimePicker.TabIndex = 4;
             this.DueDateTimePicker.ValueChanged += new System.EventHandler(this.DueDateTimePicker_ValueChanged);
             // 
             // label3
@@ -180,7 +180,7 @@
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(342, 26);
-            this.panel1.TabIndex = 6;
+            this.panel1.TabIndex = 1;
             // 
             // label2
             // 
@@ -201,7 +201,7 @@
             this.SubjectComboBox.Location = new System.Drawing.Point(58, 0);
             this.SubjectComboBox.Name = "SubjectComboBox";
             this.SubjectComboBox.Size = new System.Drawing.Size(281, 23);
-            this.SubjectComboBox.TabIndex = 1;
+            this.SubjectComboBox.TabIndex = 2;
             this.SubjectComboBox.SelectedIndexChanged += new System.EventHandler(this.SubjectComboBox_SelectedIndexChanged);
             // 
             // TaskIconPictureBox
@@ -226,7 +226,7 @@
             this.TaskBodyTextBox.Location = new System.Drawing.Point(88, 17);
             this.TaskBodyTextBox.Name = "TaskBodyTextBox";
             this.TaskBodyTextBox.Size = new System.Drawing.Size(278, 23);
-            this.TaskBodyTextBox.TabIndex = 3;
+            this.TaskBodyTextBox.TabIndex = 0;
             this.TaskBodyTextBox.TextChanged += new System.EventHandler(this.TaskBodyTextBox_TextChanged);
             // 
             // IDLabel
@@ -244,7 +244,7 @@
             this.button1.Location = new System.Drawing.Point(210, 302);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 5;
+            this.button1.TabIndex = 10;
             this.button1.Text = "Save";
             this.button1.UseVisualStyleBackColor = true;
             // 
@@ -254,7 +254,7 @@
             this.button2.Location = new System.Drawing.Point(291, 302);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 6;
+            this.button2.TabIndex = 11;
             this.button2.Text = "&Cancel";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -264,7 +264,7 @@
             this.RemoveBtn.Location = new System.Drawing.Point(12, 302);
             this.RemoveBtn.Name = "RemoveBtn";
             this.RemoveBtn.Size = new System.Drawing.Size(75, 23);
-            this.RemoveBtn.TabIndex = 7;
+            this.RemoveBtn.TabIndex = 9;
             this.RemoveBtn.Text = "Remove";
             this.RemoveBtn.UseVisualStyleBackColor = true;
             // 

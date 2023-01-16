@@ -87,7 +87,7 @@
             this.listView1.Location = new System.Drawing.Point(15, 22);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(250, 169);
-            this.listView1.TabIndex = 3;
+            this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
             this.listView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.listView1_AfterLabelEdit);
@@ -100,7 +100,7 @@
             this.button4.Location = new System.Drawing.Point(271, 51);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 2;
+            this.button4.TabIndex = 4;
             this.button4.Text = "Delete";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.deleteButtonClick);
@@ -111,7 +111,7 @@
             this.button3.Location = new System.Drawing.Point(271, 22);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 1;
+            this.button3.TabIndex = 3;
             this.button3.Text = "Edit";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.editSubjectButtonClick);
@@ -133,7 +133,7 @@
             this.button1.Location = new System.Drawing.Point(271, 47);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
+            this.button1.TabIndex = 1;
             this.button1.Text = "Add";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.addSubject);
@@ -143,7 +143,7 @@
             this.textBox1.Location = new System.Drawing.Point(15, 47);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(250, 23);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 0;
             // 
             // label2
             // 
@@ -170,7 +170,7 @@
             this.button2.Location = new System.Drawing.Point(338, 447);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 1;
+            this.button2.TabIndex = 5;
             this.button2.Text = "&Close";
             this.button2.UseVisualStyleBackColor = true;
             // 
