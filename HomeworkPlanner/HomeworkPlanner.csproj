@@ -47,7 +47,7 @@ You should have received a copy of the GNU General Public License along with thi
 
   <ItemGroup>
     <None Update="drag_task.cur">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
