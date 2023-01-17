@@ -153,7 +153,7 @@ namespace HomeworkPlanner
         
         //Main update methods
         /// <summary>
-        /// Update all panes with latest task data -- call whenever tasks are updated
+        /// Update all panes with latest taskctrl data -- call whenever tasks are updated
         /// </summary>
         /// <param name="changePerformed"></param>
         private void UpdatePanels(bool changePerformed = false)
@@ -211,8 +211,9 @@ namespace HomeworkPlanner
                     if (DaysToDisplayData - i >= 0)
                     {
                         PlanningDayPanel control = new PlanningDayPanel(selectedDay, TaskHost);
-                        control.ControlMouseDown += TaskControl_MouseOperation;
-                        control.ControlMouseUp += TaskControl_DragConfirm;
+                        control.ControlMouseDown += TaskControl_MouseDown;
+                        control.ControlMouseUp += TaskControl_MouseUp;
+                        control.ControlMouseMove += TaskControl_MouseMove;
                         control.CancelledDayClick += PlanningDay_CancelledDayClick;
                         PlanningPanel.Controls.Add(control, col, row);
                         DaysToDisplayData -= i;
@@ -244,8 +245,9 @@ namespace HomeworkPlanner
                     }
                 }
                 TaskControl testctrl = new(TaskHost, task) { AutoSize = true };
-                testctrl.MouseDown += TaskControl_MouseOperation;
-                testctrl.MouseUp += TaskControl_DragConfirm;
+                testctrl.MouseDown += TaskControl_MouseDown;
+                testctrl.MouseUp += TaskControl_MouseUp;
+                testctrl.MouseMove += TaskControl_MouseMove;
                 TasksFLP.Controls.Add(testctrl);
             }
         }
@@ -305,12 +307,15 @@ namespace HomeworkPlanner
 
         #endregion
         #region Control mouse interaction
-        private void TaskControl_DragConfirm(object? sender, MouseEventArgs e)
+
+        bool MouseMoved = false;
+        bool isClicking = false;
+        private void TaskControl_MouseUp(object? sender, MouseEventArgs e)
         {
             if (sender != null)
             {
-                TaskControl task = ((TaskControl)sender);
-                if (task.IsDragging)
+                TaskControl taskctrl = ((TaskControl)sender);
+                if (MouseMoved)
                 {
                     Point mousepos = Cursor.Position;
                     Control control = this;
@@ -321,12 +326,12 @@ namespace HomeworkPlanner
                         {
                             if (control.GetType() == typeof(PlanningDayPanel))
                             {
-                                task.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
+                                taskctrl.SelectedTask.ExecDate = ((PlanningDayPanel)control).SelectedDay;
                                 break;
                             }
                             if (control.GetType() == typeof(FlowLayoutPanel) && control.Name == TasksFLP.Name)
                             {
-                                task.SelectedTask.ExecDate = null;
+                                taskctrl.SelectedTask.ExecDate = null;
                                 break;
                             }
                         }
@@ -336,31 +341,38 @@ namespace HomeworkPlanner
                         }
                     }
                     UpdatePanels(true);
-                    Cursor = Cursors.Default;
-                }
-            }
-        }
-        private void TaskControl_MouseOperation(object? sender, MouseEventArgs e)
-        {
-            if (sender != null)
-            {
-                TaskControl task = ((TaskControl)sender);
-                if (e.Button == MouseButtons.Middle)
-                {
-                    task.IsDragging = true;
-                    Cursor = new Cursor(new MemoryStream(Properties.Resources.drag_task));
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
                     TaskControl_Click(sender, e);
                 }
-                else
+                else if (e.Button == MouseButtons.Left)
                 {
-                    task.SelectedTask.IsCompleted = !task.SelectedTask.IsCompleted;
+                    taskctrl.SelectedTask.IsCompleted = !taskctrl.SelectedTask.IsCompleted;
                     UpdatePanels(true);
                 }
+                MouseMoved = false;
+                isClicking = false;
+                Cursor = Cursors.Default;
             }
         }
+        private void TaskControl_MouseDown(object? sender, MouseEventArgs e)
+        {
+            if (sender != null)
+            {
+                isClicking = true;
+            }
+        }
+
+        private void TaskControl_MouseMove(object? sender, MouseEventArgs e)
+        {
+            if (!MouseMoved && isClicking)
+            {
+                MouseMoved = true;
+                Cursor = new Cursor(new MemoryStream(Properties.Resources.drag_task));
+            }
+        }
+
         private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
         {
             if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
@@ -368,7 +380,6 @@ namespace HomeworkPlanner
                 TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
                 UpdatePanels();
             }
-
         }
         #endregion
         #region MenuItem option on changing number of weeks displayed

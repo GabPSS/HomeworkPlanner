@@ -205,6 +205,7 @@ namespace HomeworkPlanner.TaskControls
                     TaskControl ctrl = new(taskHost, task) { AutoSize = true, DrawMode = TaskControl.TaskDrawMode.Planner };
                     ctrl.MouseDown += Ctrl_MouseDown;
                     ctrl.MouseUp += Ctrl_MouseUp;
+                    ctrl.MouseMove += Ctrl_MouseMove;
                     flp.Controls.Add(ctrl);
                 }
             }
@@ -226,6 +227,10 @@ namespace HomeworkPlanner.TaskControls
         {
             OnControlMouseDown(sender, e);
         }
+        private void Ctrl_MouseMove(object? sender, MouseEventArgs e)
+        {
+            OnControlMouseMove(sender, e);
+        }
         #endregion
         #region Event definitions
         public class CancelledDayEventArgs : EventArgs
@@ -241,6 +246,7 @@ namespace HomeworkPlanner.TaskControls
         public delegate void CancelledDayEventHandler(object sender, CancelledDayEventArgs e);
         public event MouseEventHandler ControlMouseDown;
         public event MouseEventHandler ControlMouseUp;
+        public event MouseEventHandler ControlMouseMove;
         public event CancelledDayEventHandler CancelledDayClick;
         protected virtual void OnControlMouseDown(object? sender, MouseEventArgs e)
         {
@@ -253,6 +259,14 @@ namespace HomeworkPlanner.TaskControls
         protected virtual void OnControlMouseUp(object? sender, MouseEventArgs e)
         {
             MouseEventHandler temp = ControlMouseUp;
+            if (temp != null)
+            {
+                temp(sender, e);
+            }
+        }
+        protected virtual void OnControlMouseMove(object? sender, MouseEventArgs e)
+        {
+            MouseEventHandler temp = ControlMouseMove;
             if (temp != null)
             {
                 temp(sender, e);
