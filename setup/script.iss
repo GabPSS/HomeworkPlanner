@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "HomeworkPlanner"
-#define MyAppVersion "1.0.0-alpha.1"
+#define MyAppVersion "1.0.0-alpha.2"
 #define MyAppPublisher "Gabriel P."
 #define MyAppURL "https://github.com/GabPSS/HomeworkPlanner"
 #define MyAppExeName "HomeworkPlanner.exe"
