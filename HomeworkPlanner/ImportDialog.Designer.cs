@@ -53,6 +53,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.label5 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -63,7 +64,6 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.SaveFileOpenDialog = new System.Windows.Forms.OpenFileDialog();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.SaveFileTabPage.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -348,6 +348,7 @@
             // 
             // textBox2
             // 
+            this.textBox2.AcceptsReturn = true;
             this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.textBox2.Location = new System.Drawing.Point(3, 23);
             this.textBox2.Multiline = true;
@@ -371,6 +372,16 @@
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Import options";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(413, 30);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(85, 19);
+            this.checkBox1.TabIndex = 4;
+            this.checkBox1.Text = "Completed";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // dateTimePicker1
             // 
@@ -475,19 +486,8 @@
             this.SaveFileOpenDialog.Filter = "Save files (*.hwpf)|*.hwpf|JSON files (*.json)|*.json|All files|*.*";
             this.SaveFileOpenDialog.Title = "Select a save file";
             // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(413, 30);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(85, 19);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "Completed";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // ImportDialog
             // 
-            this.AcceptButton = this.button1;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
