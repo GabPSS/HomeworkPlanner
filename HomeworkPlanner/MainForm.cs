@@ -230,7 +230,7 @@ namespace HomeworkPlanner
             //Clear panel
             TasksFLP.Controls.Clear();
             Task[] sortedArray = TaskHost.SortTasksByDueDate(TaskHost.SaveFile.Tasks.Items.ToArray());
-            
+            TasksFLP.SuspendLayout();
             //Add controls for all tasks
             foreach (Task task in sortedArray)
             {
@@ -250,6 +250,7 @@ namespace HomeworkPlanner
                 testctrl.MouseMove += TaskControl_MouseMove;
                 TasksFLP.Controls.Add(testctrl);
             }
+            TasksFLP.ResumeLayout();
         }
         private void UpdateStatusBar()
         {
