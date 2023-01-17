@@ -348,7 +348,7 @@ namespace HomeworkPlanner
                 if (e.Button == MouseButtons.Middle)
                 {
                     task.IsDragging = true;
-                    Cursor = new Cursor("drag_task.cur");
+                    Cursor = new Cursor(new MemoryStream(Properties.Resources.drag_task));
                 }
                 else if (e.Button == MouseButtons.Right)
                 {
