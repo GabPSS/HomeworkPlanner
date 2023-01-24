@@ -171,6 +171,7 @@ namespace HomeworkPlanner
         {
             UpdateWeekCountMenu();
             UpdateWeekDaysMenu(changePerformed);
+            UpdateSortByMenu(changePerformed);
             UpdateSmallMenuOptions(changePerformed);
         }
         /// <summary>
@@ -229,7 +230,7 @@ namespace HomeworkPlanner
         {
             //Clear panel
             TasksFLP.Controls.Clear();
-            List<Task> sortedArray = TaskHost.SortTasks(TaskHost.SortMethod.DueDate, TaskHost.SaveFile.Tasks.Items);
+            List<Task> sortedArray = TaskHost.SortTasks(TaskHost.SaveFile.Settings.SortMethod, TaskHost.SaveFile.Tasks.Items);
             TasksFLP.SuspendLayout();
             //Add controls for all tasks
             foreach (Task task in sortedArray)
@@ -299,6 +300,28 @@ namespace HomeworkPlanner
             //Handle changes
             HandleChangePerformed(changePerformed);
         }
+        private void UpdateSortByMenu(bool changePerformed = false)
+        {
+            int menuToCheck = (int)TaskHost.SaveFile.Settings.SortMethod;
+            var menus = sortByToolStripMenuItem.DropDownItems;
+
+            for (int i = 0; i < menus.Count; i++)
+            {
+                ((ToolStripMenuItem)menus[i]).Checked = false;
+            }
+
+            ((ToolStripMenuItem)menus[menuToCheck]).Checked = true;
+
+            HandleChangePerformed(changePerformed);
+        }
+        private void SortByItemClick(object sender, EventArgs e)
+        {
+            var menu = (ToolStripMenuItem)sender;
+            TaskHost.SaveFile.Settings.SortMethod = (SortMethod)sortByToolStripMenuItem.DropDownItems.IndexOf(menu);
+            UpdateMenus(true);
+            UpdatePanels(false);
+        }
+
         private void UpdateSmallMenuOptions(bool changePerformed = false)
         {
             //Set check state

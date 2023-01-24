@@ -4,6 +4,7 @@ using HomeworkPlanner.TaskControls;
 
 namespace HomeworkPlanner
 {
+    public enum SortMethod { None = -1, DueDate = 0, ID = 1, Alphabetically = 2, Status = 3, Subject = 4 }
     public class TaskHost
     {
         public TaskHost(SaveFile saveFile, string? saveFilePath = null)
@@ -81,9 +82,6 @@ namespace HomeworkPlanner
                 SaveFile.Tasks.Items[i].ExecDate = null;
             }
         }
-
-        public enum SortMethod { None, DueDate, ID, Alphabetically, Status, Subject }
-
         public static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks)
         {
             switch (sortMethod)
@@ -367,6 +365,7 @@ namespace HomeworkPlanner
         public int FutureWeeks { get; set; } = 2;
         public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
         public bool DisplayPreviousTasks { get; set; } = false;
+        public SortMethod SortMethod { get; set; } = SortMethod.DueDate;
     }
     #endregion
 }
