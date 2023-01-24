@@ -244,7 +244,7 @@ namespace HomeworkPlanner
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
         public string Name { get; set; } = UntitledTaskText;
-        public DateTime DueDate { get; set; } = DateTime.Today;
+        public DateTime DueDate { get; set; } = DateTime.MinValue;
         public string[] Description { get; set; } = Array.Empty<string>();
         public DateTime? ExecDate { get; set; }
 
