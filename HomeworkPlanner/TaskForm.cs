@@ -34,7 +34,15 @@ namespace HomeworkPlanner
             if (!AddTaskMode)
             {
                 TaskBodyTextBox.Text = UpdatedTask.Name == Task.UntitledTaskText ? "" : UpdatedTask.Name;
-                DueDateTimePicker.Value = UpdatedTask.DueDate;
+                if (UpdatedTask.DueDate == DateTime.MinValue)
+                {
+                    checkBox1.Checked = true;
+                    DueDateTimePicker.Value = DateTime.Today.AddDays(1);
+                }
+                else
+                {
+                    DueDateTimePicker.Value = UpdatedTask.DueDate;
+                }
                 DetailsMultilineTextBox.Lines = UpdatedTask.Description;
                 ImportantCheckBox.Checked = UpdatedTask.IsImportant;
             }
@@ -139,5 +147,12 @@ namespace HomeworkPlanner
         }
         #endregion
         #endregion
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatedTask.DueDate = checkBox1.Checked ? DateTime.MinValue : DueDateTimePicker.Value;
+            DueDateTimePicker.Enabled = !checkBox1.Checked;
+            UpdateIcon();
+        }
     }
 }
