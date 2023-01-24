@@ -64,7 +64,7 @@ namespace HomeworkPlanner.TaskControls
             switch (DrawMode)
             {
                 case TaskDrawMode.Planner:
-                    gfx.DrawString("Due: " + SelectedTask.DueDate.ToString("dd/MM"), SelectedTask.IsCompleted ? DefaultCompletedFont : DefaultDueFont, DrawingBrush, text_x, text_y);
+                    gfx.DrawString(SelectedTask.DueDate == DateTime.MinValue ? "No due date" : ("Due: " + SelectedTask.DueDate.ToString("dd/MM")), SelectedTask.IsCompleted ? DefaultCompletedFont : DefaultDueFont, DrawingBrush, text_x, text_y);
                     break;
                 case TaskDrawMode.TasksView:
                     float descTextHeight = gfx.MeasureString("This is a test string", DefaultDescFont).Height;
@@ -128,7 +128,7 @@ namespace HomeworkPlanner.TaskControls
             else
                 subjectTitle = "";
             string title = subjectTitle + SelectedTask.Name;
-            if (DrawMode == TaskDrawMode.TasksView)
+            if (DrawMode == TaskDrawMode.TasksView && SelectedTask.DueDate != DateTime.MinValue)
                 title += " - Due " + SelectedTask.DueDate.ToString("dd/MM");
             return title;
         }

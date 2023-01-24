@@ -48,6 +48,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.RemoveBtn = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -145,6 +146,7 @@
             // 
             this.panel4.AutoSize = true;
             this.panel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel4.Controls.Add(this.checkBox1);
             this.panel4.Controls.Add(this.DueDateTimePicker);
             this.panel4.Controls.Add(this.label3);
             this.panel4.Location = new System.Drawing.Point(3, 35);
@@ -158,7 +160,7 @@
             this.DueDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.DueDateTimePicker.Location = new System.Drawing.Point(58, 3);
             this.DueDateTimePicker.Name = "DueDateTimePicker";
-            this.DueDateTimePicker.Size = new System.Drawing.Size(281, 23);
+            this.DueDateTimePicker.Size = new System.Drawing.Size(184, 23);
             this.DueDateTimePicker.TabIndex = 4;
             this.DueDateTimePicker.ValueChanged += new System.EventHandler(this.DueDateTimePicker_ValueChanged);
             // 
@@ -268,6 +270,17 @@
             this.RemoveBtn.Text = "Remove";
             this.RemoveBtn.UseVisualStyleBackColor = true;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(248, 5);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(91, 19);
+            this.checkBox1.TabIndex = 5;
+            this.checkBox1.Text = "No due date";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // TaskForm
             // 
             this.AcceptButton = this.button1;
@@ -329,5 +342,6 @@
         private Button button1;
         private Button button2;
         private Button RemoveBtn;
+        private CheckBox checkBox1;
     }
 }
