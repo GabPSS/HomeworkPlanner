@@ -34,6 +34,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.recentFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearRecentsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
@@ -45,6 +46,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.unscheduleAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeCompletedTasksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,6 +58,12 @@
             this.customizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.iDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.subjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.weeksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OneWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TwoWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,8 +107,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
-            this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -149,7 +155,7 @@
             this.newToolStripMenuItem.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.New_Click);
             // 
@@ -162,6 +168,13 @@
             this.openToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenFile_Click);
+            // 
+            // importToolStripMenuItem1
+            // 
+            this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
+            this.importToolStripMenuItem1.Size = new System.Drawing.Size(146, 22);
+            this.importToolStripMenuItem1.Text = "&Import...";
+            this.importToolStripMenuItem1.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
             // 
             // recentFilesToolStripMenuItem
             // 
@@ -249,6 +262,13 @@
             this.newToolStripMenuItem1.Text = "New...";
             this.newToolStripMenuItem1.Click += new System.EventHandler(this.newToolStripMenuItem1_Click);
             // 
+            // importToolStripMenuItem
+            // 
+            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+            this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
+            this.importToolStripMenuItem.Text = "&Import...";
+            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -320,6 +340,7 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sortByToolStripMenuItem,
             this.weeksToolStripMenuItem,
             this.weekDaysToolStripMenuItem,
             this.toolStripSeparator5,
@@ -328,6 +349,53 @@
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "&View";
+            // 
+            // sortByToolStripMenuItem
+            // 
+            this.sortByToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.iDToolStripMenuItem,
+            this.nameToolStripMenuItem,
+            this.dueDateToolStripMenuItem,
+            this.statusToolStripMenuItem,
+            this.subjectToolStripMenuItem});
+            this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
+            this.sortByToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.sortByToolStripMenuItem.Text = "Sort by";
+            // 
+            // iDToolStripMenuItem
+            // 
+            this.iDToolStripMenuItem.Name = "iDToolStripMenuItem";
+            this.iDToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.iDToolStripMenuItem.Text = "ID";
+            this.iDToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
+            // 
+            // nameToolStripMenuItem
+            // 
+            this.nameToolStripMenuItem.Name = "nameToolStripMenuItem";
+            this.nameToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.nameToolStripMenuItem.Text = "Name";
+            this.nameToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
+            // 
+            // dueDateToolStripMenuItem
+            // 
+            this.dueDateToolStripMenuItem.Name = "dueDateToolStripMenuItem";
+            this.dueDateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dueDateToolStripMenuItem.Text = "Due date";
+            this.dueDateToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
+            // 
+            // statusToolStripMenuItem
+            // 
+            this.statusToolStripMenuItem.Name = "statusToolStripMenuItem";
+            this.statusToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.statusToolStripMenuItem.Text = "Status";
+            this.statusToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
+            // 
+            // subjectToolStripMenuItem
+            // 
+            this.subjectToolStripMenuItem.Name = "subjectToolStripMenuItem";
+            this.subjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.subjectToolStripMenuItem.Text = "Subject";
+            this.subjectToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
             // 
             // weeksToolStripMenuItem
             // 
@@ -344,14 +412,14 @@
             // OneWeekMenuItem
             // 
             this.OneWeekMenuItem.Name = "OneWeekMenuItem";
-            this.OneWeekMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.OneWeekMenuItem.Size = new System.Drawing.Size(180, 22);
             this.OneWeekMenuItem.Text = "1";
             this.OneWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // TwoWeekMenuItem
             // 
             this.TwoWeekMenuItem.Name = "TwoWeekMenuItem";
-            this.TwoWeekMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.TwoWeekMenuItem.Size = new System.Drawing.Size(180, 22);
             this.TwoWeekMenuItem.Text = "2";
             this.TwoWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -360,21 +428,21 @@
             this.ThreeWeekMenuItem.Checked = true;
             this.ThreeWeekMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ThreeWeekMenuItem.Name = "ThreeWeekMenuItem";
-            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(180, 22);
             this.ThreeWeekMenuItem.Text = "3";
             this.ThreeWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FourWeekMenuItem
             // 
             this.FourWeekMenuItem.Name = "FourWeekMenuItem";
-            this.FourWeekMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.FourWeekMenuItem.Size = new System.Drawing.Size(180, 22);
             this.FourWeekMenuItem.Text = "4";
             this.FourWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FiveWeekMenuItem
             // 
             this.FiveWeekMenuItem.Name = "FiveWeekMenuItem";
-            this.FiveWeekMenuItem.Size = new System.Drawing.Size(80, 22);
+            this.FiveWeekMenuItem.Size = new System.Drawing.Size(180, 22);
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -395,49 +463,49 @@
             // sundayToolStripMenuItem
             // 
             this.sundayToolStripMenuItem.Name = "sundayToolStripMenuItem";
-            this.sundayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.sundayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.sundayToolStripMenuItem.Text = "Sunday";
             this.sundayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // mondayToolStripMenuItem
             // 
             this.mondayToolStripMenuItem.Name = "mondayToolStripMenuItem";
-            this.mondayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.mondayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.mondayToolStripMenuItem.Text = "Monday";
             this.mondayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // tuesdayToolStripMenuItem
             // 
             this.tuesdayToolStripMenuItem.Name = "tuesdayToolStripMenuItem";
-            this.tuesdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.tuesdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tuesdayToolStripMenuItem.Text = "Tuesday";
             this.tuesdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // wednesdayToolStripMenuItem
             // 
             this.wednesdayToolStripMenuItem.Name = "wednesdayToolStripMenuItem";
-            this.wednesdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.wednesdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.wednesdayToolStripMenuItem.Text = "Wednesday";
             this.wednesdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // thursdayToolStripMenuItem
             // 
             this.thursdayToolStripMenuItem.Name = "thursdayToolStripMenuItem";
-            this.thursdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.thursdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.thursdayToolStripMenuItem.Text = "Thursday";
             this.thursdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // fridayToolStripMenuItem
             // 
             this.fridayToolStripMenuItem.Name = "fridayToolStripMenuItem";
-            this.fridayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.fridayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.fridayToolStripMenuItem.Text = "Friday";
             this.fridayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // saturdayToolStripMenuItem
             // 
             this.saturdayToolStripMenuItem.Name = "saturdayToolStripMenuItem";
-            this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saturdayToolStripMenuItem.Text = "Saturday";
             this.saturdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
@@ -751,20 +819,6 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
-            // importToolStripMenuItem
-            // 
-            this.importToolStripMenuItem.Name = "importToolStripMenuItem";
-            this.importToolStripMenuItem.Size = new System.Drawing.Size(215, 22);
-            this.importToolStripMenuItem.Text = "&Import...";
-            this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
-            // 
-            // importToolStripMenuItem1
-            // 
-            this.importToolStripMenuItem1.Name = "importToolStripMenuItem1";
-            this.importToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
-            this.importToolStripMenuItem1.Text = "&Import...";
-            this.importToolStripMenuItem1.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -874,5 +928,11 @@
         private ToolStripMenuItem removeAllTasksToolStripMenuItem;
         private ToolStripMenuItem importToolStripMenuItem1;
         private ToolStripMenuItem importToolStripMenuItem;
+        private ToolStripMenuItem sortByToolStripMenuItem;
+        private ToolStripMenuItem iDToolStripMenuItem;
+        private ToolStripMenuItem nameToolStripMenuItem;
+        private ToolStripMenuItem dueDateToolStripMenuItem;
+        private ToolStripMenuItem statusToolStripMenuItem;
+        private ToolStripMenuItem subjectToolStripMenuItem;
     }
 }
