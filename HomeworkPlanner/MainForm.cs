@@ -229,7 +229,7 @@ namespace HomeworkPlanner
         {
             //Clear panel
             TasksFLP.Controls.Clear();
-            Task[] sortedArray = TaskHost.SortTasksByDueDate(TaskHost.SaveFile.Tasks.Items.ToArray());
+            List<Task> sortedArray = TaskHost.SortTasks(TaskHost.SortMethod.DueDate, TaskHost.SaveFile.Tasks.Items);
             TasksFLP.SuspendLayout();
             //Add controls for all tasks
             foreach (Task task in sortedArray)

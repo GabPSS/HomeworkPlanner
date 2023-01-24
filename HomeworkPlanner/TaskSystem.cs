@@ -82,16 +82,32 @@ namespace HomeworkPlanner
             }
         }
 
-        public static Task[] SortTasksByDueDate(Task[] tasks)
-        {
-            List<Task> tasksList = tasks.ToList() ;
-            tasksList.Sort(CompareTasksByDueDate);
-            return tasksList.ToArray();
-        }
+        public enum SortMethod { None, DueDate, ID, Alphabetically, Status, Subject }
 
-        private static int CompareTasksByDueDate(Task x, Task y)
+        public static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks)
         {
-            return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1;
+            switch (sortMethod)
+            {
+                case SortMethod.DueDate:
+                    //tasks.Sort((Task x, Task y) => { return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1; });
+                    tasks.Sort((Task x, Task y) => { return x.DueDate.CompareTo(y.DueDate); });
+                    break;
+                case SortMethod.ID:
+                    tasks.Sort((Task x, Task y) => { return x.TaskID - y.TaskID; });
+                    break;
+                case SortMethod.Alphabetically:
+                    tasks.Sort((Task x, Task y) => { return x.Name.CompareTo(y.Name); });
+                    break;
+                case SortMethod.Status:
+                    tasks.Sort((Task x, Task y) => { return x.GetStatus() - y.GetStatus(); });
+                    break;
+                case SortMethod.Subject:
+                    tasks.Sort((Task x, Task y) => { return x.SubjectID - y.SubjectID; });
+                    break;
+                default:
+                    break;
+            }
+            return tasks;
         }
 
         public void RemoveCompletedTasks() => SaveFile.Tasks.Items.RemoveAll(x => x.IsCompleted);
@@ -226,7 +242,7 @@ namespace HomeworkPlanner
     public class Task: ICloneable
     {
         public const string UntitledTaskText = "Untitled task";
-
+        public enum TaskStatus { Overdue = -10, None = 0, Scheduled = 10, ImportantUnscheduled = 20, ImportantScheduled = 30, Completed = 70 }
         public int TaskID { get; set; } = -1;
         public int SubjectID { get; set; } = -1;
         public string Name { get; set; } = UntitledTaskText;
@@ -298,6 +314,25 @@ namespace HomeworkPlanner
             }
         }
 
+        public TaskStatus GetStatus()
+        {
+            int status = 0;
+            if (IsOverdue)
+            {
+                status = -10;
+            }
+            else if (IsCompleted)
+            {
+                status = 70;
+            }
+            else
+            {
+                status = IsScheduled ? status + 10 : status;
+                status = IsImportant ? status + 20 : status;
+            }
+
+            return (TaskStatus)status;
+        }
         public override string ToString()
         {
             return Name;
