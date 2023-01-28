@@ -36,7 +36,7 @@ namespace HomeworkPlanner
                 TaskBodyTextBox.Text = UpdatedTask.Name == Task.UntitledTaskText ? "" : UpdatedTask.Name;
                 if (UpdatedTask.DueDate == DateTime.MinValue)
                 {
-                    checkBox1.Checked = true;
+                    DueDateTimePicker.Checked = false;
                     DueDateTimePicker.Value = DateTime.Today.AddDays(1);
                 }
                 else
@@ -106,7 +106,7 @@ namespace HomeworkPlanner
 
         private void DueDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
-            UpdatedTask.DueDate = DueDateTimePicker.Value;
+            UpdatedTask.DueDate = DueDateTimePicker.Checked ? DueDateTimePicker.Value : DateTime.MinValue;
             UpdateIcon();
         }
 
@@ -147,12 +147,5 @@ namespace HomeworkPlanner
         }
         #endregion
         #endregion
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            UpdatedTask.DueDate = checkBox1.Checked ? DateTime.MinValue : DueDateTimePicker.Value;
-            DueDateTimePicker.Enabled = !checkBox1.Checked;
-            UpdateIcon();
-        }
     }
 }
