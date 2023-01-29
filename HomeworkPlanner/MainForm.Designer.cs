@@ -353,9 +353,9 @@
             // sortByToolStripMenuItem
             // 
             this.sortByToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dueDateToolStripMenuItem,
             this.iDToolStripMenuItem,
             this.nameToolStripMenuItem,
-            this.dueDateToolStripMenuItem,
             this.statusToolStripMenuItem,
             this.subjectToolStripMenuItem});
             this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
@@ -412,14 +412,14 @@
             // OneWeekMenuItem
             // 
             this.OneWeekMenuItem.Name = "OneWeekMenuItem";
-            this.OneWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.OneWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.OneWeekMenuItem.Text = "1";
             this.OneWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // TwoWeekMenuItem
             // 
             this.TwoWeekMenuItem.Name = "TwoWeekMenuItem";
-            this.TwoWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.TwoWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.TwoWeekMenuItem.Text = "2";
             this.TwoWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -428,21 +428,21 @@
             this.ThreeWeekMenuItem.Checked = true;
             this.ThreeWeekMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             this.ThreeWeekMenuItem.Name = "ThreeWeekMenuItem";
-            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.ThreeWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.ThreeWeekMenuItem.Text = "3";
             this.ThreeWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FourWeekMenuItem
             // 
             this.FourWeekMenuItem.Name = "FourWeekMenuItem";
-            this.FourWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FourWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.FourWeekMenuItem.Text = "4";
             this.FourWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
             // FiveWeekMenuItem
             // 
             this.FiveWeekMenuItem.Name = "FiveWeekMenuItem";
-            this.FiveWeekMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.FiveWeekMenuItem.Size = new System.Drawing.Size(80, 22);
             this.FiveWeekMenuItem.Text = "5";
             this.FiveWeekMenuItem.Click += new System.EventHandler(this.changeWeekCount);
             // 
@@ -463,49 +463,49 @@
             // sundayToolStripMenuItem
             // 
             this.sundayToolStripMenuItem.Name = "sundayToolStripMenuItem";
-            this.sundayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sundayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.sundayToolStripMenuItem.Text = "Sunday";
             this.sundayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // mondayToolStripMenuItem
             // 
             this.mondayToolStripMenuItem.Name = "mondayToolStripMenuItem";
-            this.mondayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.mondayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.mondayToolStripMenuItem.Text = "Monday";
             this.mondayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // tuesdayToolStripMenuItem
             // 
             this.tuesdayToolStripMenuItem.Name = "tuesdayToolStripMenuItem";
-            this.tuesdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.tuesdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.tuesdayToolStripMenuItem.Text = "Tuesday";
             this.tuesdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // wednesdayToolStripMenuItem
             // 
             this.wednesdayToolStripMenuItem.Name = "wednesdayToolStripMenuItem";
-            this.wednesdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.wednesdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.wednesdayToolStripMenuItem.Text = "Wednesday";
             this.wednesdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // thursdayToolStripMenuItem
             // 
             this.thursdayToolStripMenuItem.Name = "thursdayToolStripMenuItem";
-            this.thursdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.thursdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.thursdayToolStripMenuItem.Text = "Thursday";
             this.thursdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // fridayToolStripMenuItem
             // 
             this.fridayToolStripMenuItem.Name = "fridayToolStripMenuItem";
-            this.fridayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fridayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.fridayToolStripMenuItem.Text = "Friday";
             this.fridayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
             // saturdayToolStripMenuItem
             // 
             this.saturdayToolStripMenuItem.Name = "saturdayToolStripMenuItem";
-            this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saturdayToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
             this.saturdayToolStripMenuItem.Text = "Saturday";
             this.saturdayToolStripMenuItem.Click += new System.EventHandler(this.weekday_change_click);
             // 
