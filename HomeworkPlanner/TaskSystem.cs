@@ -4,7 +4,7 @@ using HomeworkPlanner.TaskControls;
 
 namespace HomeworkPlanner
 {
-    public enum SortMethod { None = -1, DueDate = 0, ID = 1, Alphabetically = 2, Status = 3, Subject = 4 }
+    public enum SortMethod { None = -1, DueDate = 0, ID = 1, Alphabetically = 2, Status = 3, Subject = 4, ExecDate = 5, DateCompleted }
     public class TaskHost
     {
         public TaskHost(SaveFile saveFile, string? saveFilePath = null)
@@ -102,6 +102,12 @@ namespace HomeworkPlanner
                 case SortMethod.Subject:
                     tasks.Sort((Task x, Task y) => { return x.SubjectID - y.SubjectID; });
                     break;
+                case SortMethod.ExecDate:
+                    tasks.Sort((Task x, Task y) => { return y.ExecDate.HasValue ? (x.ExecDate.HasValue ? x.ExecDate.Value.CompareTo(y.ExecDate.Value) : 1) : -1; });
+                    break;
+                case SortMethod.DateCompleted:
+                    tasks.Sort((Task x, Task y) => { return y.DateCompleted.HasValue ? (x.DateCompleted.HasValue ? x.DateCompleted.Value.CompareTo(y.DateCompleted.Value) : 1) : -1; });
+                    break;
                 default:
                     break;
             }
@@ -163,6 +169,39 @@ namespace HomeworkPlanner
         private void RemoveCancelledDaysPriorTo(DateTime date)
         {
             SaveFile.CancelledDays.RemoveAll(x => x.Date < date);
+        }
+
+        public List<(string Group, List<Task> Tasks)> GenerateReport()
+        {
+            List<(string Group, List<Task> Tasks)> output = new();
+            List<Task> sortedCompletedTasks = SortTasks(SortMethod.DateCompleted, FilterTasks(SaveFile.Tasks.Items.ToArray()).completed.ToList());
+            List<DateTime> Dates = new();
+            for (int i = 0; i < sortedCompletedTasks.Count; i++)
+            {
+                if (sortedCompletedTasks[i].DateCompleted != null && !Dates.Contains(sortedCompletedTasks[i].DateCompleted.Value))
+                {
+                    Dates.Add(sortedCompletedTasks[i].DateCompleted.Value);
+                }
+            }
+            for (int i = 0; i < Dates.Count; i++)
+            {
+                List<Task> tasks = new();
+                for (int x = 0; x < sortedCompletedTasks.Count; x++)
+                {
+                    if (sortedCompletedTasks[x].DateCompleted != null && sortedCompletedTasks[x].DateCompleted == Dates[i])
+                    {
+                        tasks.Add(sortedCompletedTasks[x]);
+                        sortedCompletedTasks.RemoveAt(x);
+                        x--;
+                    }
+                }
+                output.Add((Dates[i].ToShortDateString(), tasks));
+            }
+            if (sortedCompletedTasks.Count > 0)
+            {
+                output.Add(("Unknown", sortedCompletedTasks));
+            }
+            return output;
         }
     }
     public class SaveFile

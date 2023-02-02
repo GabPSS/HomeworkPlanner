@@ -759,5 +759,9 @@ namespace HomeworkPlanner
             }
         }
 
+        private void reportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ReportForm(TaskHost).ShowDialog();
+        }
     }
 }
