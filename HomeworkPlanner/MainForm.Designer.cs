@@ -59,11 +59,12 @@
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sortByToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.iDToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dueDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.subjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.execDateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.weeksToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OneWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TwoWeekMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,6 +108,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
+            this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -305,6 +307,7 @@
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.dayCancellingToolStripMenuItem,
             this.toolStripSeparator4,
+            this.reportToolStripMenuItem,
             this.customizeToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
@@ -314,26 +317,26 @@
             // dayCancellingToolStripMenuItem
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
-            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(157, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Cleanup...";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -357,10 +360,18 @@
             this.iDToolStripMenuItem,
             this.nameToolStripMenuItem,
             this.statusToolStripMenuItem,
-            this.subjectToolStripMenuItem});
+            this.subjectToolStripMenuItem,
+            this.execDateToolStripMenuItem});
             this.sortByToolStripMenuItem.Name = "sortByToolStripMenuItem";
             this.sortByToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.sortByToolStripMenuItem.Text = "Sort by";
+            // 
+            // dueDateToolStripMenuItem
+            // 
+            this.dueDateToolStripMenuItem.Name = "dueDateToolStripMenuItem";
+            this.dueDateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dueDateToolStripMenuItem.Text = "Due date";
+            this.dueDateToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
             // 
             // iDToolStripMenuItem
             // 
@@ -376,13 +387,6 @@
             this.nameToolStripMenuItem.Text = "Name";
             this.nameToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
             // 
-            // dueDateToolStripMenuItem
-            // 
-            this.dueDateToolStripMenuItem.Name = "dueDateToolStripMenuItem";
-            this.dueDateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.dueDateToolStripMenuItem.Text = "Due date";
-            this.dueDateToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
-            // 
             // statusToolStripMenuItem
             // 
             this.statusToolStripMenuItem.Name = "statusToolStripMenuItem";
@@ -396,6 +400,13 @@
             this.subjectToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.subjectToolStripMenuItem.Text = "Subject";
             this.subjectToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
+            // 
+            // execDateToolStripMenuItem
+            // 
+            this.execDateToolStripMenuItem.Name = "execDateToolStripMenuItem";
+            this.execDateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.execDateToolStripMenuItem.Text = "Exec date";
+            this.execDateToolStripMenuItem.Click += new System.EventHandler(this.SortByItemClick);
             // 
             // weeksToolStripMenuItem
             // 
@@ -819,6 +830,13 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
+            // reportToolStripMenuItem
+            // 
+            this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
+            this.reportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reportToolStripMenuItem.Text = "Generate report...";
+            this.reportToolStripMenuItem.Click += new System.EventHandler(this.reportToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -934,5 +952,7 @@
         private ToolStripMenuItem dueDateToolStripMenuItem;
         private ToolStripMenuItem statusToolStripMenuItem;
         private ToolStripMenuItem subjectToolStripMenuItem;
+        private ToolStripMenuItem execDateToolStripMenuItem;
+        private ToolStripMenuItem reportToolStripMenuItem;
     }
 }

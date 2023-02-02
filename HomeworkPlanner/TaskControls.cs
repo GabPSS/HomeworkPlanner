@@ -287,4 +287,13 @@ namespace HomeworkPlanner.TaskControls
     {
         public string FilePath { get; set; }
     }
+    internal class TaskListViewItem : ListViewItem
+    {
+        public Task Task;
+        public TaskListViewItem(Task task)
+        {
+            Task = task;
+            Text = task.Name;
+        }
+    }
 }
