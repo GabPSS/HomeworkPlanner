@@ -75,11 +75,17 @@ namespace HomeworkPlanner
             return -1;
         }
     
-        public void UnscheduleAllTasks()
+        public void UnscheduleAllTasks(bool excludeCompleted = false)
         {
             for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
             {
-                SaveFile.Tasks.Items[i].ExecDate = null;
+                // Check if item isn't completed. Then checks if excludeCompleted is false.
+                // This makes for the effect where when excludeCompleted is false, everything is unscheduled
+                // However, when it's true, only the items that are not completed are unscheduled
+                if (!SaveFile.Tasks.Items[i].IsCompleted || !excludeCompleted)
+                {
+                    SaveFile.Tasks.Items[i].ExecDate = null;
+                }
             }
         }
         public static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks)
