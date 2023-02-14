@@ -56,7 +56,7 @@ namespace HomeworkPlanner
             tasksToolStripMenuItem.Visible = enable;
             importToolStripMenuItem.Enabled = enable;
             newToolStripMenuItem1.Enabled = enable;
-            unscheduleAllToolStripMenuItem.Enabled = enable;
+            unscheduleTasksToolStripMenuItem.Enabled = enable;
 
             toolsToolStripMenuItem.Visible = enable;
             dayCancellingToolStripMenuItem.Enabled = enable;
@@ -485,14 +485,6 @@ namespace HomeworkPlanner
             subjectMgmtForm.ShowDialog();
             UpdatePanels(true);
         }
-        private void unscheduleAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Are you sure you want to unschedule all tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-            {
-                TaskHost.UnscheduleAllTasks();
-                UpdatePanels(true);
-            }
-        }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
@@ -762,6 +754,24 @@ namespace HomeworkPlanner
         private void reportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ReportForm(TaskHost).ShowDialog();
+        }
+
+        private void everythingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to unschedule all tasks? This option includes tasks marked as completed.\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.UnscheduleAllTasks();
+                UpdatePanels(true);
+            }
+        }
+
+        private void remainingOnlyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to unschedule all remaining tasks?\nThis action cannot be undone", "Unschedule all", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                TaskHost.UnscheduleAllTasks(true);
+                UpdatePanels(true);
+            }
         }
     }
 }
