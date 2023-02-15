@@ -39,6 +39,8 @@ namespace HomeworkPlanner
         {
             SubjectList.Add(textBox1.Text);
             UpdateSubjects();
+            textBox1.Clear();
+            textBox1.Focus();
         }
         private void editSubjectButtonClick(object sender, EventArgs e)
         {
@@ -81,5 +83,11 @@ namespace HomeworkPlanner
             button4.Enabled = listView1.SelectedIndices.Count > 0;
         }
         #endregion
+
+        private void SubjectMgmtForm_Load(object sender, EventArgs e)
+        {
+            groupBox1.Focus();
+            textBox1.Focus();
+        }
     }
 }

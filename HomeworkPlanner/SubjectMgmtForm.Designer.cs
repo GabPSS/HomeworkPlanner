@@ -189,6 +189,7 @@
             this.Name = "SubjectMgmtForm";
             this.ShowIcon = false;
             this.Text = "Subject preferences";
+            this.Load += new System.EventHandler(this.SubjectMgmtForm_Load);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
