@@ -216,11 +216,13 @@ namespace HomeworkPlanner
         {
             Tasks = new();
             Subjects = new();
+            Schedules = new();
             CancelledDays = new();
             Settings = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
+        public ScheduleList Schedules { get; set; }
         public CancelledDayList CancelledDays { get; set; }
         public SaveSettings Settings { get; set; }
 
@@ -279,6 +281,11 @@ namespace HomeworkPlanner
             }
             return output;
         }
+    }
+    public class ScheduleList
+    {
+        public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public List<Schedule> Items { get; set; } = new();
     }
     #endregion
     #region Main objects
@@ -401,6 +408,13 @@ namespace HomeworkPlanner
     {
         public DateTime Date { get; set; }
         public string Message { get; set; }
+    }
+
+    public class Schedule
+    {
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public List<int?> Subjects { get; set; } = new();
     }
     #endregion
     #region Settings objects
