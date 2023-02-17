@@ -27,6 +27,18 @@ namespace HomeworkPlanner
             return output;
         }
 
+        public Subject GetSubjectById(int id)
+        {
+            for (int i = 0; i < SaveFile.Subjects.Items.Count; i++)
+            {
+                if (SaveFile.Subjects.Items[i].SubjectID == id)
+                {
+                    return SaveFile.Subjects.Items[i];
+                }
+            }
+            throw new Exception("Specified subject ID didn't match any subject");
+        }
+
         /// <summary>
         /// Get all tasks planned for a certain date
         /// </summary>

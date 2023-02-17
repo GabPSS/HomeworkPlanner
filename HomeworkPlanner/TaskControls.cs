@@ -61,6 +61,7 @@ namespace HomeworkPlanner.TaskControls
             gfx.DrawString(GetTitle(), SelectedTask.IsCompleted ? DefaultCompletedTitleFont : DefaultTitleFont, DrawingBrush, imgDimension + 2, 0);
             float text_y = TitleMeasurement.Height + 3;
             float text_x = imgDimension + 2;
+            
             switch (DrawMode)
             {
                 case TaskDrawMode.Planner:

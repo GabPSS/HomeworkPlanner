@@ -111,6 +111,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.welcomeScreenIcons = new System.Windows.Forms.ImageList(this.components);
+            this.classSchedulesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -290,14 +291,14 @@
             // remainingOnlyToolStripMenuItem
             // 
             this.remainingOnlyToolStripMenuItem.Name = "remainingOnlyToolStripMenuItem";
-            this.remainingOnlyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.remainingOnlyToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.remainingOnlyToolStripMenuItem.Text = "Remaining only";
             this.remainingOnlyToolStripMenuItem.Click += new System.EventHandler(this.remainingOnlyToolStripMenuItem_Click);
             // 
             // everythingToolStripMenuItem
             // 
             this.everythingToolStripMenuItem.Name = "everythingToolStripMenuItem";
-            this.everythingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.everythingToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
             this.everythingToolStripMenuItem.Text = "Everything";
             this.everythingToolStripMenuItem.Click += new System.EventHandler(this.everythingToolStripMenuItem_Click);
             // 
@@ -327,7 +328,8 @@
             this.toolStripSeparator4,
             this.reportToolStripMenuItem,
             this.customizeToolStripMenuItem,
-            this.optionsToolStripMenuItem});
+            this.optionsToolStripMenuItem,
+            this.classSchedulesToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -335,33 +337,33 @@
             // dayCancellingToolStripMenuItem
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
-            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(162, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(177, 6);
             // 
             // reportToolStripMenuItem
             // 
             this.reportToolStripMenuItem.Name = "reportToolStripMenuItem";
-            this.reportToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.reportToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.reportToolStripMenuItem.Text = "Generate report...";
             this.reportToolStripMenuItem.Click += new System.EventHandler(this.reportToolStripMenuItem_Click);
             // 
             // customizeToolStripMenuItem
             // 
             this.customizeToolStripMenuItem.Name = "customizeToolStripMenuItem";
-            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.customizeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.customizeToolStripMenuItem.Text = "&Subjects";
             this.customizeToolStripMenuItem.Click += new System.EventHandler(this.customizeToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.optionsToolStripMenuItem.Text = "&Cleanup...";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -855,6 +857,13 @@
             this.welcomeScreenIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.welcomeScreenIcons.Images.SetKeyName(0, "plan_icon_32x32.png");
             // 
+            // classSchedulesToolStripMenuItem
+            // 
+            this.classSchedulesToolStripMenuItem.Name = "classSchedulesToolStripMenuItem";
+            this.classSchedulesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.classSchedulesToolStripMenuItem.Text = "Class schedules...";
+            this.classSchedulesToolStripMenuItem.Click += new System.EventHandler(this.classSchedulesToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -974,5 +983,6 @@
         private ToolStripMenuItem unscheduleTasksToolStripMenuItem;
         private ToolStripMenuItem remainingOnlyToolStripMenuItem;
         private ToolStripMenuItem everythingToolStripMenuItem;
+        private ToolStripMenuItem classSchedulesToolStripMenuItem;
     }
 }
