@@ -32,33 +32,41 @@ namespace HomeworkPlanner
         {
             for (int i = 0; i < THost.SaveFile.Schedules.Items.Count; i++)
             {
-                //THost.SaveFile.Schedules.Items[i].Subjects.Cast<>;
-                DataGridViewRow row = new();
-                dataGridView1.Rows.Add(row);
-                for (int x = 0; x < THost.SaveFile.Schedules.Items[i].Subjects.Count; x++)
+                var item = THost.SaveFile.Schedules.Items[i];
+
+                tableLayoutPanel2.RowCount++;
+                tableLayoutPanel2.RowStyles.Add(new(SizeType.AutoSize));
+                var str = item.StartTime.ToString() + " - " + item.EndTime.ToString();
+                Label lbl = new()
                 {
-                    DataGridViewComboBoxCell cell = (DataGridViewComboBoxCell)row.Cells[x];
-                    cell.Items.AddRange(THost.SaveFile.Subjects.Items.ToArray());
-                    //cell.Value = 1;
-                    //cell.Items.Add("Hello");
-                    //cell.Value = "Hello";
-                    var subjectID = THost.SaveFile.Schedules.Items[i].Subjects[x];
+                    Text = str,
+                    AutoSize = true,
+                    Anchor = AnchorStyles.None
+                };
+                tableLayoutPanel2.Controls.Add(lbl,0,i+1);
+
+                for (int x = 0; x < item.Subjects.Count; x++)
+                {
+                    var cmbx = new ComboBox()
+                    {
+                        DropDownStyle = ComboBoxStyle.DropDownList
+                    };
+                    cmbx.Items.Add("(None)");
+                    cmbx.SelectedIndex = 0;
+                    cmbx.Items.AddRange(THost.SaveFile.Subjects.Items.ToArray());
+                    var subjectID = item.Subjects[x];
                     if (subjectID != null)
                     {
-                        //cell.combo
-
-                        
                         var sub = THost.GetSubjectById(subjectID.Value);
-                        cell.Value = sub;
+                        cmbx.SelectedIndex = cmbx.Items.IndexOf(sub);
                     }
-                    //row.Cells.Add(cell);
+                    tableLayoutPanel2.Controls.Add(cmbx,x+1,i+1);
                 }
             }
         }
 
         public void AddColumns()
         {
-            //dataGridView1.Columns.Add("time", "Schedules");
             var daysData = (int)THost.SaveFile.Schedules.DaysToDisplay;
             DateTime refDate = HelperFunctions.GetSunday(DateTime.Today.Date).AddDays(6);
             List<DateTime> datesList = new();
@@ -72,13 +80,15 @@ namespace HomeworkPlanner
                 refDate = refDate.Subtract(TimeSpan.FromDays(1));
             }
             datesList.Reverse();
+            tableLayoutPanel2.ColumnCount = datesList.Count + 1;
             for (int i = 0; i < datesList.Count; i++)
             {
-                DataGridViewComboBoxColumn col = new();
-                col.HeaderText = datesList[i].DayOfWeek.ToString();
-                
-                //col.Name = ((int)datesList[i].DayOfWeek).ToString();
-                dataGridView1.Columns.Add(col);
+                tableLayoutPanel2.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
+                Label lbl = new()
+                {
+                    Text = datesList[i].DayOfWeek.ToString(),
+                };
+                tableLayoutPanel2.Controls.Add(lbl, i + 1,0);
             }            
         }
     }
