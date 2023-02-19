@@ -297,4 +297,10 @@ namespace HomeworkPlanner.TaskControls
             Text = task.Name;
         }
     }
+
+    internal class ScheduleComboBox : ComboBox
+    {
+        public Schedule ParentSchedule { get; set; }
+        public int ScheduleDate { get; set; }
+    }
 }

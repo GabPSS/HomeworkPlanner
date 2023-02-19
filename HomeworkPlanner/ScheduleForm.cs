@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using HomeworkPlanner.TaskControls;
 
 namespace HomeworkPlanner
 {
@@ -25,43 +17,67 @@ namespace HomeworkPlanner
             AddColumns();
             AddRows();
 
-            
+
         }
 
         public void AddRows()
         {
             for (int i = 0; i < THost.SaveFile.Schedules.Items.Count; i++)
             {
-                var item = THost.SaveFile.Schedules.Items[i];
+                //Set a schedule variable
+                var schedule = THost.SaveFile.Schedules.Items[i];
 
+                //Add row and label to TLP2
                 tableLayoutPanel2.RowCount++;
                 tableLayoutPanel2.RowStyles.Add(new(SizeType.AutoSize));
-                var str = item.StartTime.ToString() + " - " + item.EndTime.ToString();
+                var str = schedule.StartTime.ToString() + " - " + schedule.EndTime.ToString();
                 Label lbl = new()
                 {
                     Text = str,
                     AutoSize = true,
                     Anchor = AnchorStyles.None
                 };
-                tableLayoutPanel2.Controls.Add(lbl,0,i+1);
+                tableLayoutPanel2.Controls.Add(lbl, 0, i + 1);
 
-                for (int x = 0; x < item.Subjects.Count; x++)
+                for (int date = 0; date < schedule.Subjects.Count; date++)
                 {
-                    var cmbx = new ComboBox()
+                    //Add ScheduleComboBox
+                    var cmbx = new ScheduleComboBox()
                     {
                         DropDownStyle = ComboBoxStyle.DropDownList
                     };
                     cmbx.Items.Add("(None)");
                     cmbx.SelectedIndex = 0;
                     cmbx.Items.AddRange(THost.SaveFile.Subjects.Items.ToArray());
-                    var subjectID = item.Subjects[x];
+                    cmbx.FlatStyle = FlatStyle.Flat;
+                    cmbx.BackColor = Color.White;
+                    var subjectID = schedule.Subjects[date];
                     if (subjectID != null)
                     {
                         var sub = THost.GetSubjectById(subjectID.Value);
                         cmbx.SelectedIndex = cmbx.Items.IndexOf(sub);
+                        cmbx.BackColor = Color.FromArgb(sub.SubjectColor);
                     }
-                    tableLayoutPanel2.Controls.Add(cmbx,x+1,i+1);
+                    cmbx.ParentSchedule = schedule;
+                    cmbx.ScheduleDate = date;
+                    cmbx.SelectedValueChanged += Cmbx_SelectedValueChanged;
+                    tableLayoutPanel2.Controls.Add(cmbx, date + 1, i + 1);
                 }
+            }
+        }
+
+        private void Cmbx_SelectedValueChanged(object? sender, EventArgs e)
+        {
+            if (sender is ScheduleComboBox cmbx)
+            {
+                int? newValue = null;
+                cmbx.BackColor = Color.White;
+                if (cmbx.Items[cmbx.SelectedIndex] is Subject s)
+                {
+                    newValue = s.SubjectID;
+                    cmbx.BackColor = Color.FromArgb(THost.GetSubjectById(newValue.Value).SubjectColor);
+                }
+                cmbx.ParentSchedule.Subjects[cmbx.ScheduleDate] = newValue;
             }
         }
 
@@ -88,8 +104,8 @@ namespace HomeworkPlanner
                 {
                     Text = datesList[i].DayOfWeek.ToString(),
                 };
-                tableLayoutPanel2.Controls.Add(lbl, i + 1,0);
-            }            
+                tableLayoutPanel2.Controls.Add(lbl, i + 1, 0);
+            }
         }
     }
 }

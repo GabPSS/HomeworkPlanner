@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using HomeworkPlanner.TaskControls;
+﻿using HomeworkPlanner.TaskControls;
 
 namespace HomeworkPlanner
 {
@@ -81,6 +72,8 @@ namespace HomeworkPlanner
         {
             button3.Enabled = listView1.SelectedIndices.Count > 0;
             button4.Enabled = listView1.SelectedIndices.Count > 0;
+
+            button5.BackColor = listView1.SelectedIndices.Count > 0 ? Color.FromArgb(SubjectList.Items[listView1.SelectedIndices[0]].SubjectColor) : SystemColors.Control;
         }
         #endregion
 
@@ -88,6 +81,19 @@ namespace HomeworkPlanner
         {
             groupBox1.Focus();
             textBox1.Focus();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (listView1.SelectedIndices.Count > 0)
+            {
+                ColorDialog cd = new() { Color = button5.BackColor };
+                if (cd.ShowDialog() == DialogResult.OK)
+                {
+                    SubjectList.Items[listView1.SelectedIndices[0]].SubjectColor = cd.Color.ToArgb();
+                    button5.BackColor = cd.Color;
+                }
+            }
         }
     }
 }

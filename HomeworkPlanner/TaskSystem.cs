@@ -404,11 +404,13 @@ namespace HomeworkPlanner
     {
         public int SubjectID { get; set; }
         public string SubjectName { get; set; }
+        public int SubjectColor { get; set; }
         public const string DefaultMissingSubjectText = "(No subject)";
         public Subject(int subjectID, string subjectName)
         {
             SubjectID = subjectID;
             SubjectName = subjectName;
+            SubjectColor = Color.White.ToArgb();
         }
 
         public override string ToString()
@@ -416,6 +418,7 @@ namespace HomeworkPlanner
             return SubjectName;
         }
     }
+
     public class CancelledDay
     {
         public DateTime Date { get; set; }

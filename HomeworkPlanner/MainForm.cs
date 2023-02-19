@@ -777,6 +777,7 @@ namespace HomeworkPlanner
         private void classSchedulesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ScheduleForm(TaskHost).ShowDialog();
+            Modified = true;
         }
     }
 }
