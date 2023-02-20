@@ -303,4 +303,71 @@ namespace HomeworkPlanner.TaskControls
         public Schedule ParentSchedule { get; set; }
         public int ScheduleDate { get; set; }
     }
+
+    internal class ScheduleLabel : Label
+    {
+        private bool _Selected = false;
+        public bool Selected { get { return _Selected; } set
+            {
+                _Selected = value;
+                if (_Selected)
+                {
+                    BackColor = SystemColors.Highlight;
+                    ForeColor = Color.White;
+                }
+                else
+                {
+                    BackColor = SystemColors.Control;
+                    ForeColor = Color.Black;
+                }
+            }
+        }
+        public ScheduleLabelList ParentList;
+        public Schedule SelectedSchedule;
+        public ScheduleLabel(ScheduleLabelList parent, Schedule schedule)
+        {
+            ParentList = parent;
+            AutoSize = true;
+            Anchor = AnchorStyles.None;
+            SelectedSchedule = schedule;
+            UpdateText();
+            Click += ScheduleLabel_Click;
+        }
+
+        public void UpdateText()
+        {
+            Text = SelectedSchedule.StartTime.ToString() + " - " + SelectedSchedule.EndTime.ToString();
+        }
+
+        private void ScheduleLabel_Click(object? sender, EventArgs e)
+        {
+            ParentList.Select(this);
+        }
+    }
+    internal class ScheduleLabelList : List<ScheduleLabel>
+    {
+        public ScheduleLabel? SelectedLabel;
+        public void Select(ScheduleLabel lbl)
+        {
+            SelectedLabel = lbl;
+
+            for (int i = 0; i < this.Count; i++)
+            {
+                this[i].Selected = false;
+            }
+            SelectedLabel.Selected = true;
+            OnSelected();
+        }
+
+        public event EventHandler Selected;
+
+        protected internal void OnSelected()
+        {
+            EventHandler temp = Selected;
+            if (temp != null)
+            {
+                temp(this,EventArgs.Empty);
+            }
+        }
+    }
 }

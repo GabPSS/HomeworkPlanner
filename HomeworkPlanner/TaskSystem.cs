@@ -429,7 +429,7 @@ namespace HomeworkPlanner
     {
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-        public List<int?> Subjects { get; set; } = new();
+        public int?[] Subjects { get; set; } = new int?[7];
     }
     #endregion
     #region Settings objects
