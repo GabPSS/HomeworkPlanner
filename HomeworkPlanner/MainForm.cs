@@ -399,9 +399,9 @@ namespace HomeworkPlanner
 
         private void PlanningDay_CancelledDayClick(object sender, PlanningDayPanel.CancelledDayEventArgs e)
         {
-            if (MessageBox.Show("This day has been cancelled due to the following reason:\n\n" + e.SelectedCancelledDay.Message + "\n\nClick OK to restore it", "Cancelled day", MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
+            if (MessageBox.Show((e.SelectedDayNote.Cancelled ? "This day has been cancelled and given the message:\n\n" : "This day has the following note:\n\n") + e.SelectedDayNote.Message + "\n\nClick OK to remove it", (e.SelectedDayNote.Cancelled ? "Cancelled day" : "Day note"), MessageBoxButtons.OKCancel, MessageBoxIcon.Information) == DialogResult.OK)
             {
-                TaskHost.SaveFile.CancelledDays.Remove(e.SelectedCancelledDay);
+                TaskHost.SaveFile.DayNotes.Remove(e.SelectedDayNote);
                 UpdatePanels();
             }
         }
@@ -649,8 +649,7 @@ namespace HomeworkPlanner
             DayCancelForm dayCancelForm = new();
             if (dayCancelForm.ShowDialog() == DialogResult.OK)
             {
-                TaskHost.SaveFile.CancelledDays.Add(new() { Date = dayCancelForm.Date, Message = dayCancelForm.Message });
-                MessageBox.Show("Cancelled day added successfully!", "Message", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                TaskHost.SaveFile.DayNotes.Add(new() { Date = dayCancelForm.Date, Message = dayCancelForm.Message, Cancelled = dayCancelForm.IsCancelled });
                 UpdatePanels(true);
             }
         }

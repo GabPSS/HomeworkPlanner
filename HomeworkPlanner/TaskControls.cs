@@ -149,7 +149,7 @@ namespace HomeworkPlanner.TaskControls
         #region Default constructor and variable
         public DateTime SelectedDay;
         public bool IsCancelled = false;
-        private CancelledDay CancelledDay;
+        private DayNote CancelledDay;
         public PlanningDayPanel(DateTime day, TaskHost taskHost)
         {
             SelectedDay = day;
@@ -162,7 +162,7 @@ namespace HomeworkPlanner.TaskControls
             Label lbl = new()
             {
                 Text = day.ToString("dd/MMM"),
-                Dock = DockStyle.Fill,
+                AutoSize = true,
                 Font = day == DateTime.Today ? new Font(Font, FontStyle.Bold) : Font
             };
             Controls.Add(lbl, 0, 0);
@@ -173,23 +173,31 @@ namespace HomeworkPlanner.TaskControls
             flp.SuspendLayout();
 
             //Check cancelled day
-            CancelledDay? cDay = taskHost.SaveFile.CancelledDays.GetObjectByDate(day);
+            DayNote? cDay = taskHost.SaveFile.DayNotes.GetObjectByDate(day);
 
             if (cDay != null)
             {
-                IsCancelled = true;
                 CancelledDay = cDay;
-                BackColor = Color.Pink;
-                Label cancelLbl = new()
+                if (cDay.Cancelled)
                 {
-                    Text = "Cancelled. Reason:\n\n" + cDay.Message,
-                    AutoSize = false,
-                    Dock = DockStyle.Fill
-                };
-                Controls.Remove(flp);
-                Controls.Add(cancelLbl,0,1);
-                cancelLbl.Click += CancelledDay_Click;
-                Click += CancelledDay_Click;
+                    IsCancelled = true;
+                    BackColor = Color.Pink;
+                    Label cancelLbl = new()
+                    {
+                        Text = "Cancelled. Reason:\n\n" + cDay.Message,
+                        AutoSize = false,
+                        Dock = DockStyle.Fill
+                    };
+                    Controls.Remove(flp);
+                    Controls.Add(cancelLbl,0,1);
+                    cancelLbl.Click += CancelledDay_Click;
+                    Click += CancelledDay_Click;
+                }
+                else
+                {
+                    lbl.Text += "\n" + cDay.Message;
+                    lbl.Click += CancelledDay_Click;
+                }
             }
 
             //Add tasks
@@ -236,11 +244,11 @@ namespace HomeworkPlanner.TaskControls
         #region Event definitions
         public class CancelledDayEventArgs : EventArgs
         {
-            public CancelledDay SelectedCancelledDay { get; set; }
+            public DayNote SelectedDayNote { get; set; }
 
-            public CancelledDayEventArgs(CancelledDay cancelledDay)
+            public CancelledDayEventArgs(DayNote cancelledDay)
             {
-                SelectedCancelledDay = cancelledDay;
+                SelectedDayNote = cancelledDay;
             }
         }
 

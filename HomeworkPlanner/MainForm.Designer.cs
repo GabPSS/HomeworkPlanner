@@ -338,7 +338,7 @@
             // 
             this.dayCancellingToolStripMenuItem.Name = "dayCancellingToolStripMenuItem";
             this.dayCancellingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.dayCancellingToolStripMenuItem.Text = "Day cancelling...";
+            this.dayCancellingToolStripMenuItem.Text = "Day notes...";
             this.dayCancellingToolStripMenuItem.Click += new System.EventHandler(this.dayCancellingToolStripMenuItem_Click);
             // 
             // toolStripSeparator4

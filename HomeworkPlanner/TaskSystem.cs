@@ -186,7 +186,7 @@ namespace HomeworkPlanner
 
         private void RemoveCancelledDaysPriorTo(DateTime date)
         {
-            SaveFile.CancelledDays.RemoveAll(x => x.Date < date);
+            SaveFile.DayNotes.RemoveAll(x => x.Date < date);
         }
 
         public List<(string Group, List<Task> Tasks)> GenerateReport()
@@ -229,13 +229,13 @@ namespace HomeworkPlanner
             Tasks = new();
             Subjects = new();
             Schedules = new();
-            CancelledDays = new();
+            DayNotes = new();
             Settings = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
         public ScheduleList Schedules { get; set; }
-        public CancelledDayList CancelledDays { get; set; }
+        public DayNoteList DayNotes { get; set; }
         public SaveSettings Settings { get; set; }
 
         public static SaveFile FromJSON(string JSON)
@@ -282,11 +282,11 @@ namespace HomeworkPlanner
             return newIndex;
         }
     }
-    public class CancelledDayList : List<CancelledDay>
+    public class DayNoteList : List<DayNote>
     {
-        public CancelledDay? GetObjectByDate(DateTime date)
+        public DayNote? GetObjectByDate(DateTime date)
         {
-            CancelledDay? output = null;
+            DayNote? output = null;
             for (int i = 0; i < Count; i++)
             {
                 output = this[i].Date.Date == date.Date ? this[i] : output;
@@ -418,11 +418,11 @@ namespace HomeworkPlanner
             return SubjectName;
         }
     }
-
-    public class CancelledDay
+    public class DayNote
     {
         public DateTime Date { get; set; }
         public string Message { get; set; }
+        public bool Cancelled { get; set; } = true;
     }
 
     public class Schedule
