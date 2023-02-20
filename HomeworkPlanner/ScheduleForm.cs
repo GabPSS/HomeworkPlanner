@@ -12,7 +12,6 @@ namespace HomeworkPlanner
             InitializeComponent();
             THost = tHost;
             UpdateSchedules();
-            ScheduleLabels.Selected += ScheduleLabels_Selected;
         }
 
         private void ScheduleLabels_Selected(object? sender, EventArgs e)
@@ -24,6 +23,7 @@ namespace HomeworkPlanner
         public void UpdateSchedules()
         {
             ScheduleLabels = new();
+            ScheduleLabels.Selected += ScheduleLabels_Selected;
             DaysOfWeek = new();
             ResetTLP();
             AddColumns();
