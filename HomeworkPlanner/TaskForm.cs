@@ -107,6 +107,7 @@ namespace HomeworkPlanner
         private void DueDateTimePicker_ValueChanged(object sender, EventArgs e)
         {
             UpdatedTask.DueDate = DueDateTimePicker.Checked ? DueDateTimePicker.Value : DateTime.MinValue;
+            NextClassButton.Enabled = DueDateTimePicker.Checked;
             UpdateIcon();
         }
 
@@ -120,6 +121,27 @@ namespace HomeworkPlanner
             UpdatedTask.IsImportant = ImportantCheckBox.Checked;
             UpdateIcon();
         }
+
+        private void NextClassButton_Click(object sender, EventArgs e)
+        {
+            if (SubjectComboBox.SelectedItem != null && SubjectComboBox.SelectedItem.GetType() == typeof(Subject))
+            {
+                DateTime? nextDate = TaskHost.GetNextSubjectScheduledDate((Subject)SubjectComboBox.SelectedItem, DueDateTimePicker.Value);
+                if (nextDate != null)
+                {
+                    DueDateTimePicker.Value = nextDate.Value;
+                }
+                else
+                {
+                    MessageBox.Show("Subject schedule not found", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a subject to use this feature", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
         #region Subject updating functions
         private void SubjectComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -146,6 +168,9 @@ namespace HomeworkPlanner
             SubjectComboBoxSelectionIndex = SubjectComboBox.SelectedIndex;
         }
         #endregion
+
         #endregion
+
+        
     }
 }
