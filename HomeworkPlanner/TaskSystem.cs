@@ -233,6 +233,28 @@ namespace HomeworkPlanner
             return null;
         }
 
+        public void ToggleDayOfWeek(int dayOfWeek, bool include)
+        {
+            var days = HelperFunctions.GetDaysIncluded(SaveFile.Schedules.DaysToDisplay);
+            bool containsDay = days.Contains(dayOfWeek);
+            var newData = (int)SaveFile.Schedules.DaysToDisplay;
+            if (containsDay && !include)
+            {
+                //Delete day of week from schedules
+                for (int i = 0; i < SaveFile.Schedules.Items.Count; i++)
+                {
+                    SaveFile.Schedules.Items[i].Subjects[dayOfWeek] = null;
+                }
+                newData -= (int)HelperFunctions.GetDaysToInclude((DayOfWeek)dayOfWeek);
+            }
+            else if (!containsDay && include)
+            {
+                //Add day of week
+                newData += (int)HelperFunctions.GetDaysToInclude((DayOfWeek)dayOfWeek);
+            }
+            SaveFile.Schedules.DaysToDisplay = (DaysToInclude)newData;
+        }
+
         public List<(string Group, List<Task> Tasks)> GenerateReport()
         {
             List<(string Group, List<Task> Tasks)> output = new();

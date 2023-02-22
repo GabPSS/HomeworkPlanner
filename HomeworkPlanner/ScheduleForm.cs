@@ -12,6 +12,8 @@ namespace HomeworkPlanner
             InitializeComponent();
             THost = tHost;
             UpdateSchedules();
+            Days = new() { checkBox1, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6, checkBox7 };
+            UpdateCheckboxes();
         }
 
         private void ScheduleLabels_Selected(object? sender, EventArgs e)
@@ -20,6 +22,17 @@ namespace HomeworkPlanner
             button2.Enabled = true;
         }
 
+        public void UpdateCheckboxes()
+        {
+            List<int> daysToInclude = HelperFunctions.GetDaysIncluded(THost.SaveFile.Schedules.DaysToDisplay);
+            for (int i = 0; i < Days.Count; i++)
+            {
+                if (daysToInclude.Contains(i))
+                {
+                    Days[i].Checked = true;
+                }
+            }
+        }
         public void UpdateSchedules()
         {
             ScheduleLabels = new();
@@ -126,6 +139,20 @@ namespace HomeworkPlanner
                 };
                 tableLayoutPanel2.Controls.Add(lbl, i + 1, 0);
                 DaysOfWeek.Add(daysToInclude[i]);
+            }
+        }
+
+        private List<CheckBox> Days;
+        public void ToggleDate(object? sender, EventArgs e)
+        {
+            if (sender is CheckBox c)
+            {
+                if (Days.Contains(c))
+                {
+                    int dayOfWeek = Days.IndexOf(c);
+                    THost.ToggleDayOfWeek(dayOfWeek, c.Checked);
+                    UpdateSchedules();
+                }
             }
         }
 

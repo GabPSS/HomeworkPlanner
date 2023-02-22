@@ -48,6 +48,29 @@ namespace HomeworkPlanner
             output.Reverse();
             return output;
         }
+
+        public static DaysToInclude GetDaysToInclude(DayOfWeek dayOfWeek)
+        {
+            switch (dayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    return DaysToInclude.Sunday;
+                case DayOfWeek.Monday:
+                    return DaysToInclude.Monday;
+                case DayOfWeek.Tuesday:
+                    return DaysToInclude.Tuesday;
+                case DayOfWeek.Wednesday:
+                    return DaysToInclude.Wednesday;
+                case DayOfWeek.Thursday:
+                    return DaysToInclude.Thursday;
+                case DayOfWeek.Friday:
+                    return DaysToInclude.Friday;
+                case DayOfWeek.Saturday:
+                    return DaysToInclude.Saturday;
+                default:
+                    throw new ArgumentException("Argument provided doesn't match any value of DaysToInclude");
+            }
+        }
         #endregion
     }
 }
