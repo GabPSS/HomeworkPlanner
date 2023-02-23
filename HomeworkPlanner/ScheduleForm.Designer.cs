@@ -78,6 +78,7 @@
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tableLayoutPanel2.AutoScroll = true;
             this.tableLayoutPanel2.AutoSize = true;
             this.tableLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel2.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
@@ -90,12 +91,13 @@
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(68, 22);
             this.tableLayoutPanel2.TabIndex = 0;
+            this.tableLayoutPanel2.SizeChanged += new System.EventHandler(this.tableLayoutPanel2_SizeChanged);
             // 
             // TableLabel
             // 
             this.TableLabel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.TableLabel.AutoSize = true;
-            this.TableLabel.Location = new System.Drawing.Point(4, 3);
+            this.TableLabel.Location = new System.Drawing.Point(4, 6);
             this.TableLabel.Name = "TableLabel";
             this.TableLabel.Size = new System.Drawing.Size(60, 15);
             this.TableLabel.TabIndex = 0;
@@ -175,6 +177,7 @@
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.button4.Location = new System.Drawing.Point(727, 360);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
@@ -302,8 +305,10 @@
             // 
             // ScheduleForm
             // 
+            this.AcceptButton = this.button4;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.button4;
             this.ClientSize = new System.Drawing.Size(815, 396);
             this.Controls.Add(this.tableLayoutPanel3);
             this.MaximizeBox = false;

@@ -41,6 +41,15 @@ namespace HomeworkPlanner
             ResetTLP();
             AddColumns();
             AddRows();
+
+            if (tableLayoutPanel2.ColumnCount == 1 && tableLayoutPanel2.RowCount == 1)
+            {
+                TableLabel.Text = "No schedules created";
+            }
+            else
+            {
+                TableLabel.Text = "Schedules";
+            }
         }
 
         public void ResetTLP()
@@ -187,6 +196,12 @@ namespace HomeworkPlanner
         {
             THost.SaveFile.Schedules.Items.Remove(ScheduleLabels.SelectedLabel.SelectedSchedule);
             UpdateSchedules();
+        }
+
+        
+        private void tableLayoutPanel2_SizeChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
