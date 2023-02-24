@@ -172,6 +172,11 @@ namespace HomeworkPlanner
             ResetSubjectIDs();
         }
 
+        public void SortSubjectsByName()
+        {
+            SaveFile.Subjects.Items.Sort((Subject x, Subject y) => x.SubjectName.CompareTo(y.SubjectName));
+        }
+
         private void RemoveCancelledDaysPriorTo(DateTime date)
         {
             SaveFile.DayNotes.RemoveAll(x => x.Date < date);
@@ -256,6 +261,9 @@ namespace HomeworkPlanner
     }
     public class SubjectList
     {
+        /// <summary>
+        /// Index of last created item, initially -1
+        /// </summary>
         public int LastIndex { get; set; } = -1;
         public List<Subject> Items { get; set; } = new();
 
