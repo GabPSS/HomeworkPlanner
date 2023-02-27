@@ -203,5 +203,56 @@ namespace HomeworkPlanner
         {
             
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new() { Title = "Save image as...", Filter = "All image formats (*.png;*.jpg)|*.png;*.jpg", DefaultExt = "jpg"};
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                DrawTableImage().Save(sfd.FileName);
+            }
+        }
+
+        private Bitmap DrawTableImage()
+        {
+            //Default fonts and pens
+            Font cellFont = new Font(FontFamily.GenericSansSerif, 12);
+
+            //Default dimensions
+            int dfHeight = 36;
+            int dfWidth = 200;
+            int height = dfHeight;
+            int width = dfWidth;
+
+            //Multiplying dimensions by table rows and columns
+            height *= THost.SaveFile.Schedules.Items.Count + 1;
+            width *= HelperFunctions.GetDayCount(THost.SaveFile.Schedules.DaysToDisplay) + 1;
+
+            //Generating blank bitmap and graphics
+            var bmp = new Bitmap(width, height);
+            Graphics g = Graphics.FromImage(bmp);
+            g.Clear(Color.White);
+
+            //Draw backgrounds
+            for (int row = 1; row < (height/36); row++)
+            {
+                for (int col = 1; col < (width/200); col++)
+                {
+                    int? sID = THost.SaveFile.Schedules.Items[row - 1].Subjects[col - 1];
+                    if (sID != null)
+                    {
+                        Subject sbj = THost.GetSubjectById(sID.Value);
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(sbj.SubjectColor)),dfWidth * col,dfHeight * row,dfWidth,dfHeight);
+                        g.DrawString(sbj.SubjectName, cellFont, Brushes.Black, dfWidth * col, dfHeight * row);
+                    }
+                }
+            }
+
+            //TODO: Fix drawing routine to draw days not sequentially but select each day that is shown
+            //TODO: Draw timetable hours and day captions
+            //TODO: Draw cell and table borders
+
+            return bmp;
+        }
     }
 }
