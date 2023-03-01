@@ -1,4 +1,5 @@
 ﻿using HomeworkPlanner.TaskControls;
+using System.Text.RegularExpressions;
 
 namespace HomeworkPlanner
 {
@@ -215,6 +216,9 @@ namespace HomeworkPlanner
 
         private Bitmap DrawTableImage()
         {
+            //Get days included in schedules
+            List<int> Days =  HelperFunctions.GetDaysIncluded(THost.SaveFile.Schedules.DaysToDisplay);
+
             //Default fonts and pens
             Font cellFont = new Font(FontFamily.GenericSansSerif, 12);
 
@@ -226,33 +230,72 @@ namespace HomeworkPlanner
 
             //Multiplying dimensions by table rows and columns
             height *= THost.SaveFile.Schedules.Items.Count + 1;
-            width *= HelperFunctions.GetDayCount(THost.SaveFile.Schedules.DaysToDisplay) + 1;
+            width *= Days.Count + 1;
 
             //Generating blank bitmap and graphics
             var bmp = new Bitmap(width, height);
             Graphics g = Graphics.FromImage(bmp);
             g.Clear(Color.White);
 
+            SizeF measurement = g.MeasureString("Schedules", cellFont);
+            int x = GetCoordinate(0, dfWidth, measurement.Width);
+            int y = GetCoordinate(0, dfHeight, measurement.Height);
+            g.DrawString("Schedules",cellFont,Brushes.Black,x, y);
+
             //Draw backgrounds
-            for (int row = 1; row < (height/36); row++)
+            for (int row = 1; row < (height/dfHeight); row++)
             {
-                for (int col = 1; col < (width/200); col++)
+                Schedule s = THost.SaveFile.Schedules.Items[row - 1];
+                string scheduleString = s.StartTime.ToString() + " - " + s.EndTime.ToString();
+                measurement = g.MeasureString(scheduleString, cellFont);
+                x = GetCoordinate(0, dfWidth, measurement.Width);
+                y = GetCoordinate(row * dfHeight, dfHeight, measurement.Height);
+                g.DrawString(scheduleString, cellFont, Brushes.Black, x, y);
+
+                for (int col = 0; col < Days.Count; col++)
                 {
-                    int? sID = THost.SaveFile.Schedules.Items[row - 1].Subjects[col - 1];
+                    int? sID = THost.SaveFile.Schedules.Items[row - 1].Subjects[Days[col]];
                     if (sID != null)
                     {
                         Subject sbj = THost.GetSubjectById(sID.Value);
-                        g.FillRectangle(new SolidBrush(Color.FromArgb(sbj.SubjectColor)),dfWidth * col,dfHeight * row,dfWidth,dfHeight);
-                        g.DrawString(sbj.SubjectName, cellFont, Brushes.Black, dfWidth * col, dfHeight * row);
+                        int topX = dfWidth * (col + 1);
+                        int topY = dfHeight * row;
+
+                        measurement = g.MeasureString(sbj.SubjectName, cellFont);
+                        
+                        x = GetCoordinate(topX, dfWidth, measurement.Width);
+                        y = GetCoordinate(topY, dfHeight, measurement.Height);
+                        
+                        g.FillRectangle(new SolidBrush(Color.FromArgb(sbj.SubjectColor)),topX,topY,dfWidth,dfHeight);
+                        g.DrawString(sbj.SubjectName, cellFont, Brushes.Black, x, y);
                     }
                 }
             }
 
-            //TODO: Fix drawing routine to draw days not sequentially but select each day that is shown
-            //TODO: Draw timetable hours and day captions
-            //TODO: Draw cell and table borders
+            //Draw days of week
+            for (int day = 0; day < Days.Count; day++)
+            {
+                string dayString = ((DayOfWeek)Days[day]).ToString();
+                measurement = g.MeasureString(dayString, cellFont);
+                x = GetCoordinate((day + 1) * dfWidth, dfWidth, measurement.Width);
+                y = GetCoordinate(0, dfHeight, measurement.Height);
+                g.DrawString(dayString,cellFont,Brushes.Black, x, y);
+            }
+
+
+            //Draw cell borders
+            for (int row = 0; row < (height / dfHeight); row++)
+            {
+                for (int col = 0; col < (width / dfWidth); col++)
+                {
+                    g.DrawRectangle(Pens.Black,col * dfWidth, row * dfHeight, dfWidth, dfHeight);
+                }
+            }
+
 
             return bmp;
         }
+
+        private int GetCoordinate(int startPoint, int bounds, float textSize) => startPoint + ((bounds - (int)textSize) / 2);
     }
 }
