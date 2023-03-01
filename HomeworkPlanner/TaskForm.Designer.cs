@@ -36,6 +36,7 @@
             this.DetailsMultilineTextBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.NextClassButton = new System.Windows.Forms.Button();
             this.DueDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -145,12 +146,23 @@
             // 
             this.panel4.AutoSize = true;
             this.panel4.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel4.Controls.Add(this.NextClassButton);
             this.panel4.Controls.Add(this.DueDateTimePicker);
             this.panel4.Controls.Add(this.label3);
             this.panel4.Location = new System.Drawing.Point(3, 35);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(342, 29);
             this.panel4.TabIndex = 3;
+            // 
+            // NextClassButton
+            // 
+            this.NextClassButton.Location = new System.Drawing.Point(264, 3);
+            this.NextClassButton.Name = "NextClassButton";
+            this.NextClassButton.Size = new System.Drawing.Size(75, 23);
+            this.NextClassButton.TabIndex = 5;
+            this.NextClassButton.Text = "Next class";
+            this.NextClassButton.UseVisualStyleBackColor = true;
+            this.NextClassButton.Click += new System.EventHandler(this.NextClassButton_Click);
             // 
             // DueDateTimePicker
             // 
@@ -159,7 +171,7 @@
             this.DueDateTimePicker.Location = new System.Drawing.Point(58, 3);
             this.DueDateTimePicker.Name = "DueDateTimePicker";
             this.DueDateTimePicker.ShowCheckBox = true;
-            this.DueDateTimePicker.Size = new System.Drawing.Size(281, 23);
+            this.DueDateTimePicker.Size = new System.Drawing.Size(200, 23);
             this.DueDateTimePicker.TabIndex = 4;
             this.DueDateTimePicker.ValueChanged += new System.EventHandler(this.DueDateTimePicker_ValueChanged);
             // 
@@ -330,5 +342,6 @@
         private Button button1;
         private Button button2;
         private Button RemoveBtn;
+        private Button NextClassButton;
     }
 }
