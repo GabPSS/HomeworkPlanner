@@ -18,6 +18,10 @@ namespace HomeworkPlanner
         public void UpdateSubjects()
         {
             listView1.Items.Clear();
+            if (checkBox1.Checked)
+            {
+                TaskHost.SortSubjectsByName();
+            }
             for (int i = 0; i < SubjectList.Items.Count; i++)
             {
                 SubjectControl ctrl = new(SubjectList.Items[i]);
@@ -81,6 +85,11 @@ namespace HomeworkPlanner
         {
             groupBox1.Focus();
             textBox1.Focus();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateSubjects();
         }
 
         private void button5_Click(object sender, EventArgs e)
