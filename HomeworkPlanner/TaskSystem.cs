@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-using System.Text.Json;
-using HomeworkPlanner.TaskControls;
+﻿using System.Text.Json;
 
 namespace HomeworkPlanner
 {
@@ -25,6 +23,18 @@ namespace HomeworkPlanner
                 }
             }
             return output;
+        }
+
+        public Subject GetSubjectById(int id)
+        {
+            for (int i = 0; i < SaveFile.Subjects.Items.Count; i++)
+            {
+                if (SaveFile.Subjects.Items[i].SubjectID == id)
+                {
+                    return SaveFile.Subjects.Items[i];
+                }
+            }
+            throw new Exception("Specified subject ID didn't match any subject");
         }
 
         /// <summary>
@@ -60,21 +70,21 @@ namespace HomeworkPlanner
                     remainingTasks.Remove(tasks[i]);
                 }
             }
-            return (completedTasks.ToArray(),remainingTasks.ToArray());
+            return (completedTasks.ToArray(), remainingTasks.ToArray());
         }
 
         public int GetTaskIndexById(int id)
         {
             for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
             {
-                if (SaveFile.Tasks.Items[i].TaskID== id)
+                if (SaveFile.Tasks.Items[i].TaskID == id)
                 {
                     return i;
                 }
             }
             return -1;
         }
-    
+
         public void UnscheduleAllTasks(bool excludeCompleted = false)
         {
             for (int i = 0; i < SaveFile.Tasks.Items.Count; i++)
@@ -140,7 +150,7 @@ namespace HomeworkPlanner
             {
                 SaveFile.Tasks.Items[i].TaskID = i;
             }
-            SaveFile.Tasks.LastIndex = i-1;
+            SaveFile.Tasks.LastIndex = i - 1;
         }
 
         public void ResetSubjectIDs()
@@ -161,7 +171,7 @@ namespace HomeworkPlanner
                 SaveFile.Subjects.Items[new_sid].SubjectID = new_sid;
             }
 
-            SaveFile.Subjects.LastIndex = new_sid-1;
+            SaveFile.Subjects.LastIndex = new_sid - 1;
         }
 
         public void Repair()
@@ -180,6 +190,74 @@ namespace HomeworkPlanner
         private void RemoveCancelledDaysPriorTo(DateTime date)
         {
             SaveFile.DayNotes.RemoveAll(x => x.Date < date);
+        }
+
+        public DateTime? GetNextSubjectScheduledDate(Subject subject, DateTime startDate)
+        {
+            return GetNextSubjectScheduledDate(subject.SubjectID, startDate);
+        }
+
+        /// <summary>
+        /// Gets the next date a certain subject is scheduled to be given
+        /// </summary>
+        /// <param name="subjectId">The subject's ID</param>
+        /// <returns>A DateTime object representing the next date where Subject is scheduled</returns>
+        public DateTime? GetNextSubjectScheduledDate(int subjectId, DateTime startDate)
+        {
+            DateTime date = startDate.AddDays(1);
+            int dayOfWeek = (int)date.DayOfWeek; //2
+
+            //Go through each day of week starting from today
+            int dayOffset = dayOfWeek;
+            do
+            {
+                //Go through each schedule and see if any of them match subjectId at dayOffset position
+                for (int i = 0; i < SaveFile.Schedules.Items.Count; i++)
+                {
+                    int? scheduledSubject = SaveFile.Schedules.Items[i].Subjects[dayOffset];
+                    if (scheduledSubject != null && scheduledSubject == subjectId)
+                    {
+                        //This means the next subject's day of week is found and is dayOffset!
+                        //Next, get how many days until then and add that to date
+                        if ((int)date.DayOfWeek > dayOffset)
+                        {
+                            dayOffset += 7;
+                        }
+                        dayOffset -= (int)date.DayOfWeek;
+                        date = date.AddDays(dayOffset);
+                        return date;
+                    }
+                }
+                dayOffset++;
+                if (dayOffset > 6)
+                {
+                    dayOffset = 0;
+                }
+            } while (dayOffset != dayOfWeek);
+
+            return null;
+        }
+
+        public void ToggleDayOfWeek(int dayOfWeek, bool include)
+        {
+            var days = HelperFunctions.GetDaysIncluded(SaveFile.Schedules.DaysToDisplay);
+            bool containsDay = days.Contains(dayOfWeek);
+            var newData = (int)SaveFile.Schedules.DaysToDisplay;
+            if (containsDay && !include)
+            {
+                //Delete day of week from schedules
+                for (int i = 0; i < SaveFile.Schedules.Items.Count; i++)
+                {
+                    SaveFile.Schedules.Items[i].Subjects[dayOfWeek] = null;
+                }
+                newData -= (int)HelperFunctions.GetDaysToInclude((DayOfWeek)dayOfWeek);
+            }
+            else if (!containsDay && include)
+            {
+                //Add day of week
+                newData += (int)HelperFunctions.GetDaysToInclude((DayOfWeek)dayOfWeek);
+            }
+            SaveFile.Schedules.DaysToDisplay = (DaysToInclude)newData;
         }
 
         public List<(string Group, List<Task> Tasks)> GenerateReport()
@@ -221,20 +299,20 @@ namespace HomeworkPlanner
         {
             Tasks = new();
             Subjects = new();
+            Schedules = new();
             DayNotes = new();
             Settings = new();
         }
         public TaskList Tasks { get; set; }
         public SubjectList Subjects { get; set; }
+        public ScheduleList Schedules { get; set; }
         public DayNoteList DayNotes { get; set; }
         public SaveSettings Settings { get; set; }
 
         public static SaveFile FromJSON(string JSON)
         {
             SaveFile? output = JsonSerializer.Deserialize<SaveFile>(JSON);
-            if (output is null)
-                throw new JsonException();
-            return output;
+            return output is null ? throw new JsonException() : output;
         }
 
         public string MakeJSON()
@@ -288,9 +366,14 @@ namespace HomeworkPlanner
             return output;
         }
     }
+    public class ScheduleList
+    {
+        public DaysToInclude DaysToDisplay { get; set; } = DaysToInclude.Monday | DaysToInclude.Tuesday | DaysToInclude.Wednesday | DaysToInclude.Thursday | DaysToInclude.Friday;
+        public List<Schedule> Items { get; set; } = new();
+    }
     #endregion
     #region Main objects
-    public class Task: ICloneable
+    public class Task : ICloneable
     {
         public const string UntitledTaskText = "Untitled task";
         public enum TaskStatus { Overdue = -10, None = 0, Scheduled = 10, ImportantUnscheduled = 20, ImportantScheduled = 30, Completed = 70 }
@@ -310,14 +393,7 @@ namespace HomeworkPlanner
             }
             set
             {
-                if (DateCompleted == null)
-                {
-                    DateCompleted = value ? DateTime.Today : null;
-                }
-                else
-                {
-                    DateCompleted = !value ? null : DateCompleted;
-                }
+                DateCompleted = DateCompleted == null ? value ? DateTime.Today : null : !value ? null : DateCompleted;
             }
         }
         public bool IsImportant { get; set; }
@@ -354,13 +430,11 @@ namespace HomeworkPlanner
                 {
                     return Properties.Resources.Overdue;
                 }
-                else if (IsScheduled && IsImportant)
-                {
-                    return Properties.Resources.Important;
-                }
                 else
                 {
-                    return IsImportant ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
+                    return IsScheduled && IsImportant
+                        ? Properties.Resources.Important
+                        : IsImportant ? Properties.Resources.NewImportant : (Image)(IsScheduled ? Properties.Resources.Scheduled : Properties.Resources.New);
                 }
             }
         }
@@ -393,11 +467,13 @@ namespace HomeworkPlanner
     {
         public int SubjectID { get; set; }
         public string SubjectName { get; set; }
+        public int SubjectColor { get; set; }
         public const string DefaultMissingSubjectText = "(No subject)";
         public Subject(int subjectID, string subjectName)
         {
             SubjectID = subjectID;
             SubjectName = subjectName;
+            SubjectColor = Color.White.ToArgb();
         }
 
         public override string ToString()
@@ -410,6 +486,13 @@ namespace HomeworkPlanner
         public DateTime Date { get; set; }
         public string Message { get; set; }
         public bool Cancelled { get; set; } = true;
+    }
+
+    public class Schedule
+    {
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
+        public int?[] Subjects { get; set; } = new int?[7];
     }
     #endregion
     #region Settings objects
