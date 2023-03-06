@@ -25,7 +25,7 @@ namespace HomeworkPlanner.TaskControls
         public Font DefaultCompletedDescFont { get; set; } 
         public Font DefaultCompletedFont { get; set; }
 
-        public int ZoomFactor { get; set; } = 10;
+        public int ZoomFactor { get; set; }
         /// <summary>
         /// Defines if the control should be sized automatically
         /// </summary>
@@ -42,6 +42,7 @@ namespace HomeworkPlanner.TaskControls
         {
             TaskHandler = taskHandler;
             SelectedTask = selectedTask;
+            ZoomFactor = Properties.Settings.Default.ZoomFactor / 10;
             DefaultTitleFont = new Font(FontFamily.GenericSansSerif, ZoomFactor, FontStyle.Bold);
             DefaultCompletedTitleFont = new Font(FontFamily.GenericSansSerif, ZoomFactor, FontStyle.Strikeout);
             DefaultDueFont = new Font(FontFamily.GenericSansSerif, ZoomFactor);

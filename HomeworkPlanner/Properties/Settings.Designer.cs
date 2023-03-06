@@ -56,5 +56,17 @@ namespace HomeworkPlanner.Properties {
                 this["EnableRecentFiles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int ZoomFactor {
+            get {
+                return ((int)(this["ZoomFactor"]));
+            }
+            set {
+                this["ZoomFactor"] = value;
+            }
+        }
     }
 }
