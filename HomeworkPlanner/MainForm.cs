@@ -172,6 +172,7 @@ namespace HomeworkPlanner
             UpdateWeekCountMenu();
             UpdateWeekDaysMenu(changePerformed);
             UpdateSortByMenu(changePerformed);
+            UpdateZoomMenu(changePerformed);
             UpdateSmallMenuOptions(changePerformed);
         }
         /// <summary>
@@ -312,6 +313,17 @@ namespace HomeworkPlanner
 
             ((ToolStripMenuItem)menus[menuToCheck]).Checked = true;
 
+            HandleChangePerformed(changePerformed);
+        }
+        private void UpdateZoomMenu(bool changePerformed = false)
+        {
+            for (int i = 0; i < zoomToolStripMenuItem.DropDownItems.Count;i++)
+            {
+                if (zoomToolStripMenuItem.DropDownItems[i] is ToolStripMenuItem item)
+                {
+                    item.Checked = Convert.ToInt32(item.Text.Substring(0, item.Text.Length - 1)) == Properties.Settings.Default.ZoomFactor;
+                }
+            }
             HandleChangePerformed(changePerformed);
         }
         private void SortByItemClick(object sender, EventArgs e)
@@ -777,6 +789,18 @@ namespace HomeworkPlanner
         {
             new ScheduleForm(TaskHost).ShowDialog();
             Modified = true;
+        }
+
+        private void ZoomMenuItemClick(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem item)
+            {
+                int factor = Convert.ToInt32(item.Text.Substring(0, item.Text.Length - 1));
+                Properties.Settings.Default.ZoomFactor = factor;
+                Properties.Settings.Default.Save();
+                UpdateZoomMenu();
+                UpdatePanels();
+            }
         }
     }
 }

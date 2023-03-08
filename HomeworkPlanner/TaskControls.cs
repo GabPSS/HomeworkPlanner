@@ -18,12 +18,14 @@ namespace HomeworkPlanner.TaskControls
         public TaskHost TaskHandler { get; set; }
         public Task SelectedTask { get; set; }
         public bool IsDragging = false;
-        public Font DefaultTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold);
-        public Font DefaultCompletedTitleFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Strikeout);
-        public Font DefaultDueFont { get; set; } = new Font(FontFamily.GenericSansSerif, 10);
-        public Font DefaultDescFont { get; set; } = new Font(FontFamily.GenericSansSerif, 8);
-        public Font DefaultCompletedDescFont { get; set; } = new Font(FontFamily.GenericSansSerif, 8,FontStyle.Strikeout);
-        public Font DefaultCompletedFont { get; set; } = new Font(FontFamily.GenericSansSerif,10, FontStyle.Strikeout);
+        public Font DefaultTitleFont { get; set; }
+        public Font DefaultCompletedTitleFont { get; set; }
+        public Font DefaultDueFont { get; set; }
+        public Font DefaultDescFont { get; set; }
+        public Font DefaultCompletedDescFont { get; set; } 
+        public Font DefaultCompletedFont { get; set; }
+
+        public int ZoomFactor { get; set; }
         /// <summary>
         /// Defines if the control should be sized automatically
         /// </summary>
@@ -40,6 +42,13 @@ namespace HomeworkPlanner.TaskControls
         {
             TaskHandler = taskHandler;
             SelectedTask = selectedTask;
+            ZoomFactor = Properties.Settings.Default.ZoomFactor / 10;
+            DefaultTitleFont = new Font(FontFamily.GenericSansSerif, ZoomFactor, FontStyle.Bold);
+            DefaultCompletedTitleFont = new Font(FontFamily.GenericSansSerif, ZoomFactor, FontStyle.Strikeout);
+            DefaultDueFont = new Font(FontFamily.GenericSansSerif, ZoomFactor);
+            DefaultDescFont = new Font(FontFamily.GenericSansSerif, ZoomFactor * 0.8f);
+            DefaultCompletedDescFont = new Font(FontFamily.GenericSansSerif, ZoomFactor * 0.8f, FontStyle.Strikeout);
+            DefaultCompletedFont = new Font(FontFamily.GenericSansSerif, ZoomFactor, FontStyle.Strikeout);
         }
         public override Size GetPreferredSize(Size proposedSize)
         {
@@ -53,7 +62,7 @@ namespace HomeworkPlanner.TaskControls
         #region Graphics-handling functions
         private void DrawControl(Graphics gfx)
         {
-            int imgDimension = 32;
+            int imgDimension = Convert.ToInt32(ZoomFactor * 3.2);
             gfx.Clear(BackColor);
             gfx.DrawImage(Icon, 0, 0, imgDimension, imgDimension);
 
@@ -85,8 +94,8 @@ namespace HomeworkPlanner.TaskControls
         {
             float width, height, imgwidth, imgheight, titleWidth, bodyWitdh = 0, txtheight = 0;
 
-            imgwidth = 32;
-            imgheight = 32;
+            imgwidth = ZoomFactor * 3.2f;
+            imgheight = ZoomFactor * 3.2f;
 
             SizeF TitleMeasurement = gfx.MeasureString(GetTitle(), DefaultTitleFont);
             titleWidth = TitleMeasurement.Width;
