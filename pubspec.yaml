@@ -7,8 +7,10 @@ environment:
   sdk: '>=2.19.6 <3.0.0'
 
 dependencies:
+  build_runner: ^2.3.3
   flutter:
     sdk: flutter
+  json_serializable: ^6.6.1
 
 dev_dependencies:
   flutter_test:

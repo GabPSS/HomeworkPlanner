@@ -1,5 +1,10 @@
 import 'dart:ffi';
 
+import 'package:json_annotation/json_annotation.dart';
+
+part 'task.g.dart';
+
+@JsonSerializable()
 class Task {
   //Class constants
   static const String UntitledTaskText = "Untitled Task";
@@ -20,4 +25,10 @@ class Task {
   String toString() {
     return Name;
   }
+
+  Task({required this.TaskID, required this.SubjectID, required this.Name, required this.Description});
+
+  factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$TaskToJson(this);
 }
