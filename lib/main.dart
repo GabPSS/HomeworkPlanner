@@ -13,7 +13,7 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
-  String GetJSON() {
+  String GetJSON() { //TODO: Remove JSON test
     SaveFile sfile = SaveFile();
     return jsonEncode(sfile.toJson());
   }
@@ -24,7 +24,7 @@ class MainApp extends StatelessWidget {
       home: Scaffold(
         body: Column(
           children: [
-            Text(GetJSON()),
+            Text(GetJSON()), //TODO: Remove JSON test 
           ]
         ),
       ),
