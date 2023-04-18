@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'subject.g.dart';
+
+@JsonSerializable()
 class Subject {
   static const String DefaultMissingSubjectText = "(No subject)";
 
@@ -14,4 +18,8 @@ class Subject {
   String toString() {
     return SubjectName;
   }
+
+  factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);
+  
+  Map<String, dynamic> toJson() => _$SubjectToJson(this);
 }
