@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:homeworkplanner/models/lists/ScheduleList.dart';
+import 'package:homeworkplanner/models/lists/subjectlist.dart';
+import 'package:homeworkplanner/models/lists/tasklist.dart';
+import 'package:homeworkplanner/tasksystem/savefile.dart';
 
 void main() {
   runApp(const MainApp());
@@ -7,12 +13,19 @@ void main() {
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
+  String GetJSON() { //TODO: Remove JSON test
+    SaveFile sfile = SaveFile();
+    return jsonEncode(sfile.toJson());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: Text('Welcome to HomeworkPlanner!'),
+        body: Column(
+          children: [
+            Text(GetJSON()), //TODO: Remove JSON test 
+          ]
         ),
       ),
     );
