@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Comment CommentText="Basic system types">
+    <Position X="11.07" Y="0.886" Height="0.369" Width="1.999" />
+  </Comment>
+  <Comment CommentText="Lists">
+    <Position X="8.288" Y="0.5" Height="0.359" Width="1.432" />
+  </Comment>
+  <Comment CommentText="Main system objects">
+    <Position X="4.729" Y="7.294" Height="0.431" Width="1.484" />
+  </Comment>
+  <Class Name="HomeworkPlanner.TaskHost">
+    <Position X="0.5" Y="3.5" Width="4" />
+    <AssociationLine Name="SaveFile" Type="HomeworkPlanner.SaveFile" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4.5" Y="3.783" />
+        <Point X="4.928" Y="3.783" Type="JumpStart" />
+        <Point X="5.094" Y="3.783" Type="JumpEnd" />
+        <Point X="5.31" Y="3.783" Type="JumpStart" />
+        <Point X="5.476" Y="3.783" Type="JumpEnd" />
+        <Point X="5.833" Y="3.783" />
+        <Point X="5.833" Y="2.738" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AUAAsAAEgAAAACEAAAAQIAAAADQAoBAgBgAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SaveFile" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HomeworkPlanner.SaveFile">
+    <Position X="5.25" Y="1.25" Width="1.75" />
+    <AssociationLine Name="DayNotes" Type="HomeworkPlanner.DayNoteList" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="6.375" Y="2.738" />
+        <Point X="6.375" Y="5.188" />
+        <Point X="6.676" Y="5.187" Type="JumpStart" />
+        <Point X="6.842" Y="5.188" Type="JumpEnd" />
+        <Point X="7.145" Y="5.187" Type="JumpStart" />
+        <Point X="7.311" Y="5.188" Type="JumpEnd" />
+        <Point X="8.25" Y="5.188" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Schedules" Type="HomeworkPlanner.ScheduleList" ManuallyRouted="true">
+      <Path>
+        <Point X="7" Y="2.397" />
+        <Point X="7.228" Y="2.397" />
+        <Point X="7.228" Y="7.302" />
+        <Point X="8.25" Y="7.302" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="Settings" Type="HomeworkPlanner.SaveSettings" FixedToPoint="true">
+      <Path>
+        <Point X="6.759" Y="2.738" />
+        <Point X="6.759" Y="5.5" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAQEEAAAAAAAAAAAAAAAAAAEAAAAAAgAAIQAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DayNotes" />
+      <Property Name="Schedules" />
+      <Property Name="Settings" />
+      <Property Name="Subjects" />
+      <Property Name="Tasks" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HomeworkPlanner.TaskList">
+    <Position X="8.25" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAACAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.SubjectList">
+    <Position X="8.25" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAACAAAAgAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.DayNoteList">
+    <Position X="8.25" Y="5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.ScheduleList">
+    <Position X="8.25" Y="6.75" Width="2" />
+    <AssociationLine Name="DaysToDisplay" Type="HomeworkPlanner.DaysToInclude" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.25" Y="6.995" />
+        <Point X="7.311" Y="6.995" Type="JumpStart" />
+        <Point X="7.145" Y="6.995" Type="JumpEnd" />
+        <Point X="4.562" Y="6.995" />
+        <Point X="4.562" Y="3.125" />
+        <Point X="4.083" Y="3.125" Type="JumpStart" />
+        <Point X="3.917" Y="3.125" Type="JumpEnd" />
+        <Point X="1.75" Y="3.125" />
+        <Point X="1.75" Y="2.508" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DaysToDisplay" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HomeworkPlanner.Task" BaseTypeListCollapsed="true">
+    <Position X="13.25" Y="1.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="HomeworkPlanner.Task.TaskStatus">
+        <TypeIdentifier>
+          <NewMemberFileName>TaskSystem.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ABAASAAAEBCoACAEAAAAAAQEAAgAAhAAAAAAAAAAABA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HomeworkPlanner.Subject">
+    <Position X="10.5" Y="1.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEIAAAAAEAAAAAAAAAAAAAACAAAAAACAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.DayNote">
+    <Position X="10.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAABAAAAIAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.Schedule">
+    <Position X="10.75" Y="6.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAIAAgAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="HomeworkPlanner.SaveSettings">
+    <Position X="4.75" Y="5.5" Width="2.25" />
+    <AssociationLine Name="DaysToDisplay" Type="HomeworkPlanner.DaysToInclude" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.393" Y="5.5" />
+        <Point X="5.393" Y="3.314" />
+        <Point X="5.094" Y="3.314" Type="JumpStart" />
+        <Point X="4.928" Y="3.314" Type="JumpEnd" />
+        <Point X="4.646" Y="3.314" Type="JumpStart" />
+        <Point X="4.479" Y="3.314" Type="JumpEnd" />
+        <Point X="4" Y="3.314" />
+        <Point X="4" Y="0.594" />
+        <Point X="2" Y="0.594" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="SortMethod" Type="HomeworkPlanner.SortMethod" ManuallyRouted="true">
+      <Path>
+        <Point X="5.011" Y="5.5" />
+        <Point X="5.011" Y="1.85" />
+        <Point X="4.083" Y="1.85" Type="JumpStart" />
+        <Point X="3.917" Y="1.85" Type="JumpEnd" />
+        <Point X="3.75" Y="1.85" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEAAgAAAAAAQAAAAAAQAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DaysToDisplay" />
+      <Property Name="SortMethod" />
+    </ShowAsAssociation>
+  </Class>
+  <Enum Name="HomeworkPlanner.SortMethod">
+    <Position X="2.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAIgCAAAIAAAAAAAAAAAgAAAAAAAEEAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="HomeworkPlanner.DaysToInclude">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAIAACAAAAAAAAAAACAAIACAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>TaskSystem.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
