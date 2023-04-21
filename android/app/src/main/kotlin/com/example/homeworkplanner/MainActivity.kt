@@ -1,4 +1,4 @@
-package com.example.homeworkplanner
+package com.gabpss.homeworkplanner
 
 import io.flutter.embedding.android.FlutterActivity
 

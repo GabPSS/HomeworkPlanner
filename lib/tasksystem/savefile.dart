@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:homeworkplanner/models/lists/ScheduleList.dart';
+// ignore_for_file: non_constant_identifier_names
+
+import 'package:homeworkplanner/models/lists/schedulelist.dart';
 import 'package:homeworkplanner/models/lists/subjectlist.dart';
 import 'package:homeworkplanner/models/lists/tasklist.dart';
 import 'package:homeworkplanner/models/main/daynote.dart';

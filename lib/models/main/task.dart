@@ -1,4 +1,5 @@
-import 'dart:ffi';
+
+// ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 import 'package:homeworkplanner/models/main/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
