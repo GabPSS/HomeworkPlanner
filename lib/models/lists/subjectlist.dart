@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -8,9 +10,9 @@ class SubjectList {
   int LastIndex = -1;
   List<Subject> Items = List.empty();
 
-  int Add(String subject) {
+  int add(String subject) {
     //TODO: Implement adding subjects
-    throw UnimplementedError('SubjectList Add() not implemented');
+    throw UnimplementedError('SubjectList add() not implemented');
   }
 
   SubjectList({int lastIndex = -1, List<Subject>? items}) {
