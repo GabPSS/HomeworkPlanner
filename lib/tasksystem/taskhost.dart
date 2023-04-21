@@ -6,7 +6,7 @@ import '../models/main/enums.dart';
 import '../models/main/task.dart';
 
 class TaskHost {
-  String? SaveFilePath;
+  String? saveFilePath;
   SaveFile saveFile; //TODO: Update code with lowercase saveFile
 
   TaskHost({required this.saveFile});
