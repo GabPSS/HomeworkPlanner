@@ -7,13 +7,13 @@ part of 'schedule.dart';
 // **************************************************************************
 
 Schedule _$ScheduleFromJson(Map<String, dynamic> json) => Schedule(
-      StartTime: DateTime.parse(json['StartTime'] as String),
-      EndTime: DateTime.parse(json['EndTime'] as String),
+      StartTime: json['StartTime'],
+      EndTime: json['EndTime'],
     )..Subjects =
         (json['Subjects'] as List<dynamic>).map((e) => e as int?).toList();
 
 Map<String, dynamic> _$ScheduleToJson(Schedule instance) => <String, dynamic>{
-      'StartTime': instance.StartTime.toIso8601String(),
-      'EndTime': instance.EndTime.toIso8601String(),
+      'StartTime': instance.StartTime,
+      'EndTime': instance.EndTime,
       'Subjects': instance.Subjects,
     };
