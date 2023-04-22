@@ -168,4 +168,24 @@ class TaskHost {
 
     return null;
   }
+
+  static List<Task> filterCompletedTasks(List<Task> tasks) {
+    List<Task> completedTasks = List<Task>.empty(growable: true);
+    for (int i = 0; i < tasks.length; i++) {
+      if (tasks[i].IsCompleted) {
+        completedTasks.add(tasks[i]);
+      }
+    }
+    return completedTasks;
+  }
+
+  static List<Task> filterRemainingTasks(List<Task> tasks) {
+    List<Task> remainingTasks = List<Task>.empty(growable: true);
+    for (int i = 0; i < tasks.length; i++) {
+      if (!tasks[i].IsCompleted) {
+        remainingTasks.add(tasks[i]);
+      }
+    }
+    return remainingTasks;
+  }
 }
