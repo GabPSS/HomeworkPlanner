@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/pages/taskpage.dart';
 import 'package:homeworkplanner/tasksystem/savefile.dart';
 
 import '../tasksystem/taskhost.dart';
@@ -47,10 +48,17 @@ class _PlannerPageState extends State<PlannerPage> {
       List<Task> filteredTasks = TaskHost.filterRemainingTasks(host!.saveFile.Tasks.Items);
       for (var i = 0; i < filteredTasks.length; i++) {
         var item = filteredTasks[i];
-        items.add(Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Text(host!.getSubject(item.SubjectID) + " - " + item.Name + " - " + item.DueDate.toString()),
-        ));
+        items.add(
+          ListTile(
+            leading: Icon(Icons.assignment_outlined),
+            title: Text(host!.getSubject(item.SubjectID) + " - " + item.Name),
+            subtitle: Text("Due: " + item.DueDate.toString()),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(task: item),));
+            },
+          )
+          //child: Text(host!.getSubject(item.SubjectID) + " - " + item.Name + " - " + item.DueDate.toString()),
+        );
       }
       return ListView(
         children: items,
@@ -63,12 +71,7 @@ class _PlannerPageState extends State<PlannerPage> {
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
-      appBar = AppBar(
-        title: Text('HomeworkPlanner'),
-        actions: [
-          IconButton(onPressed: openFile, icon: Icon(Icons.file_open))
-        ],
-      );
+      appBar = buildAndroidAppBar();
     }
 
     return Scaffold(
@@ -98,6 +101,15 @@ class _PlannerPageState extends State<PlannerPage> {
           // ),
         ],
       ),
+    );
+  }
+
+  AppBar buildAndroidAppBar() {
+    return AppBar(
+      title: Text('HomeworkPlanner'),
+      actions: [
+        IconButton(onPressed: openFile, icon: Icon(Icons.file_open))
+      ],
     );
   }
 
