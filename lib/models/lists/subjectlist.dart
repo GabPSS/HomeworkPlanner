@@ -8,7 +8,7 @@ part 'subjectlist.g.dart';
 @JsonSerializable()
 class SubjectList {
   int LastIndex = -1;
-  List<Subject> Items = List.empty();
+  List<Subject> Items = List.empty(growable: true);
 
   int add(String subject) {
     //TODO: Implement adding subjects
