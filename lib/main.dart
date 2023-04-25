@@ -19,12 +19,13 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  TaskHost host = TaskHost(saveFile: SaveFile());
   
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(primarySwatch: Colors.blue), 
-        home: PlannerPage()
+        home: PlannerPage(host: host,)
     );
   } 
 }

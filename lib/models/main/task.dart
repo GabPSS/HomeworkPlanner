@@ -1,8 +1,8 @@
-
 // ignore_for_file: non_constant_identifier_names, constant_identifier_names
 
 import 'package:homeworkplanner/models/main/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/material.dart';
 
 part 'task.g.dart';
 
@@ -15,7 +15,7 @@ class Task {
   //TODO: Implement TaskStatus
   int TaskID = -1;
   int SubjectID = -1;
-  String Name = UntitledTaskText;
+  String Name = "";
   DateTime DueDate =
       minimumDateTime; //TODO: Datetime means minimum value or null
   List<String> Description = List.empty();
@@ -42,14 +42,14 @@ class Task {
 
   @override
   String toString() {
-    return Name;
+    if (Name != "") {
+      return Name;
+    } else {
+      return Task.UntitledTaskText;
+    }
   }
 
-  Task(
-      {required this.TaskID,
-      required this.SubjectID,
-      required this.Name,
-      required this.Description});
+  Task();
 
   TaskStatus GetStatus() {
     int status = 0;
@@ -63,6 +63,26 @@ class Task {
     }
 
     return EnumConverters.intToTaskStatus(status);
+  }
+
+  Icon GetIcon() {
+    IconData toReturn;
+    if (IsCompleted) {
+      toReturn = Icons.assignment_turned_in;
+    } else {
+      if (IsOverdue) {
+        toReturn = Icons.assignment_return;
+      } else {
+        IsScheduled && IsImportant
+            ? toReturn = Icons.assignment_late
+            : IsImportant
+                ? toReturn = Icons.assignment_late_outlined
+                : (IsScheduled
+                    ? toReturn = Icons.assignment
+                    : toReturn = Icons.assignment_outlined);
+      }
+    }
+    return Icon(toReturn, size: 32);
   }
 
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);

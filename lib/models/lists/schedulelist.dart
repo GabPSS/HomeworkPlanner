@@ -8,7 +8,7 @@ part 'schedulelist.g.dart';
 @JsonSerializable()
 class ScheduleList {
   var DaysToDisplay; //TODO: Implement DaysToDisplay
-  List<Schedule> Items = List.empty();
+  List<Schedule> Items = List.empty(growable: true);
 
   ScheduleList({List<Schedule>? items}) {
     if (items != null) {

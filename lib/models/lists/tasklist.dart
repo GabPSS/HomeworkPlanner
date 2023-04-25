@@ -8,11 +8,13 @@ part 'tasklist.g.dart';
 @JsonSerializable()
 class TaskList {
   int LastIndex = -1;
-  List<Task> Items = List.empty();
+  List<Task> Items = List.empty(growable: true);
 
   void Add(Task item) {
-    //TODO: Implement task addition
-    throw UnimplementedError('TaskList Add() not implemented');
+    int newIndex = LastIndex + 1;
+    item.TaskID = newIndex;
+    Items.add(item);
+    LastIndex = newIndex;
   }
 
   TaskList({int lastIndex = -1, List<Task>? items}) {
@@ -22,8 +24,8 @@ class TaskList {
     }
   }
 
-  factory TaskList.fromJson(Map<String, dynamic> json) => _$TaskListFromJson(json);
+  factory TaskList.fromJson(Map<String, dynamic> json) =>
+      _$TaskListFromJson(json);
 
   Map<String, dynamic> toJson() => _$TaskListToJson(this);
-
 }

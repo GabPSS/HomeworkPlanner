@@ -12,15 +12,19 @@ import 'package:homeworkplanner/tasksystem/savefile.dart';
 import '../tasksystem/taskhost.dart';
 
 class PlannerPage extends StatefulWidget {
-  const PlannerPage({super.key});
+  TaskHost? host;
+
+  PlannerPage({super.key, this.host});
 
   @override
-  State<PlannerPage> createState() => _PlannerPageState();
+  State<PlannerPage> createState() => _PlannerPageState(host: host);
 }
 
 class _PlannerPageState extends State<PlannerPage> {
   TaskHost? host;
   AppBar? appBar;
+
+  _PlannerPageState({this.host});
 
   void openFile() {
     FilePicker.platform
@@ -30,7 +34,7 @@ class _PlannerPageState extends State<PlannerPage> {
         File(value.files.single.path!).readAsString().then((jsonvalue) {
           setState(() {
             host = TaskHost(saveFile: SaveFile.fromJson(jsonDecode(jsonvalue)));
-            host!.saveFilePath = value.files.single.name;
+            host!.saveFilePath = value.files.single.path;
           });
         });
       }
@@ -43,28 +47,85 @@ class _PlannerPageState extends State<PlannerPage> {
       List<Widget> items = List.empty(growable: true);
       items.add(Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text("File statistics\nTasks: ${host!.saveFile.Tasks.Items.length}\nLast index: ${host!.saveFile.Tasks.LastIndex}\nSubjects: ${host!.saveFile.Subjects.Items.length}"),
+        child: Text(
+            "File statistics\nTasks: ${host!.saveFile.Tasks.Items.length}\nLast index: ${host!.saveFile.Tasks.LastIndex}\nSubjects: ${host!.saveFile.Subjects.Items.length}"),
       ));
-      List<Task> filteredTasks = TaskHost.filterRemainingTasks(host!.saveFile.Tasks.Items);
+
+      List<Task> filteredTasks =
+          TaskHost.filterRemainingTasks(host!.saveFile.Tasks.Items);
+
       for (var i = 0; i < filteredTasks.length; i++) {
         var item = filteredTasks[i];
-        items.add(
-          ListTile(
-            leading: Icon(Icons.assignment_outlined),
-            title: Text(host!.getSubject(item.SubjectID) + " - " + item.Name),
-            subtitle: Text("Due: " + item.DueDate.toString()),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(task: item),));
-            },
-          )
-          //child: Text(host!.getSubject(item.SubjectID) + " - " + item.Name + " - " + item.DueDate.toString()),
-        );
+        items.add(ListTile(
+          leading: item.GetIcon(),
+          title:
+              Text(host!.getSubject(item.SubjectID) + " - " + item.toString()),
+          subtitle: Text("Due: " + item.DueDate.toString()),
+          onTap: () {
+            showTaskPageOrDialog(item);
+          },
+        ));
       }
+
       return ListView(
         children: items,
       );
     } else {
       return Text("Select a file!");
+    }
+  }
+
+  void showTaskPageOrDialog(Task item) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TaskPage(task: item, host: host!),
+          ));
+    } else {
+      _showTaskDialog(item);
+    }
+  }
+
+  Future<void> _showTaskDialog(Task task) async {
+    switch (await showDialog(
+      context: context,
+      builder: ((context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            TaskPageBuilder pageBuilder = TaskPageBuilder(
+                onTaskCompleted: taskCompleted,
+                onTaskMarkedImportant: taskMarkedImportant,
+                setState: setState);
+            return SimpleDialog(
+                title: Text('Editing task'),
+                children: pageBuilder.buildPageContent(task));
+          },
+        );
+      }),
+    )) {
+      default:
+        updateEverything();
+        break;
+    }
+  }
+
+  void taskCompleted(Task task, bool value, Function(Function())? setState) {
+    if (setState != null) {
+      setState(() {
+        task.IsCompleted = value;
+      });
+      updateEverything();
+    }
+  }
+
+  void taskMarkedImportant(
+      Task task, bool value, Function(Function())? setState) {
+    if (setState != null) {
+      setState(() {
+        task.IsImportant = value;
+      });
+      updateEverything();
     }
   }
 
@@ -76,9 +137,15 @@ class _PlannerPageState extends State<PlannerPage> {
 
     return Scaffold(
       appBar: appBar,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          createTask();
+        },
+        child: Icon(Icons.assignment_add),
+      ),
       body: Column(
         children: [
-          createMenuBar(context),
+          buildMenuBar(context),
           Expanded(child: getFileStatistics()),
           // Row(
           //   children: [
@@ -104,16 +171,73 @@ class _PlannerPageState extends State<PlannerPage> {
     );
   }
 
+  void createTask() {
+    Task task = Task();
+    host!.saveFile.Tasks.Add(task);
+    showTaskPageOrDialog(task);
+  }
+
+  void createSaveFile() {
+    setState(() {
+      host = TaskHost(saveFile: SaveFile());
+    });
+  }
+
+  void saveSavefile({String? path, bool noRetry = false}) {
+    path = path ?? (host != null ? host!.saveFilePath : null);
+    if (path != null) {
+      if (host != null) {
+        try {
+          host!.saveFilePath = path;
+          String jsonData = jsonEncode(host!.saveFile.toJson());
+          File(path).writeAsString(jsonData);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved at ' + path)));
+        } catch (e) {
+          if (!noRetry) {
+            saveAs(noRetry: true);
+          } else {
+            //TODO: Implement an alert dialog with some options
+            throw new UnimplementedError("Alert dialog not implemented here");
+          }
+        }
+      }
+    } else {
+      saveAs();
+    }
+  }
+
+  void saveAs({bool noRetry = false}) {
+    if (Platform.isAndroid) {
+      saveSavefile(path: "/storage/emulated/0/Download/Plan.hwpf");
+    } else {
+      FilePicker.platform.saveFile(dialogTitle: "Save plan as...", allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
+        if (value != null) {
+          saveSavefile(path: value);
+        }
+      });
+    }
+  }
+
   AppBar buildAndroidAppBar() {
     return AppBar(
       title: Text('HomeworkPlanner'),
       actions: [
-        IconButton(onPressed: openFile, icon: Icon(Icons.file_open))
+        IconButton(onPressed: openFile, icon: Icon(Icons.file_open)),
+        IconButton(onPressed: saveSavefile, icon: Icon(Icons.save)),
+        IconButton(onPressed: updateEverything, icon: Icon(Icons.refresh))
       ],
     );
   }
 
-  Row createMenuBar(BuildContext context) {
+  void updateEverything({bool showMessage = false}) {
+    setState(() {});
+    if (showMessage) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Updated tasks')));
+    }
+  }
+
+  Row buildMenuBar(BuildContext context) {
     if (Platform.isAndroid) {
       return Row();
     } else {
@@ -127,6 +251,7 @@ class _PlannerPageState extends State<PlannerPage> {
                   menuChildren: [
                     MenuItemButton(
                       child: Text('New'),
+                      onPressed: createSaveFile,
                     ),
                     MenuItemButton(
                       child: Text('Open...'),
@@ -137,13 +262,16 @@ class _PlannerPageState extends State<PlannerPage> {
                     ),
                     SubmenuButton(
                         menuChildren: [], child: Text('Recent files')),
-                    MenuItemButton(child: Text('Save')),
-                    MenuItemButton(child: Text('Save as...')),
+                    MenuItemButton(child: Text('Save'), onPressed: saveSavefile),
+                    MenuItemButton(child: Text('Save as...'), onPressed: saveAs,),
                     MenuItemButton(child: Text('Exit'))
                   ],
                 ),
                 SubmenuButton(menuChildren: [
-                  MenuItemButton(child: Text('New...')),
+                  MenuItemButton(
+                    child: Text('New...'),
+                    onPressed: createTask,
+                  ),
                   MenuItemButton(child: Text('Import...')),
                   SubmenuButton(menuChildren: [
                     MenuItemButton(child: Text('Remaining only')),
