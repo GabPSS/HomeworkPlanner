@@ -8,7 +8,7 @@ part of 'savesettings.dart';
 
 SaveSettings _$SaveSettingsFromJson(Map<String, dynamic> json) => SaveSettings(
       FutureWeeks: json['FutureWeeks'] as int? ?? 2,
-      DaysToDisplay: json['DaysToDisplay'],
+      DaysToDisplay: json['DaysToDisplay'] as int? ?? 62,
       DisplayPreviousTasks: json['DisplayPreviousTasks'] as bool? ?? false,
       SortMethod: json['SortMethod'],
     );

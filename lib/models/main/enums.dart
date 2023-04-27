@@ -11,6 +11,8 @@ enum SortMethod { None, DueDate, ID, Alphabetically, Status, Subject, ExecDate, 
 
 enum DayOfWeek {Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday}
 
+enum DaysToInclude { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+
 class EnumConverters {
   static int taskStatusToInt(TaskStatus value) {
     switch (value) {
@@ -100,5 +102,24 @@ class EnumConverters {
       value = 0;
     }
     return value;
+  }
+
+  static int daysToIncludeToInt(DaysToInclude value) {
+    switch (value) {      
+      case DaysToInclude.Sunday:
+        return 1;
+      case DaysToInclude.Monday:
+        return 2;
+      case DaysToInclude.Tuesday:
+        return 4;
+      case DaysToInclude.Wednesday:
+        return 8;
+      case DaysToInclude.Thursday:
+        return 16;
+      case DaysToInclude.Friday:
+        return 32;
+      case DaysToInclude.Saturday:
+        return 64;
+    }
   }
 }
