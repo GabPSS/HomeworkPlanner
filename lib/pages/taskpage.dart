@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import '../tasksystem/taskhost.dart';
 
@@ -27,7 +28,8 @@ class _TaskPageState extends State<TaskPage> {
     TaskPageBuilder builder = TaskPageBuilder(
         onTaskCompleted: taskCompleted,
         onTaskMarkedImportant: taskMarkedImportant,
-        setState: setState);
+        setState: setState,
+        host: host);
 
     return Scaffold(
         appBar: AppBar(
@@ -55,7 +57,8 @@ class _TaskPageState extends State<TaskPage> {
     });
   }
 
-  void taskMarkedImportant(Task task, bool value, Function(Function()) setState) {
+  void taskMarkedImportant(
+      Task task, bool value, Function(Function()) setState) {
     setState(() {
       task.IsImportant = value;
     });
@@ -66,9 +69,13 @@ class TaskPageBuilder {
   final Function(Task, bool, Function(Function())) onTaskCompleted;
   final Function(Task, bool, Function(Function())) onTaskMarkedImportant;
   final Function(Function()) setState;
+  TaskHost? host;
 
   TaskPageBuilder(
-      {required this.onTaskCompleted, required this.onTaskMarkedImportant, required this.setState});
+      {required this.onTaskCompleted,
+      required this.onTaskMarkedImportant,
+      required this.setState,
+      required this.host});
 
   List<Widget> buildPageContent(Task task) {
     // String desc = "";
@@ -78,6 +85,21 @@ class TaskPageBuilder {
     //     desc += "\n";
     //   }
     // }
+    Subject noSubject = Subject.getNoSubject();
+    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : host!.getSubjectById(task.SubjectID);
+    List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
+    subjectWidgets.add(DropdownMenuItem(child: Text(noSubject.SubjectName), value: noSubject,));
+    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained = host?.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
+      (e) {
+        return DropdownMenuItem<Subject>(
+          value: e,
+          child: Text(e.toString()),
+        );
+      },
+    ).toList();
+    if (subjectWidgetsObtained != null) {
+      subjectWidgets.addAll(subjectWidgetsObtained);
+    }
 
     return [
       Padding(
@@ -97,6 +119,27 @@ class TaskPageBuilder {
         ),
       ),
       Padding(
+        padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: DropdownButtonFormField(
+          decoration: InputDecoration(
+              icon: Icon(Icons.assignment_ind_outlined),
+              border: OutlineInputBorder(),
+              labelText: 'Subject'),
+          items: subjectWidgets,
+          value: selectedSubject,
+          onChanged: (value) {
+            setState(
+              () {
+                if (value != null) {
+                  task.SubjectID = value.SubjectID;
+                  selectedSubject = value;
+                }
+              },
+            );
+          },
+        ),
+      ),
+      Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
           decoration: InputDecoration(
@@ -107,9 +150,11 @@ class TaskPageBuilder {
           keyboardType: TextInputType.multiline,
           initialValue: task.Description,
           onChanged: (value) {
-            setState(() {
-              task.Description = value.trim();
-            },);
+            setState(
+              () {
+                task.Description = value.trim();
+              },
+            );
           },
         ),
       ),

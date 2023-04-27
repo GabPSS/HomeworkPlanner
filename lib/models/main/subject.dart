@@ -20,6 +20,10 @@ class Subject {
     return SubjectName;
   }
 
+  static getNoSubject() {
+    return Subject(SubjectID: -1, SubjectName: defaultMissingSubjectText);
+  }
+
   factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);
   
   Map<String, dynamic> toJson() => _$SubjectToJson(this);

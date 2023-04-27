@@ -24,6 +24,8 @@ class PlannerPage extends StatefulWidget {
 class _PlannerPageState extends State<PlannerPage> {
   TaskHost? host;
   AppBar? appBar;
+  BottomNavigationBar? bottomNav;
+  int bottomNavSelectedIndex = 0;
 
   _PlannerPageState({this.host});
 
@@ -58,14 +60,22 @@ class _PlannerPageState extends State<PlannerPage> {
 
       for (var i = 0; i < filteredTasks.length; i++) {
         var item = filteredTasks[i];
-        items.add(ListTile(
+        Widget itemTile = ListTile(
           leading: item.GetIcon(),
-          title:
-              Text(host!.getSubject(item.SubjectID) + " - " + item.toString()),
+          title: Text((item.SubjectID != -1
+                  ? "${host!.getSubject(item.SubjectID)} - "
+                  : "") +
+              item.toString()),
           subtitle: Text("Due: " + item.DueDate.toString()),
           onTap: () {
             showTaskPageOrDialog(item);
           },
+        );
+        items.add(LongPressDraggable(
+          data: item,
+          dragAnchorStrategy: pointerDragAnchorStrategy,
+          feedback: item.GetIcon(),
+          child: itemTile,
         ));
       }
 
@@ -98,7 +108,8 @@ class _PlannerPageState extends State<PlannerPage> {
             TaskPageBuilder pageBuilder = TaskPageBuilder(
                 onTaskCompleted: taskCompleted,
                 onTaskMarkedImportant: taskMarkedImportant,
-                setState: setState);
+                setState: setState,
+                host: host);
             List<Widget> dialogWidgets = List.empty(growable: true);
             dialogWidgets.addAll(pageBuilder.buildPageContent(task));
             dialogWidgets.add(Padding(
@@ -161,12 +172,53 @@ class _PlannerPageState extends State<PlannerPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget currentPage;
     if (Platform.isAndroid) {
       appBar = buildAndroidAppBar();
+      bottomNav = BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
+        ],
+        currentIndex: bottomNavSelectedIndex,
+        onTap: (value) {
+          setState(() {
+            bottomNavSelectedIndex = value;
+          });
+        },
+      );
+      switch (bottomNavSelectedIndex) {
+        case 0:
+          currentPage = Expanded(child: getPlannerViewWidget());
+          break;
+        case 1:
+          currentPage = Expanded(child: getFileStatistics());
+          break;
+        default:
+          throw UnimplementedError('Page not implemented');
+      }
+    } else {
+      currentPage = Expanded(
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: getPlannerViewWidget(),
+            ),
+            Expanded(
+              child: getFileStatistics(),
+              flex: 1,
+            )
+          ],
+        ),
+      );
     }
 
     return Scaffold(
       appBar: appBar,
+      bottomNavigationBar: bottomNav,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           createTask();
@@ -177,20 +229,7 @@ class _PlannerPageState extends State<PlannerPage> {
         children: [
           buildMenuBar(context),
           // Expanded(child: getFileStatistics()),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: getPlannerViewWidget(),
-                ),
-                Expanded(
-                  child: getFileStatistics(),
-                  flex: 1,
-                )
-              ],
-            ),
-          ),
+          currentPage
         ],
       ),
     );
@@ -201,25 +240,22 @@ class _PlannerPageState extends State<PlannerPage> {
       List<Widget> Rows = List.empty(growable: true);
       List<Widget> Cols;
 
-      int colCount = HelperFunctions.getDayCount(host!.saveFile.Settings.DaysToDisplay);
+      int colCount =
+          HelperFunctions.getDayCount(host!.saveFile.Settings.DaysToDisplay);
       int rowCount = host!.saveFile.Settings.FutureWeeks + 1;
 
-      DateTime selectedDay = HelperFunctions.getSunday(DateTime.now()).add(Duration(days: 6));
+      DateTime selectedDay =
+          HelperFunctions.getSunday(DateTime.now()).add(Duration(days: 6));
       for (int row = 0; row < rowCount; row++) {
         Cols = List.empty(growable: true);
 
         int col = colCount - 1;
-        double DaysToDisplayData = host!.saveFile.Settings.DaysToDisplay.toDouble();
+        double DaysToDisplayData =
+            host!.saveFile.Settings.DaysToDisplay.toDouble();
 
         for (double i = 64; i >= 1; i /= 2) {
           if (DaysToDisplayData - i >= 0) {
-            // PlanningDayPanel control = new PlanningDayPanel(selectedDay, TaskHost);
-            // control.ControlMouseDown += TaskControl_MouseDown;
-            // control.ControlMouseUp += TaskControl_MouseUp;
-            // control.ControlMouseMove += TaskControl_MouseMove;
-            // control.CancelledDayClick += PlanningDay_CancelledDayClick;
-            // PlanningPanel.Controls.Add(control, col, row);
-            Cols.add(Expanded(child: Text(selectedDay.day.toString())));
+            Cols.add(getTaskListForADay(selectedDay));
             DaysToDisplayData -= i;
             col--;
           }
@@ -231,12 +267,43 @@ class _PlannerPageState extends State<PlannerPage> {
         selectedDay = selectedDay.add(Duration(days: 14));
       }
 
-      return Column(
-        children: Rows
-      );
+      return Column(children: Rows);
     } else {
       throw new UnimplementedError('Case not analysed yet');
     }
+  }
+
+  Widget getTaskListForADay(DateTime selectedDay) {
+    List<Widget> taskWidgets = List.empty(growable: true);
+    taskWidgets.add(Text("${selectedDay.day}/${selectedDay.month}"));
+    if (host != null) {
+      List<Task> tasksForDate = host!.getTasksPlannedForDate(selectedDay);
+
+      taskWidgets.addAll(tasksForDate
+          .map<ListTile>((e) => ListTile(
+                title: Text(e.toString()),
+                subtitle: Text(e.DueDate != Task.minimumDateTime
+                    ? "Due ${e.DueDate.toString()}"
+                    : "No due date"),
+              ))
+          .toList());
+    }
+    return Expanded(
+        child: DragTarget(
+      builder: (context, candidateData, rejectedData) {
+        return ListView(
+          children: taskWidgets,
+        );
+      },
+      onAccept: (data) {
+        setState(() {
+          if (data is Task) {
+            (data as Task).ExecDate =
+                DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+          }
+        });
+      },
+    ));
   }
 
   void createTask() {
