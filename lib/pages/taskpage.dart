@@ -71,13 +71,13 @@ class TaskPageBuilder {
       {required this.onTaskCompleted, required this.onTaskMarkedImportant, required this.setState});
 
   List<Widget> buildPageContent(Task task) {
-    String desc = "";
-    for (var i = 0; i < task.Description.length; i++) {
-      desc += task.Description[i];
-      if (i != task.Description.length - 1) {
-        desc += "\n";
-      }
-    }
+    // String desc = "";
+    // for (var i = 0; i < task.Description.length; i++) {
+    //   desc += task.Description[i];
+    //   if (i != task.Description.length - 1) {
+    //     desc += "\n";
+    //   }
+    // }
 
     return [
       Padding(
@@ -105,7 +105,12 @@ class TaskPageBuilder {
               labelText: 'Description'),
           maxLines: Platform.isAndroid ? 15 : 5,
           keyboardType: TextInputType.multiline,
-          initialValue: desc,
+          initialValue: task.Description,
+          onChanged: (value) {
+            setState(() {
+              task.Description = value.trim();
+            },);
+          },
         ),
       ),
       Padding(

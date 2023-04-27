@@ -18,7 +18,7 @@ class Task {
   String Name = "";
   DateTime DueDate =
       minimumDateTime; //TODO: Datetime means minimum value or null
-  List<String> Description = List.empty();
+  String Description = "";
   DateTime? ExecDate;
   DateTime? DateCompleted;
   bool IsImportant = false;
