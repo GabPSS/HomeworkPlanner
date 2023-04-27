@@ -22,20 +22,21 @@ class TaskHost {
     return output;
   }
 
-  Subject getSubjectById(int id) {
+  Subject? getSubjectById(int id) {
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
       if (saveFile.Subjects.Items[i].SubjectID == id) {
         return saveFile.Subjects.Items[i];
       }
     }
-    throw Error();
+    return null;
   }
 
   List<Task> getTasksPlannedForDate(DateTime date) {
-    List<Task> tasks = List<Task>.empty();
+    List<Task> tasks = List<Task>.empty(growable: true);
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].ExecDate != null) {
-        if (saveFile.Tasks.Items[i].ExecDate == date) {
+        DateTime execDate = saveFile.Tasks.Items[i].ExecDate!;
+        if (DateTime(execDate.year,execDate.month,execDate.day) == DateTime(date.year,date.month,date.day)) {
           tasks.add(saveFile.Tasks.Items[i]);
         }
       }
