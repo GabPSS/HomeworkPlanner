@@ -7,11 +7,11 @@ part 'savesettings.g.dart';
 @JsonSerializable()
 class SaveSettings {
   int FutureWeeks;
-  var DaysToDisplay; // TODO: Implement DaysToInclude
+  int DaysToDisplay;
   bool DisplayPreviousTasks;
   var SortMethod; //TODO: Implement SortMethod enum
 
-  SaveSettings({this.FutureWeeks = 2, this.DaysToDisplay, this.DisplayPreviousTasks = false, this.SortMethod});
+  SaveSettings({this.FutureWeeks = 2, this.DaysToDisplay = 62, this.DisplayPreviousTasks = false, this.SortMethod});
 
   factory SaveSettings.fromJson(Map<String, dynamic> json) => _$SaveSettingsFromJson(json);
   

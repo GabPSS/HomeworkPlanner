@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:homeworkplanner/pages/taskpage.dart';
 import 'package:homeworkplanner/tasksystem/savefile.dart';
@@ -48,7 +49,8 @@ class _PlannerPageState extends State<PlannerPage> {
       items.add(Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-            "File statistics\nTasks: ${host!.saveFile.Tasks.Items.length}\nLast index: ${host!.saveFile.Tasks.LastIndex}\nSubjects: ${host!.saveFile.Subjects.Items.length}"),
+            // "File statistics\nTasks: ${host!.saveFile.Tasks.Items.length}\nLast index: ${host!.saveFile.Tasks.LastIndex}\nSubjects: ${host!.saveFile.Subjects.Items.length}"),
+            "All tasks"),
       ));
 
       List<Task> filteredTasks =
@@ -97,9 +99,37 @@ class _PlannerPageState extends State<PlannerPage> {
                 onTaskCompleted: taskCompleted,
                 onTaskMarkedImportant: taskMarkedImportant,
                 setState: setState);
+            List<Widget> dialogWidgets = List.empty(growable: true);
+            dialogWidgets.addAll(pageBuilder.buildPageContent(task));
+            dialogWidgets.add(Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+              child: Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        if (host != null) {
+                          host?.saveFile.Tasks.Items.remove(task);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Task deleted')));
+                        }
+                      },
+                      icon: Icon(Icons.delete)),
+                  Spacer(),
+                  OutlinedButton(
+                    child: Row(
+                      children: [Icon(Icons.check), Text('OK')],
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            ));
+
             return SimpleDialog(
-                title: Text('Editing task'),
-                children: pageBuilder.buildPageContent(task));
+                title: Text('Editing task'), children: dialogWidgets);
           },
         );
       }),
@@ -146,29 +176,67 @@ class _PlannerPageState extends State<PlannerPage> {
       body: Column(
         children: [
           buildMenuBar(context),
-          Expanded(child: getFileStatistics()),
-          // Row(
-          //   children: [
-          //     Expanded(
-          //       child: Table(
-          //         border: TableBorder.all(),
-          //         defaultColumnWidth: IntrinsicColumnWidth(),
-          //         children: [
-          //           TableRow(children: [
-          //             Text('Monday'),
-          //             Text('Tuesday'),
-          //             Text('Wednesday'),
-          //             Text('Thursday'),
-          //             Text('Friday')
-          //           ])
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
+          // Expanded(child: getFileStatistics()),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: getPlannerViewWidget(),
+                ),
+                Expanded(
+                  child: getFileStatistics(),
+                  flex: 1,
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Column getPlannerViewWidget() {
+    if (host != null) {
+      List<Widget> Rows = List.empty(growable: true);
+      List<Widget> Cols;
+
+      int colCount = HelperFunctions.getDayCount(host!.saveFile.Settings.DaysToDisplay);
+      int rowCount = host!.saveFile.Settings.FutureWeeks + 1;
+
+      DateTime selectedDay = HelperFunctions.getSunday(DateTime.now()).add(Duration(days: 6));
+      for (int row = 0; row < rowCount; row++) {
+        Cols = List.empty(growable: true);
+
+        int col = colCount - 1;
+        double DaysToDisplayData = host!.saveFile.Settings.DaysToDisplay.toDouble();
+
+        for (double i = 64; i >= 1; i /= 2) {
+          if (DaysToDisplayData - i >= 0) {
+            // PlanningDayPanel control = new PlanningDayPanel(selectedDay, TaskHost);
+            // control.ControlMouseDown += TaskControl_MouseDown;
+            // control.ControlMouseUp += TaskControl_MouseUp;
+            // control.ControlMouseMove += TaskControl_MouseMove;
+            // control.CancelledDayClick += PlanningDay_CancelledDayClick;
+            // PlanningPanel.Controls.Add(control, col, row);
+            Cols.add(Expanded(child: Text(selectedDay.day.toString())));
+            DaysToDisplayData -= i;
+            col--;
+          }
+          selectedDay = selectedDay.add(Duration(days: -1));
+          // selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
+        }
+        Cols = Cols.reversed.cast<Widget>().toList(growable: true);
+        Rows.add(Expanded(child: Row(children: Cols)));
+        selectedDay = selectedDay.add(Duration(days: 14));
+      }
+
+      return Column(
+        children: Rows
+      );
+    } else {
+      throw new UnimplementedError('Case not analysed yet');
+    }
   }
 
   void createTask() {
@@ -191,7 +259,8 @@ class _PlannerPageState extends State<PlannerPage> {
           host!.saveFilePath = path;
           String jsonData = jsonEncode(host!.saveFile.toJson());
           File(path).writeAsString(jsonData);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved at ' + path)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('File saved at ' + path)));
         } catch (e) {
           if (!noRetry) {
             saveAs(noRetry: true);
@@ -210,7 +279,9 @@ class _PlannerPageState extends State<PlannerPage> {
     if (Platform.isAndroid) {
       saveSavefile(path: "/storage/emulated/0/Download/Plan.hwpf");
     } else {
-      FilePicker.platform.saveFile(dialogTitle: "Save plan as...", allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
+      FilePicker.platform.saveFile(
+          dialogTitle: "Save plan as...",
+          allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
         if (value != null) {
           saveSavefile(path: value);
         }
@@ -262,8 +333,12 @@ class _PlannerPageState extends State<PlannerPage> {
                     ),
                     SubmenuButton(
                         menuChildren: [], child: Text('Recent files')),
-                    MenuItemButton(child: Text('Save'), onPressed: saveSavefile),
-                    MenuItemButton(child: Text('Save as...'), onPressed: saveAs,),
+                    MenuItemButton(
+                        child: Text('Save'), onPressed: saveSavefile),
+                    MenuItemButton(
+                      child: Text('Save as...'),
+                      onPressed: saveAs,
+                    ),
                     MenuItemButton(child: Text('Exit'))
                   ],
                 ),
