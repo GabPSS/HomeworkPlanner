@@ -52,6 +52,7 @@ namespace HomeworkPlanner
             saveToolStripMenuItem.Enabled = enable;
             saveAsToolStripMenuItem.Enabled = enable;
             importToolStripMenuItem1.Enabled = enable;
+            exportAsToolStripMenuItem.Enabled = enable;
 
             tasksToolStripMenuItem.Visible = enable;
             importToolStripMenuItem.Enabled = enable;
@@ -800,6 +801,16 @@ namespace HomeworkPlanner
                 Properties.Settings.Default.Save();
                 UpdateZoomMenu();
                 UpdatePanels();
+            }
+        }
+
+        private void newHomeworkPlannerVersionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new() { Title = "Export as...", Filter = "HomeworkPlannerMobile plan|*.hwpf" };
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                string content = Converter.GetNewTaskSystemJSON(TaskHost.SaveFile);
+                File.WriteAllText(sfd.FileName, content);
             }
         }
     }
