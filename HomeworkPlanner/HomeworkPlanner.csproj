@@ -14,10 +14,10 @@ You should have received a copy of the GNU General Public License along with thi
     <PackageIcon>DesktopIcon.png</PackageIcon>
     <RepositoryUrl>https://github.com/GabPSS/HomeworkPlanner</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Copyright>Copyright (C) Gabriel P. 2022</Copyright>
+    <Copyright>Copyright (C) Gabriel P. 2022-2023</Copyright>
     <Title>HomeworkPlanner - Task planning system</Title>
     <Authors>Gabriel P.</Authors>
-    <Version>1.0.0-alpha.3</Version>
+    <Version>1.0.0-alpha.4</Version>
     <ApplicationIcon>Resources\DesktopIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
