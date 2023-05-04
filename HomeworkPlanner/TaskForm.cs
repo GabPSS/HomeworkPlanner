@@ -37,7 +37,7 @@ namespace HomeworkPlanner
                 if (UpdatedTask.DueDate == DateTime.MinValue)
                 {
                     DueDateTimePicker.Checked = false;
-                    DueDateTimePicker.Value = DateTime.Today.AddDays(1);
+                    DueDateTimePicker.Value = DateTime.Today;
                 }
                 else
                 {
@@ -50,7 +50,7 @@ namespace HomeworkPlanner
             {
                 Text = "Add task";
                 RemoveBtn.Enabled = false;
-                DueDateTimePicker.Value = DateTime.Today.AddDays(1);
+                DueDateTimePicker.Value = DateTime.Today;
             }
 
             //Update task id, subjects, icon
