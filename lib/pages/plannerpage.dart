@@ -2,11 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/pages/subjectspage.dart';
 import 'package:homeworkplanner/pages/taskpage.dart';
 import 'package:homeworkplanner/tasksystem/savefile.dart';
 
@@ -44,38 +43,53 @@ class _PlannerPageState extends State<PlannerPage> {
     });
   }
 
-  //TODO: Remove placeholder method and corresponding UI artifacts
-  Widget getFileStatistics() {
+  Widget getAllTasksPanel() {
     if (host != null) {
       List<Widget> items = List.empty(growable: true);
-      items.add(Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Text(
-            // "File statistics\nTasks: ${host!.saveFile.Tasks.Items.length}\nLast index: ${host!.saveFile.Tasks.LastIndex}\nSubjects: ${host!.saveFile.Subjects.Items.length}"),
-            "All tasks"),
+      items.add(const Padding(
+        padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Text("All tasks"),
       ));
 
-      List<Task> filteredTasks =
-          TaskHost.filterRemainingTasks(host!.saveFile.Tasks.Items);
+      List<Task> allTasks = host!.saveFile.Tasks.Items
+          .where((element) =>
+              host!.saveFile.Settings.DisplayPreviousTasks ||
+              !(element.IsCompleted &&
+                  element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+          .toList();
 
-      for (var i = 0; i < filteredTasks.length; i++) {
-        var item = filteredTasks[i];
+      for (var i = 0; i < allTasks.length; i++) {
+        var task = allTasks[i];
         Widget itemTile = ListTile(
-          leading: item.GetIcon(),
-          title: Text((item.SubjectID != -1
-                  ? "${host!.getSubject(item.SubjectID)} - "
+          leading: IconButton(
+              onPressed: () {
+                setState(() {
+                  task.IsCompleted = !task.IsCompleted;
+                });
+              },
+              icon: task.GetIcon()),
+          title: Text((task.SubjectID != -1
+                  ? "${host!.getSubject(task.SubjectID)} - "
                   : "") +
-              item.toString()),
-          subtitle: Text("Due: " + item.DueDate.toString()),
+              task.toString()),
+          subtitle: Text("Due: ${task.DueDate}"),
           onTap: () {
-            showTaskPageOrDialog(item);
+            showTaskPageOrDialog(task);
           },
         );
         items.add(LongPressDraggable(
-          data: item,
+          data: task,
           dragAnchorStrategy: pointerDragAnchorStrategy,
-          feedback: item.GetIcon(),
+          feedback: task.GetIcon(),
           child: itemTile,
+          onDragStarted: () {
+            setState(() {
+              task.ExecDate = null;
+              if (Platform.isAndroid) {
+                bottomNavSelectedIndex = 0;
+              }
+            });
+          },
         ));
       }
 
@@ -83,7 +97,7 @@ class _PlannerPageState extends State<PlannerPage> {
         children: items,
       );
     } else {
-      return Text("Select a file!");
+      return const Text("Select a file!");
     }
   }
 
@@ -122,13 +136,13 @@ class _PlannerPageState extends State<PlannerPage> {
                         if (host != null) {
                           host?.saveFile.Tasks.Items.remove(task);
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Task deleted')));
+                              const SnackBar(content: Text('Task deleted')));
                         }
                       },
-                      icon: Icon(Icons.delete)),
-                  Spacer(),
+                      icon: const Icon(Icons.delete)),
+                  const Spacer(),
                   OutlinedButton(
-                    child: Row(
+                    child: const Row(
                       children: [Icon(Icons.check), Text('OK')],
                     ),
                     onPressed: () {
@@ -140,7 +154,7 @@ class _PlannerPageState extends State<PlannerPage> {
             ));
 
             return SimpleDialog(
-                title: Text('Editing task'), children: dialogWidgets);
+                title: const Text('Editing task'), children: dialogWidgets);
           },
         );
       }),
@@ -177,9 +191,9 @@ class _PlannerPageState extends State<PlannerPage> {
       appBar = buildAndroidAppBar();
       bottomNav = BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
         ],
         currentIndex: bottomNavSelectedIndex,
@@ -194,7 +208,7 @@ class _PlannerPageState extends State<PlannerPage> {
           currentPage = Expanded(child: getPlannerViewWidget());
           break;
         case 1:
-          currentPage = Expanded(child: getFileStatistics());
+          currentPage = Expanded(child: getAllTasksPanel());
           break;
         default:
           throw UnimplementedError('Page not implemented');
@@ -208,8 +222,8 @@ class _PlannerPageState extends State<PlannerPage> {
               child: getPlannerViewWidget(),
             ),
             Expanded(
-              child: getFileStatistics(),
               flex: 1,
+              child: getAllTasksPanel(),
             )
           ],
         ),
@@ -223,11 +237,11 @@ class _PlannerPageState extends State<PlannerPage> {
         onPressed: () {
           createTask();
         },
-        child: Icon(Icons.assignment_add),
+        child: const Icon(Icons.assignment_add),
       ),
       body: Column(
         children: [
-          buildMenuBar(context),
+          buildDesktopMenuBar(context),
           // Expanded(child: getFileStatistics()),
           currentPage
         ],
@@ -244,8 +258,8 @@ class _PlannerPageState extends State<PlannerPage> {
           HelperFunctions.getDayCount(host!.saveFile.Settings.DaysToDisplay);
       int rowCount = host!.saveFile.Settings.FutureWeeks + 1;
 
-      DateTime selectedDay =
-          HelperFunctions.getSunday(DateTime.now()).add(Duration(days: 6));
+      DateTime selectedDay = HelperFunctions.getSunday(DateTime.now())
+          .add(const Duration(days: 6));
       for (int row = 0; row < rowCount; row++) {
         Cols = List.empty(growable: true);
 
@@ -259,17 +273,17 @@ class _PlannerPageState extends State<PlannerPage> {
             DaysToDisplayData -= i;
             col--;
           }
-          selectedDay = selectedDay.add(Duration(days: -1));
+          selectedDay = selectedDay.add(const Duration(days: -1));
           // selectedDay = selectedDay.Subtract(TimeSpan.FromDays(1));
         }
         Cols = Cols.reversed.cast<Widget>().toList(growable: true);
         Rows.add(Expanded(child: Row(children: Cols)));
-        selectedDay = selectedDay.add(Duration(days: 14));
+        selectedDay = selectedDay.add(const Duration(days: 14));
       }
 
       return Column(children: Rows);
     } else {
-      throw new UnimplementedError('Case not analysed yet');
+      throw UnimplementedError('Case not analysed yet');
     }
   }
 
@@ -298,7 +312,7 @@ class _PlannerPageState extends State<PlannerPage> {
       onAccept: (data) {
         setState(() {
           if (data is Task) {
-            (data as Task).ExecDate =
+            data.ExecDate =
                 DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
           }
         });
@@ -358,26 +372,26 @@ class _PlannerPageState extends State<PlannerPage> {
 
   AppBar buildAndroidAppBar() {
     return AppBar(
-      title: Text('HomeworkPlanner'),
+      title: const Text('HomeworkPlanner'),
       actions: [
-        IconButton(onPressed: openFile, icon: Icon(Icons.file_open)),
-        IconButton(onPressed: saveSavefile, icon: Icon(Icons.save)),
-        IconButton(onPressed: updateEverything, icon: Icon(Icons.refresh))
+        IconButton(onPressed: openFile, icon: const Icon(Icons.file_open)),
+        IconButton(onPressed: saveSavefile, icon: const Icon(Icons.save)),
+        IconButton(onPressed: updateEverything, icon: const Icon(Icons.refresh))
       ],
     );
   }
 
-  void updateEverything({bool showMessage = false}) {
+  void updateEverything({bool showMessage = true}) {
     setState(() {});
     if (showMessage) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Updated tasks')));
+          .showSnackBar(const SnackBar(content: Text('Updated tasks')));
     }
   }
 
-  Row buildMenuBar(BuildContext context) {
+  Row buildDesktopMenuBar(BuildContext context) {
     if (Platform.isAndroid) {
-      return Row();
+      return const Row();
     } else {
       return Row(
         children: [
@@ -385,56 +399,68 @@ class _PlannerPageState extends State<PlannerPage> {
             child: MenuBar(
               children: [
                 SubmenuButton(
-                  child: Text('File'),
                   menuChildren: [
                     MenuItemButton(
-                      child: Text('New'),
                       onPressed: createSaveFile,
+                      child: const Text('New'),
                     ),
                     MenuItemButton(
-                      child: Text('Open...'),
                       onPressed: openFile,
+                      child: const Text('Open...'),
                     ),
-                    MenuItemButton(
+                    const MenuItemButton(
                       child: Text('Import...'),
                     ),
-                    SubmenuButton(
+                    const SubmenuButton(
                         menuChildren: [], child: Text('Recent files')),
                     MenuItemButton(
-                        child: Text('Save'), onPressed: saveSavefile),
+                        onPressed: saveSavefile,
+                        child: const Text('Save')),
                     MenuItemButton(
-                      child: Text('Save as...'),
                       onPressed: saveAs,
+                      child: const Text('Save as...'),
                     ),
-                    MenuItemButton(child: Text('Exit'))
+                    const MenuItemButton(child: Text('Exit'))
                   ],
+                  child: const Text('File'),
                 ),
                 SubmenuButton(menuChildren: [
                   MenuItemButton(
-                    child: Text('New...'),
                     onPressed: createTask,
+                    child: const Text('New...'),
                   ),
-                  MenuItemButton(child: Text('Import...')),
-                  SubmenuButton(menuChildren: [
+                  const MenuItemButton(child: Text('Import...')),
+                  const SubmenuButton(menuChildren: [
                     MenuItemButton(child: Text('Remaining only')),
                     MenuItemButton(child: Text('Everything')),
                   ], child: Text('Unschedule tasks')),
-                  SubmenuButton(menuChildren: [
+                  const SubmenuButton(menuChildren: [
                     MenuItemButton(child: Text('Completed')),
                     MenuItemButton(child: Text('Everything'))
                   ], child: Text('Remove tasks'))
-                ], child: Text('Tasks')),
+                ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
-                  MenuItemButton(child: Text('Day notes...')),
-                  MenuItemButton(child: Text('Report...')),
-                  MenuItemButton(child: Text('Subjects...')),
-                  MenuItemButton(child: Text('Clean up...')),
-                  MenuItemButton(child: Text('Manage schedules...')),
-                ], child: Text('Tools')),
-                SubmenuButton(menuChildren: [
-                  MenuItemButton(child: Text('Get help...')),
+                  const MenuItemButton(child: Text('Day notes...')),
+                  const MenuItemButton(child: Text('Report...')),
                   MenuItemButton(
-                    child: Text('About...'),
+                    child: const Text('Subjects...'),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SubjectsPage(
+                              host: host!,
+                            ),
+                          ));
+                    },
+                  ),
+                  const MenuItemButton(child: Text('Clean up...')),
+                  const MenuItemButton(child: Text('Manage schedules...')),
+                ], child: const Text('Tools')),
+                SubmenuButton(menuChildren: [
+                  const MenuItemButton(child: Text('Get help...')),
+                  MenuItemButton(
+                    child: const Text('About...'),
                     onPressed: () {
                       showAboutDialog(
                           context: context,
@@ -442,7 +468,7 @@ class _PlannerPageState extends State<PlannerPage> {
                           applicationLegalese: '(C) Gabriel P. 2023');
                     },
                   )
-                ], child: Text('About'))
+                ], child: const Text('About'))
               ],
             ),
           ),

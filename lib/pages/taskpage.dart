@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import '../tasksystem/taskhost.dart';
@@ -40,10 +38,10 @@ class _TaskPageState extends State<TaskPage> {
                   host.saveFile.Tasks.Items.remove(task);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context)
-                      .showSnackBar(SnackBar(content: Text('Task deleted')));
+                      .showSnackBar(const SnackBar(content: Text('Task deleted')));
                   ScaffoldMessenger.of(context).setState(() {});
                 },
-                icon: Icon(Icons.delete))
+                icon: const Icon(Icons.delete))
           ],
         ),
         body: ListView(
@@ -105,7 +103,7 @@ class TaskPageBuilder {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             icon: Icon(Icons.assignment_outlined),
             border: OutlineInputBorder(),
             labelText: 'Name',
@@ -119,9 +117,9 @@ class TaskPageBuilder {
         ),
       ),
       Padding(
-        padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: DropdownButtonFormField(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               icon: Icon(Icons.assignment_ind_outlined),
               border: OutlineInputBorder(),
               labelText: 'Subject'),
@@ -142,7 +140,7 @@ class TaskPageBuilder {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
               icon: Icon(Icons.description_outlined),
               border: OutlineInputBorder(),
               labelText: 'Description'),
@@ -167,7 +165,7 @@ class TaskPageBuilder {
               onTaskCompleted(task, value, setState);
             }
           },
-          title: Text('Completed'),
+          title: const Text('Completed'),
         ),
       ),
       Padding(
@@ -179,7 +177,7 @@ class TaskPageBuilder {
               onTaskMarkedImportant(task, value, setState);
             }
           },
-          title: Text('Important'),
+          title: const Text('Important'),
         ),
       )
     ];

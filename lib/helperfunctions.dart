@@ -19,4 +19,6 @@ class HelperFunctions {
     return dateTime
         .add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
   }
+
+  static DateTime getToday() => DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 }
