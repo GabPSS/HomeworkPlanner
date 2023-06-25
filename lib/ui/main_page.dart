@@ -144,7 +144,7 @@ class _MainPageState extends State<MainPage> {
     for (int row = 0; row < rowCount; row++) {
       cols = List.empty(growable: true);
 
-      selectedDay = HelperFunctions.iterateThroughWeek(
+      selectedDay = HelperFunctions.iterateThroughWeekFromDate(
         host.saveFile.Settings.DaysToDisplay.toDouble(),
         selectedDay,
         (p0) {
