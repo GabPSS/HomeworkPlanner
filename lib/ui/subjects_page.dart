@@ -28,7 +28,6 @@ class _SubjectsPageState extends State<SubjectsPage> {
       appBar: AppBar(title: const Text('Edit subjects')),
       body: ListView.builder(
         itemBuilder: (context, index) {
-          // return Text(host.saveFile.Subjects.Items[index].SubjectName);
           return ListTile(
             leading: const Icon(Icons.assignment_ind),
             title: Text(host.saveFile.Subjects.Items[index].SubjectName),
