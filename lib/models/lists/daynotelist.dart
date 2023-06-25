@@ -1,1 +1,0 @@
-//TODO: Remove DayNoteList from existance

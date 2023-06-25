@@ -1,9 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'subjectlist.g.dart';
+part 'subject_list.g.dart';
 
 @JsonSerializable()
 class SubjectList {
@@ -22,6 +20,6 @@ class SubjectList {
     }
   }
   factory SubjectList.fromJson(Map<String, dynamic> json) => _$SubjectListFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$SubjectListToJson(this);
 }

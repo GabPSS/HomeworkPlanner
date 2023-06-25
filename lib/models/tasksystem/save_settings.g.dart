@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'savesettings.dart';
+part of 'save_settings.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -13,8 +13,7 @@ SaveSettings _$SaveSettingsFromJson(Map<String, dynamic> json) => SaveSettings(
       SortMethod: json['SortMethod'],
     );
 
-Map<String, dynamic> _$SaveSettingsToJson(SaveSettings instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$SaveSettingsToJson(SaveSettings instance) => <String, dynamic>{
       'FutureWeeks': instance.FutureWeeks,
       'DaysToDisplay': instance.DaysToDisplay,
       'DisplayPreviousTasks': instance.DisplayPreviousTasks,

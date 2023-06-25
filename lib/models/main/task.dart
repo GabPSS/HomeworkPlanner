@@ -1,6 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
-
-import 'package:homeworkplanner/models/main/enums.dart';
+import 'package:homeworkplanner/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +14,7 @@ class Task {
   int TaskID = -1;
   int SubjectID = -1;
   String Name = "";
-  DateTime DueDate =
-      minimumDateTime; //TODO: Datetime means minimum value or null
+  DateTime DueDate = minimumDateTime; //TODO: Datetime means minimum value or null
   String Description = "";
   DateTime? ExecDate;
   DateTime? DateCompleted;
@@ -35,10 +32,7 @@ class Task {
   }
 
   bool get IsScheduled => ExecDate != null;
-  bool get IsOverdue =>
-      !IsCompleted &&
-      (DueDate.compareTo(DateTime.now()) < 0) &&
-      DueDate != minimumDateTime;
+  bool get IsOverdue => !IsCompleted && (DueDate.compareTo(DateTime.now()) < 0) && DueDate != minimumDateTime;
 
   @override
   String toString() {
@@ -77,9 +71,7 @@ class Task {
             ? toReturn = Icons.assignment_late
             : IsImportant
                 ? toReturn = Icons.assignment_late_outlined
-                : (IsScheduled
-                    ? toReturn = Icons.assignment
-                    : toReturn = Icons.assignment_outlined);
+                : (IsScheduled ? toReturn = Icons.assignment : toReturn = Icons.assignment_outlined);
       }
     }
     return Icon(toReturn, size: 32);

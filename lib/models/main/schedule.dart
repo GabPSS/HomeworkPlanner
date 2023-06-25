@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'schedule.g.dart';
@@ -13,6 +11,6 @@ class Schedule {
   Schedule({required this.StartTime, required this.EndTime});
 
   factory Schedule.fromJson(Map<String, dynamic> json) => _$ScheduleFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ScheduleToJson(this);
 }
