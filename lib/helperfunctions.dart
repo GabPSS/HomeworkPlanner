@@ -1,4 +1,4 @@
-import 'package:homeworkplanner/models/main/enums.dart';
+import 'package:homeworkplanner/enums.dart';
 
 class HelperFunctions {
   static int getDayCount(int data) {
@@ -16,9 +16,21 @@ class HelperFunctions {
   static DateTime getSunday(DateTime dateTime) {
     DayOfWeek dayOfWeek = EnumConverters.weekdayToDayOfWeek(dateTime.weekday);
 
-    return dateTime
-        .add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
+    return dateTime.add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
   }
 
   static DateTime getToday() => DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
+  /// WARNING: [startDate] MUST be a saturday for this method to work
+  static DateTime iterateThroughWeek(double daysOfWeekSum, DateTime startDate, Function(DateTime) callback) {
+    DateTime selectedDate = startDate;
+    for (double dayOfWeek = 64; dayOfWeek > 0; dayOfWeek /= 2) {
+      if (daysOfWeekSum - dayOfWeek >= 0) {
+        callback(selectedDate);
+        daysOfWeekSum -= dayOfWeek;
+      }
+      selectedDate = selectedDate.add(const Duration(days: -1));
+    }
+    return selectedDate;
+  }
 }

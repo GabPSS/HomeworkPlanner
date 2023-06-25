@@ -13,6 +13,6 @@ class DayNote {
   DayNote({required this.Date, required this.Message});
 
   factory DayNote.fromJson(Map<String, dynamic> json) => _$DayNoteFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$DayNoteToJson(this);
 }

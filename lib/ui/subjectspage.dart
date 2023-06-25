@@ -1,7 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
-import 'package:homeworkplanner/tasksystem/taskhost.dart';
+import 'package:homeworkplanner/models/tasksystem/taskhost.dart';
 
 class SubjectsPage extends StatefulWidget {
   TaskHost host;
@@ -22,8 +21,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
     List<Widget> subjectWidgets = List<Widget>.empty(growable: true);
 
     for (var i = 0; i < host.saveFile.Subjects.Items.length; i++) {
-      subjectWidgets.add(Text(
-          host.saveFile.Subjects.Items[i].SubjectName)); //TODO: Stopped here
+      subjectWidgets.add(Text(host.saveFile.Subjects.Items[i].SubjectName));
     }
 
     return Scaffold(
@@ -32,7 +30,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
         itemBuilder: (context, index) {
           // return Text(host.saveFile.Subjects.Items[index].SubjectName);
           return ListTile(
-            leading: const Icon(Icons.assignment_ind, color: Colors.red), //TODO: Stopped here
+            leading: const Icon(Icons.assignment_ind),
             title: Text(host.saveFile.Subjects.Items[index].SubjectName),
           );
         },
@@ -41,6 +39,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
+            //TODO: Swap this out when add function is implemented
             // host.saveFile.Subjects.add("Hello!");
             host.saveFile.Subjects.Items.add(Subject(SubjectName: "Hello", SubjectID: 5));
           });

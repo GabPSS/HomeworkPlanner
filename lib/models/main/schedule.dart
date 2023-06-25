@@ -13,6 +13,6 @@ class Schedule {
   Schedule({required this.StartTime, required this.EndTime});
 
   factory Schedule.fromJson(Map<String, dynamic> json) => _$ScheduleFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$ScheduleToJson(this);
 }

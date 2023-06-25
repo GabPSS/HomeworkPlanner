@@ -14,6 +14,6 @@ class SaveSettings {
   SaveSettings({this.FutureWeeks = 2, this.DaysToDisplay = 62, this.DisplayPreviousTasks = false, this.SortMethod});
 
   factory SaveSettings.fromJson(Map<String, dynamic> json) => _$SaveSettingsFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$SaveSettingsToJson(this);
 }

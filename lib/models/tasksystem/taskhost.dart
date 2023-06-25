@@ -1,17 +1,16 @@
 import 'package:homeworkplanner/models/lists/tasklist.dart';
-import 'package:homeworkplanner/tasksystem/savefile.dart';
+import 'package:homeworkplanner/models/tasksystem/savefile.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 
-import '../models/main/enums.dart';
-import '../models/main/task.dart';
+import '../../enums.dart';
+import '../main/task.dart';
 
 class TaskHost {
   String? saveFilePath;
-  SaveFile saveFile; //TODO: Update code with lowercase saveFile
+  SaveFile saveFile;
 
   TaskHost({required this.saveFile});
 
-  ///Obtains a subject name given its ID
   String getSubject(int id) {
     String output = Subject.defaultMissingSubjectText;
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
@@ -36,7 +35,7 @@ class TaskHost {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].ExecDate != null) {
         DateTime execDate = saveFile.Tasks.Items[i].ExecDate!;
-        if (DateTime(execDate.year,execDate.month,execDate.day) == DateTime(date.year,date.month,date.day)) {
+        if (DateTime(execDate.year, execDate.month, execDate.day) == DateTime(date.year, date.month, date.day)) {
           tasks.add(saveFile.Tasks.Items[i]);
         }
       }
@@ -44,7 +43,6 @@ class TaskHost {
     return tasks;
   }
 
-  /// Gets the index of a task in SaveFile.Tasks.Items based on the task ID
   int GetTaskIndexById(int id) {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].TaskID == id) {
@@ -54,10 +52,6 @@ class TaskHost {
     return -1;
   }
 
-  /// Unschedules all tasks from the SaveFile
-  ///
-  /// This makes for the effect where when excludeCompleted is false, everything is unscheduled
-  /// However, when it's true, only the items that are not completed are unscheduled
   void unscheduleAllTasks({bool excludeCompleted = false}) {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (!saveFile.Tasks.Items[i].IsCompleted || !excludeCompleted) {
@@ -66,11 +60,9 @@ class TaskHost {
     }
   }
 
-  /// Sorts a list of tasks using the given sortMethod
   static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
-        //tasks.Sort((Task x, Task y) => { return x.DueDate == y.DueDate ? 0 : x.DueDate > y.DueDate ? 1 : -1; });
         tasks.sort((Task x, Task y) => x.DueDate.compareTo(y.DueDate));
         break;
       case SortMethod.ID:
@@ -80,24 +72,16 @@ class TaskHost {
         tasks.sort((Task x, Task y) => x.Name.compareTo(y.Name));
         break;
       case SortMethod.Status:
-        tasks.sort((Task x, Task y) =>
-            EnumConverters.taskStatusToInt(x.GetStatus()) -
-            EnumConverters.taskStatusToInt(y.GetStatus()));
+        tasks.sort((Task x, Task y) => EnumConverters.taskStatusToInt(x.GetStatus()) - EnumConverters.taskStatusToInt(y.GetStatus()));
         break;
       case SortMethod.Subject:
         tasks.sort((Task x, Task y) => x.SubjectID - y.SubjectID);
         break;
       case SortMethod.ExecDate:
-        tasks.sort((Task x, Task y) => y.ExecDate != null
-            ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1)
-            : -1);
+        tasks.sort((Task x, Task y) => y.ExecDate != null ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1) : -1);
         break;
       case SortMethod.DateCompleted:
-        tasks.sort((Task x, Task y) => y.DateCompleted != null
-            ? (x.DateCompleted != null
-                ? x.DateCompleted!.compareTo(y.DateCompleted!)
-                : 1)
-            : -1);
+        tasks.sort((Task x, Task y) => y.DateCompleted != null ? (x.DateCompleted != null ? x.DateCompleted!.compareTo(y.DateCompleted!) : 1) : -1);
         break;
       default:
         break;
@@ -105,8 +89,7 @@ class TaskHost {
     return tasks;
   }
 
-  void RemoveCompletedTasks() => saveFile.Tasks.Items.removeWhere(
-      (x) => x.IsCompleted); //TODO: Test if this is the right order
+  void RemoveCompletedTasks() => saveFile.Tasks.Items.removeWhere((x) => x.IsCompleted); //TODO: Test if this is the right order
 
   void RemoveAllTasks() => saveFile.Tasks = TaskList();
 
@@ -136,8 +119,7 @@ class TaskHost {
   }
 
   void SortSubjectsByName() {
-    saveFile.Subjects.Items
-        .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
+    saveFile.Subjects.Items.sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
   }
 
   DateTime? GetNextSubjectScheduledDate(int subjectId, DateTime startDate) {

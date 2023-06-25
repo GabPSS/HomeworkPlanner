@@ -22,6 +22,6 @@ class SubjectList {
     }
   }
   factory SubjectList.fromJson(Map<String, dynamic> json) => _$SubjectListFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$SubjectListToJson(this);
 }
