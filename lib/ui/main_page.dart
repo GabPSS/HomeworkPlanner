@@ -32,15 +32,7 @@ class _MainPageState extends State<MainPage> {
     Widget currentPage;
     if (Platform.isAndroid) {
       appBar = buildAndroidAppBar();
-      bottomNav = BottomNavigationBar(
-        items: [const BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Planner"), const BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Tasks')],
-        currentIndex: bottomNavSelectedIndex,
-        onTap: (value) {
-          setState(() {
-            bottomNavSelectedIndex = value;
-          });
-        },
-      );
+      bottomNav = buildAndroidBottomNav();
       switch (bottomNavSelectedIndex) {
         case 0:
           currentPage = Expanded(child: buildPlannerViewPanel());
@@ -78,11 +70,7 @@ class _MainPageState extends State<MainPage> {
         child: const Icon(Icons.assignment_add),
       ),
       body: Column(
-        children: [
-          buildDesktopMenuBar(context),
-          // Expanded(child: getFileStatistics()),
-          currentPage
-        ],
+        children: [buildDesktopMenuBar(context), currentPage],
       ),
     );
   }
@@ -94,7 +82,11 @@ class _MainPageState extends State<MainPage> {
       child: Text("All tasks"),
     ));
 
-    List<Task> allTasks = host.saveFile.Tasks.Items.where((element) => host.saveFile.Settings.DisplayPreviousTasks || !(element.IsCompleted && element.DateCompleted!.isBefore(HelperFunctions.getToday()))).toList();
+    List<Task> allTasks = host.saveFile.Tasks.Items
+        .where((element) =>
+            host.saveFile.Settings.DisplayPreviousTasks ||
+            !(element.IsCompleted && element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+        .toList();
 
     for (var i = 0; i < allTasks.length; i++) {
       var task = allTasks[i];
@@ -190,7 +182,26 @@ class _MainPageState extends State<MainPage> {
   AppBar buildAndroidAppBar() {
     return AppBar(
       title: const Text('HomeworkPlanner'),
-      actions: [IconButton(onPressed: openFile, icon: const Icon(Icons.file_open)), IconButton(onPressed: saveSavefile, icon: const Icon(Icons.save)), IconButton(onPressed: updateTasks, icon: const Icon(Icons.refresh))],
+      actions: [
+        IconButton(onPressed: openFile, icon: const Icon(Icons.file_open)),
+        IconButton(onPressed: saveSavefile, icon: const Icon(Icons.save)),
+        IconButton(onPressed: updateTasks, icon: const Icon(Icons.refresh))
+      ],
+    );
+  }
+
+  BottomNavigationBar buildAndroidBottomNav() {
+    return BottomNavigationBar(
+      items: [
+        const BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
+        const BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
+      ],
+      currentIndex: bottomNavSelectedIndex,
+      onTap: (value) {
+        setState(() {
+          bottomNavSelectedIndex = value;
+        });
+      },
     );
   }
 
@@ -236,7 +247,9 @@ class _MainPageState extends State<MainPage> {
                     MenuItemButton(child: Text('Remaining only')),
                     MenuItemButton(child: Text('Everything')),
                   ], child: Text('Unschedule tasks')),
-                  const SubmenuButton(menuChildren: [MenuItemButton(child: Text('Completed')), MenuItemButton(child: Text('Everything'))], child: Text('Remove tasks'))
+                  const SubmenuButton(
+                      menuChildren: [MenuItemButton(child: Text('Completed')), MenuItemButton(child: Text('Everything'))],
+                      child: Text('Remove tasks'))
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Day notes...')),
@@ -261,7 +274,8 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('About...'),
                     onPressed: () {
-                      showAboutDialog(context: context, applicationName: 'HomeworkPlanner', applicationLegalese: '(C) Gabriel P. 2023');
+                      showAboutDialog(
+                          context: context, applicationName: 'HomeworkPlanner', applicationLegalese: '(C) Gabriel P. 2023');
                     },
                   )
                 ], child: const Text('About'))
@@ -291,7 +305,8 @@ class _MainPageState extends State<MainPage> {
       builder: ((context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            TaskEditor pageBuilder = TaskEditor(onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
+            TaskEditor pageBuilder = TaskEditor(
+                onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
             List<Widget> dialogWidgets = List.empty(growable: true);
             dialogWidgets.addAll(pageBuilder.build(task));
             dialogWidgets.add(Padding(
