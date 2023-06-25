@@ -1,8 +1,6 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:json_annotation/json_annotation.dart';
 
-part 'daynote.g.dart';
+part 'day_note.g.dart';
 
 @JsonSerializable()
 class DayNote {

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, constant_identifier_names
-
 import 'package:homeworkplanner/enums.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
-import 'package:homeworkplanner/models/tasksystem/taskhost.dart';
+import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 class SubjectsPage extends StatefulWidget {
   TaskHost host;

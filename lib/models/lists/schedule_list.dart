@@ -1,9 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:homeworkplanner/models/main/schedule.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'schedulelist.g.dart';
+part 'schedule_list.g.dart';
 
 @JsonSerializable()
 class ScheduleList {

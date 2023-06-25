@@ -1,9 +1,7 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'tasklist.g.dart';
+part 'task_list.g.dart';
 
 @JsonSerializable()
 class TaskList {

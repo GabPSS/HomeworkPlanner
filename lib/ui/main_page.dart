@@ -4,11 +4,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
-import 'package:homeworkplanner/ui/subjectspage.dart';
-import 'package:homeworkplanner/ui/taskpage.dart';
-import 'package:homeworkplanner/models/tasksystem/savefile.dart';
+import 'package:homeworkplanner/ui/subjects_page.dart';
+import 'package:homeworkplanner/ui/task_page.dart';
+import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 
-import '../models/tasksystem/taskhost.dart';
+import '../models/tasksystem/task_host.dart';
 
 class MainPage extends StatefulWidget {
   TaskHost host;

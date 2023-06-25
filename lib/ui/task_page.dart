@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
-import '../models/tasksystem/taskhost.dart';
+import '../models/tasksystem/task_host.dart';
 
 class TaskEditorPage extends StatefulWidget {
   Task task;

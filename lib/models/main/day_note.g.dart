@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daynote.dart';
+part of 'day_note.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

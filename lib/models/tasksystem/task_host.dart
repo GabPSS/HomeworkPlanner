@@ -1,5 +1,5 @@
-import 'package:homeworkplanner/models/lists/tasklist.dart';
-import 'package:homeworkplanner/models/tasksystem/savefile.dart';
+import 'package:homeworkplanner/models/lists/task_list.dart';
+import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 
 import '../../enums.dart';

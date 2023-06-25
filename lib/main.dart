@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/ui/main_page.dart';
-import 'package:homeworkplanner/models/tasksystem/savefile.dart';
-import 'package:homeworkplanner/models/tasksystem/taskhost.dart';
+import 'package:homeworkplanner/models/tasksystem/save_file.dart';
+import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 void main() {
   runApp(const MainApp());

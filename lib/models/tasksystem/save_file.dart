@@ -1,13 +1,11 @@
-// ignore_for_file: non_constant_identifier_names
-
-import 'package:homeworkplanner/models/lists/schedulelist.dart';
-import 'package:homeworkplanner/models/lists/subjectlist.dart';
-import 'package:homeworkplanner/models/lists/tasklist.dart';
-import 'package:homeworkplanner/models/main/daynote.dart';
-import 'package:homeworkplanner/models/tasksystem/savesettings.dart';
+import 'package:homeworkplanner/models/lists/schedule_list.dart';
+import 'package:homeworkplanner/models/lists/subject_list.dart';
+import 'package:homeworkplanner/models/lists/task_list.dart';
+import 'package:homeworkplanner/models/main/day_note.dart';
+import 'package:homeworkplanner/models/tasksystem/save_settings.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'savefile.g.dart';
+part 'save_file.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class SaveFile {
