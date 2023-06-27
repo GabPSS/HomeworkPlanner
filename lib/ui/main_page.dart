@@ -89,7 +89,8 @@ class _MainPageState extends State<MainPage> {
         .toList();
 
     for (var i = 0; i < allTasks.length; i++) {
-      var task = allTasks[i];
+      Task task = allTasks[i];
+      String? subjectName = host.getSubjectNameById(task.SubjectID);
       Widget itemTile = ListTile(
         leading: IconButton(
             onPressed: () {
@@ -98,7 +99,7 @@ class _MainPageState extends State<MainPage> {
               });
             },
             icon: task.GetIcon()),
-        title: Text((task.SubjectID != -1 ? "${host.getSubject(task.SubjectID)} - " : "") + task.toString()),
+        title: Text((task.SubjectID != -1 && subjectName != null ? "${subjectName} - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
           showTaskEditor(task);

@@ -35,6 +35,13 @@ class _SubjectsPageState extends State<SubjectsPage> {
             onTap: () {
               showSubjectEditorDialog(context, subject);
             },
+            trailing: IconButton(
+                onPressed: () {
+                  setState(() {
+                    host.saveFile.Subjects.Items.remove(subject);
+                  });
+                },
+                icon: Icon(Icons.delete)),
           );
         },
         itemCount: host.saveFile.Subjects.Items.length,
