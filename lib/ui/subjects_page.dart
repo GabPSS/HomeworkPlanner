@@ -37,11 +37,30 @@ class _SubjectsPageState extends State<SubjectsPage> {
             },
             trailing: IconButton(
                 onPressed: () {
-                  setState(() {
-                    host.saveFile.Subjects.Items.remove(subject);
-                  });
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Delete '${subject.SubjectName}'?"),
+                      content: const Text("You won't be able to recover it once it's gone"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel')),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              setState(() {
+                                host.saveFile.Subjects.Items.remove(subject);
+                              });
+                            },
+                            child: const Text("Delete")),
+                      ],
+                    ),
+                  );
                 },
-                icon: Icon(Icons.delete)),
+                icon: const Icon(Icons.delete)),
           );
         },
         itemCount: host.saveFile.Subjects.Items.length,
