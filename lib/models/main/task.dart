@@ -1,4 +1,5 @@
 import 'package:homeworkplanner/enums.dart';
+import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class Task {
   int TaskID = -1;
   int SubjectID = -1;
   String Name = "";
-  DateTime DueDate = minimumDateTime; //TODO: Datetime means minimum value or null
+  DateTime? DueDate;
   String Description = "";
   DateTime? ExecDate;
   DateTime? DateCompleted;
@@ -24,7 +25,7 @@ class Task {
   set IsCompleted(bool value) {
     DateCompleted = DateCompleted == null
         ? value
-            ? DateTime.now()
+            ? HelperFunctions.getToday()
             : null
         : !value
             ? null
@@ -32,7 +33,7 @@ class Task {
   }
 
   bool get IsScheduled => ExecDate != null;
-  bool get IsOverdue => !IsCompleted && (DueDate.compareTo(DateTime.now()) < 0) && DueDate != minimumDateTime;
+  bool get IsOverdue => !IsCompleted && (DueDate != null ? DueDate!.compareTo(HelperFunctions.getToday()) < 0 : false);
 
   @override
   String toString() {

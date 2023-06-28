@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
@@ -23,7 +24,8 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
 
   @override
   Widget build(BuildContext context) {
-    TaskEditor builder = TaskEditor(onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
+    TaskEditor builder =
+        TaskEditor(onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
 
     return Scaffold(
         appBar: AppBar(
@@ -85,9 +87,23 @@ class TaskEditor {
       subjectWidgets.addAll(subjectWidgetsObtained);
     }
 
+    var dateTimeFormField = DateTimeField(
+      decoration: InputDecoration(
+        icon: Icon(Icons.date_range),
+        border: OutlineInputBorder(),
+        labelText: 'Due date',
+      ),
+      mode: DateTimeFieldPickerMode.date,
+      selectedDate: task.DueDate,
+      onDateSelected: (value) {
+        setState(() {
+          task.DueDate = value;
+        });
+      },
+    );
     return [
       Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
         child: TextFormField(
           decoration: const InputDecoration(
             icon: Icon(Icons.assignment_outlined),
@@ -105,7 +121,8 @@ class TaskEditor {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: DropdownButtonFormField(
-          decoration: const InputDecoration(icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
+          decoration: const InputDecoration(
+              icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
           items: subjectWidgets,
           value: selectedSubject,
           onChanged: (value) {
@@ -122,8 +139,29 @@ class TaskEditor {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: dateTimeFormField,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: TextButton(
+                  onPressed: () {
+                    setState(() {
+                      task.DueDate = null;
+                    });
+                  },
+                  child: Text('CLEAR')),
+            )
+          ],
+        ),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
-          decoration: const InputDecoration(icon: Icon(Icons.description_outlined), border: OutlineInputBorder(), labelText: 'Description'),
+          decoration: const InputDecoration(
+              icon: Icon(Icons.description_outlined), border: OutlineInputBorder(), labelText: 'Description'),
           maxLines: Platform.isAndroid ? 15 : 5,
           keyboardType: TextInputType.multiline,
           initialValue: task.Description,
@@ -161,5 +199,57 @@ class TaskEditor {
         ),
       )
     ];
+  }
+
+  static Future<void> showEditorDialog({
+    required BuildContext context,
+    required Task task,
+    required TaskHost host,
+    required Function(Task, bool, Function(Function())) onTaskCompleted,
+    required Function(Task, bool, Function(Function())) onTaskMarkedImportant,
+    Function()? onClose,
+  }) async {
+    switch (await showDialog(
+      context: context,
+      builder: ((context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            TaskEditor pageBuilder = TaskEditor(
+                onTaskCompleted: onTaskCompleted, onTaskMarkedImportant: onTaskMarkedImportant, setState: setState, host: host);
+            List<Widget> dialogWidgets = List.empty(growable: true);
+            dialogWidgets.addAll(pageBuilder.build(task));
+            dialogWidgets.add(Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
+              child: Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        host.saveFile.Tasks.Items.remove(task);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
+                      },
+                      icon: const Icon(Icons.delete)),
+                  const Spacer(),
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
+            ));
+
+            return SimpleDialog(title: const Text('Editing task'), children: dialogWidgets);
+          },
+        );
+      }),
+    )) {
+      default:
+        if (onClose != null) {
+          onClose();
+        }
+        break;
+    }
   }
 }

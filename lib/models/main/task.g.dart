@@ -10,7 +10,8 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task()
   ..TaskID = json['TaskID'] as int
   ..SubjectID = json['SubjectID'] as int
   ..Name = json['Name'] as String
-  ..DueDate = DateTime.parse(json['DueDate'] as String)
+  ..DueDate =
+      json['DueDate'] == null ? null : DateTime.parse(json['DueDate'] as String)
   ..Description = json['Description'] as String
   ..ExecDate = json['ExecDate'] == null
       ? null
@@ -25,7 +26,7 @@ Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
       'TaskID': instance.TaskID,
       'SubjectID': instance.SubjectID,
       'Name': instance.Name,
-      'DueDate': instance.DueDate.toIso8601String(),
+      'DueDate': instance.DueDate?.toIso8601String(),
       'Description': instance.Description,
       'ExecDate': instance.ExecDate?.toIso8601String(),
       'DateCompleted': instance.DateCompleted?.toIso8601String(),

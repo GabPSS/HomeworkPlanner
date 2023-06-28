@@ -63,7 +63,7 @@ class TaskHost {
   static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
-        tasks.sort((Task x, Task y) => x.DueDate.compareTo(y.DueDate));
+        tasks.sort((Task x, Task y) => y.DueDate == null ? -1 : (x.DueDate?.compareTo(y.DueDate!) ?? -1));
         break;
       case SortMethod.ID:
         tasks.sort((Task x, Task y) => x.TaskID - y.TaskID);
@@ -72,7 +72,8 @@ class TaskHost {
         tasks.sort((Task x, Task y) => x.Name.compareTo(y.Name));
         break;
       case SortMethod.Status:
-        tasks.sort((Task x, Task y) => EnumConverters.taskStatusToInt(x.GetStatus()) - EnumConverters.taskStatusToInt(y.GetStatus()));
+        tasks.sort(
+            (Task x, Task y) => EnumConverters.taskStatusToInt(x.GetStatus()) - EnumConverters.taskStatusToInt(y.GetStatus()));
         break;
       case SortMethod.Subject:
         tasks.sort((Task x, Task y) => x.SubjectID - y.SubjectID);
@@ -81,7 +82,8 @@ class TaskHost {
         tasks.sort((Task x, Task y) => y.ExecDate != null ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1) : -1);
         break;
       case SortMethod.DateCompleted:
-        tasks.sort((Task x, Task y) => y.DateCompleted != null ? (x.DateCompleted != null ? x.DateCompleted!.compareTo(y.DateCompleted!) : 1) : -1);
+        tasks.sort((Task x, Task y) =>
+            y.DateCompleted != null ? (x.DateCompleted != null ? x.DateCompleted!.compareTo(y.DateCompleted!) : 1) : -1);
         break;
       default:
         break;

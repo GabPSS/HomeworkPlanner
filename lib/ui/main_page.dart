@@ -295,52 +295,13 @@ class _MainPageState extends State<MainPage> {
             builder: (context) => TaskEditorPage(task: item, host: host),
           ));
     } else {
-      _showTaskEditorDialog(item);
-    }
-  }
-
-  Future<void> _showTaskEditorDialog(Task task) async {
-    switch (await showDialog(
-      context: context,
-      builder: ((context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            TaskEditor pageBuilder = TaskEditor(
-                onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
-            List<Widget> dialogWidgets = List.empty(growable: true);
-            dialogWidgets.addAll(pageBuilder.build(task));
-            dialogWidgets.add(Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        host.saveFile.Tasks.Items.remove(task);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
-                      },
-                      icon: const Icon(Icons.delete)),
-                  const Spacer(),
-                  OutlinedButton(
-                    child: const Row(
-                      children: [Icon(Icons.check), Text('OK')],
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ],
-              ),
-            ));
-
-            return SimpleDialog(title: const Text('Editing task'), children: dialogWidgets);
-          },
-        );
-      }),
-    )) {
-      default:
-        updateTasks();
-        break;
+      TaskEditor.showEditorDialog(
+          context: context,
+          task: item,
+          host: host,
+          onTaskCompleted: taskCompleted,
+          onTaskMarkedImportant: taskMarkedImportant,
+          onClose: updateTasks);
     }
   }
 
