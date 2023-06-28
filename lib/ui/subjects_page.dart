@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
@@ -9,6 +11,27 @@ class SubjectsPage extends StatefulWidget {
 
   @override
   State<SubjectsPage> createState() => _SubjectsPageState(host: host);
+
+  static void show(BuildContext context, TaskHost host) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubjectsPage(
+              host: host,
+            ),
+          ));
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SubjectsPage(host: host),
+          );
+        },
+      );
+    }
+  }
 }
 
 class _SubjectsPageState extends State<SubjectsPage> {

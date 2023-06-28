@@ -258,7 +258,7 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Subjects...'),
                     onPressed: () {
-                      showSubjectsPage(context);
+                      SubjectsPage.show(context, host);
                     },
                   ),
                   const MenuItemButton(child: Text('Clean up...')),
@@ -278,27 +278,6 @@ class _MainPageState extends State<MainPage> {
             ),
           ),
         ],
-      );
-    }
-  }
-
-  void showSubjectsPage(BuildContext context) {
-    if (Platform.isAndroid) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SubjectsPage(
-              host: host,
-            ),
-          ));
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            child: SubjectsPage(host: host),
-          );
-        },
       );
     }
   }

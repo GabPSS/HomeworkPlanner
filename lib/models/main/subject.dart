@@ -13,13 +13,13 @@ class Subject {
   //TODO: Implement autoincrementing logic and remove default values
   Subject({this.SubjectName = "", this.SubjectID = 0});
 
+  Subject.editSubjectsTemplate({this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
+
+  Subject.noSubjectTemplate({this.SubjectID: -1, this.SubjectName: defaultMissingSubjectText});
+
   @override
   String toString() {
     return SubjectName;
-  }
-
-  static getNoSubject() {
-    return Subject(SubjectID: -1, SubjectName: defaultMissingSubjectText);
   }
 
   factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);

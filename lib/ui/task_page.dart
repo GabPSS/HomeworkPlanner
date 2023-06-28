@@ -1,11 +1,10 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/subjects_page.dart';
 import '../models/tasksystem/task_host.dart';
 
 class TaskEditorPage extends StatefulWidget {
@@ -13,7 +12,7 @@ class TaskEditorPage extends StatefulWidget {
   final TaskHost host;
   final bool isAdding;
 
-  TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host});
+  const TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host});
 
   @override
   State<TaskEditorPage> createState() => _TaskEditorPageState();
@@ -39,7 +38,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
           ],
         ),
         body: ListView(
-          children: builder.build(widget.task),
+          children: builder.build(context, widget.task),
         ));
   }
 }
@@ -48,19 +47,24 @@ class TaskEditor {
   final Function() onTaskUpdated;
   final Function(Function()) setState;
   bool isAdding;
-  TaskHost? host;
+  TaskHost host;
 
   TaskEditor({this.isAdding = false, required this.onTaskUpdated, required this.setState, required this.host});
 
-  List<Widget> build(Task task) {
-    Subject noSubject = Subject.getNoSubject();
-    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : host!.getSubjectById(task.SubjectID);
+  List<Widget> build(BuildContext context, Task task) {
+    Subject noSubject = Subject.noSubjectTemplate();
+    Subject editSubjects = Subject.editSubjectsTemplate();
+    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : host.getSubjectById(task.SubjectID);
     List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
     subjectWidgets.add(DropdownMenuItem(
       value: noSubject,
       child: Text(noSubject.SubjectName),
     ));
-    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained = host?.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
+    subjectWidgets.add(DropdownMenuItem(
+      value: editSubjects,
+      child: Text(editSubjects.SubjectName),
+    ));
+    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained = host.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
       (e) {
         return DropdownMenuItem<Subject>(
           value: e,
@@ -68,12 +72,10 @@ class TaskEditor {
         );
       },
     ).toList();
-    if (subjectWidgetsObtained != null) {
-      subjectWidgets.addAll(subjectWidgetsObtained);
-    }
+    subjectWidgets.addAll(subjectWidgetsObtained);
 
     var dateTimeFormField = DateTimeField(
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         icon: Icon(Icons.date_range),
         border: OutlineInputBorder(),
         labelText: 'Due date',
@@ -113,6 +115,13 @@ class TaskEditor {
           items: subjectWidgets,
           value: selectedSubject,
           onChanged: (value) {
+            if (value == editSubjects) {
+              // setState(() {
+              selectedSubject = noSubject;
+              // });
+              SubjectsPage.show(context, host);
+              return;
+            }
             setState(
               () {
                 if (value != null) {
@@ -141,7 +150,7 @@ class TaskEditor {
                     });
                     onTaskUpdated();
                   },
-                  child: Text('CLEAR')),
+                  child: const Text('CLEAR')),
             )
           ],
         ),
@@ -226,7 +235,7 @@ class TaskEditor {
           builder: (context, setState) {
             TaskEditor pageBuilder = TaskEditor(onTaskUpdated: onTaskUpdated, setState: setState, host: host);
             List<Widget> dialogWidgets = List.empty(growable: true);
-            dialogWidgets.addAll(pageBuilder.build(task));
+            dialogWidgets.addAll(pageBuilder.build(context, task));
             dialogWidgets.add(Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
               child: Row(
