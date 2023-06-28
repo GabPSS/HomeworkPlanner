@@ -258,7 +258,7 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Subjects...'),
                     onPressed: () {
-                      SubjectsPage.show(context, host);
+                      SubjectsPage.show(context, host, updateTasks);
                     },
                   ),
                   const MenuItemButton(child: Text('Clean up...')),

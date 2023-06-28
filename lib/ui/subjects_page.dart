@@ -6,27 +6,26 @@ import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 class SubjectsPage extends StatefulWidget {
   TaskHost host;
+  Function() onSubjectUpdate;
 
-  SubjectsPage({super.key, required this.host});
+  SubjectsPage({super.key, required this.host, required this.onSubjectUpdate});
 
   @override
   State<SubjectsPage> createState() => _SubjectsPageState(host: host);
 
-  static void show(BuildContext context, TaskHost host) {
+  static void show(BuildContext context, TaskHost host, Function() onSubjectUpdate) {
     if (Platform.isAndroid) {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SubjectsPage(
-              host: host,
-            ),
+            builder: (context) => SubjectsPage(host: host, onSubjectUpdate: onSubjectUpdate),
           ));
     } else {
       showDialog(
         context: context,
         builder: (context) {
           return Dialog(
-            child: SubjectsPage(host: host),
+            child: SubjectsPage(host: host, onSubjectUpdate: onSubjectUpdate),
           );
         },
       );
@@ -77,6 +76,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                               setState(() {
                                 host.saveFile.Subjects.Items.remove(subject);
                               });
+                              widget.onSubjectUpdate();
                             },
                             child: const Text("Delete")),
                       ],
@@ -119,6 +119,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   host.saveFile.Subjects.addSubject(subject);
                 }
               });
+              widget.onSubjectUpdate();
               Navigator.pop(context);
             },
             child: Text('OK')));

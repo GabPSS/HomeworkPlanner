@@ -116,10 +116,8 @@ class TaskEditor {
           value: selectedSubject,
           onChanged: (value) {
             if (value == editSubjects) {
-              // setState(() {
               selectedSubject = noSubject;
-              // });
-              SubjectsPage.show(context, host);
+              SubjectsPage.show(context, host, () => setState(() {}));
               return;
             }
             setState(
