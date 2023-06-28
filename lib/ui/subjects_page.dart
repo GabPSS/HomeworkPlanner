@@ -28,23 +28,101 @@ class _SubjectsPageState extends State<SubjectsPage> {
       appBar: AppBar(title: const Text('Edit subjects')),
       body: ListView.builder(
         itemBuilder: (context, index) {
+          var subject = host.saveFile.Subjects.Items[index];
           return ListTile(
             leading: const Icon(Icons.assignment_ind),
-            title: Text(host.saveFile.Subjects.Items[index].SubjectName),
+            title: Text(subject.SubjectName),
+            onTap: () {
+              showSubjectEditorDialog(context, subject);
+            },
+            trailing: IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text("Delete '${subject.SubjectName}'?"),
+                      content: const Text("You won't be able to recover it once it's gone"),
+                      actions: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Cancel')),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              setState(() {
+                                host.saveFile.Subjects.Items.remove(subject);
+                              });
+                            },
+                            child: const Text("Delete")),
+                      ],
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.delete)),
           );
         },
         itemCount: host.saveFile.Subjects.Items.length,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          setState(() {
-            //TODO: Swap this out when add function is implemented
-            // host.saveFile.Subjects.add("Hello!");
-            host.saveFile.Subjects.Items.add(Subject(SubjectName: "Hello", SubjectID: 5));
-          });
+          Subject newSubject = Subject();
+          showSubjectEditorDialog(context, newSubject, true);
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+
+  Future<dynamic> showSubjectEditorDialog(BuildContext context, Subject subject, [bool isAdding = false]) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        List<Widget> dialogButtons = List.empty(growable: true);
+
+        dialogButtons.add(Spacer());
+        if (isAdding) {
+          dialogButtons.add(TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel')));
+        }
+        dialogButtons.add(TextButton(
+            onPressed: () {
+              setState(() {
+                if (isAdding) {
+                  host.saveFile.Subjects.addSubject(subject);
+                }
+              });
+              Navigator.pop(context);
+            },
+            child: Text('OK')));
+
+        return SimpleDialog(
+          title: Text(isAdding ? 'Add subject' : 'Edit subject'),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextFormField(
+                initialValue: subject.SubjectName,
+                onChanged: (value) {
+                  subject.SubjectName = value;
+                },
+                decoration: InputDecoration(
+                  icon: Icon(Icons.assignment_ind),
+                  border: OutlineInputBorder(),
+                  labelText: 'Name',
+                ),
+              ),
+            ),
+            Row(
+              children: dialogButtons,
+            )
+          ],
+        );
+      },
     );
   }
 }

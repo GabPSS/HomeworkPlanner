@@ -11,14 +11,13 @@ class TaskHost {
 
   TaskHost({required this.saveFile});
 
-  String getSubject(int id) {
-    String output = Subject.defaultMissingSubjectText;
+  String? getSubjectNameById(int id) {
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
       if (saveFile.Subjects.Items[i].SubjectID == id) {
-        output = saveFile.Subjects.Items[i].SubjectName;
+        return saveFile.Subjects.Items[i].SubjectName;
       }
     }
-    return output;
+    return null;
   }
 
   Subject? getSubjectById(int id) {

@@ -89,7 +89,8 @@ class _MainPageState extends State<MainPage> {
         .toList();
 
     for (var i = 0; i < allTasks.length; i++) {
-      var task = allTasks[i];
+      Task task = allTasks[i];
+      String? subjectName = host.getSubjectNameById(task.SubjectID);
       Widget itemTile = ListTile(
         leading: IconButton(
             onPressed: () {
@@ -98,7 +99,7 @@ class _MainPageState extends State<MainPage> {
               });
             },
             icon: task.GetIcon()),
-        title: Text((task.SubjectID != -1 ? "${host.getSubject(task.SubjectID)} - " : "") + task.toString()),
+        title: Text((task.SubjectID != -1 && subjectName != null ? "${subjectName} - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
           TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
@@ -257,13 +258,7 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Subjects...'),
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SubjectsPage(
-                              host: host,
-                            ),
-                          ));
+                      showSubjectsPage(context);
                     },
                   ),
                   const MenuItemButton(child: Text('Clean up...')),
@@ -287,12 +282,24 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void taskMarkedImportant(Task task, bool value, Function(Function())? setState) {
-    if (setState != null) {
-      setState(() {
-        task.IsImportant = value;
-      });
-      updateTasks();
+  void showSubjectsPage(BuildContext context) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubjectsPage(
+              host: host,
+            ),
+          ));
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SubjectsPage(host: host),
+          );
+        },
+      );
     }
   }
 
