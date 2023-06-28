@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
         title: Text((task.SubjectID != -1 ? "${host.getSubject(task.SubjectID)} - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
-          TaskEditor.show(context: context, host: host, item: task, onTaskUpdated: updateTasks);
+          TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
         },
       );
       items.add(LongPressDraggable(
@@ -301,7 +301,7 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       host.saveFile.Tasks.Add(task);
     });
-    TaskEditor.showEditorDialog(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
+    TaskEditor.show(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
   }
 
   void createSaveFile() {

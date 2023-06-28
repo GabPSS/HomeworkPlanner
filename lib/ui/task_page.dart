@@ -26,7 +26,7 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.isAdding ? "Create task" : "Edit '${widget.task.Name}'"),
+          title: Text(widget.isAdding ? "Create task" : (widget.task.Name != "" ? "Edit '${widget.task.Name}'" : "Edit task")),
           actions: [
             IconButton(
                 onPressed: () {
@@ -194,17 +194,21 @@ class TaskEditor {
   static void show(
       {required BuildContext context,
       required TaskHost host,
-      required Task item,
+      required Task task,
       required Function() onTaskUpdated,
       bool isAdding = false}) {
     if (Platform.isAndroid) {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TaskEditorPage(task: item, host: host),
+            builder: (context) => TaskEditorPage(
+              task: task,
+              host: host,
+              isAdding: isAdding,
+            ),
           ));
     } else {
-      showEditorDialog(context: context, task: item, host: host, onTaskUpdated: onTaskUpdated, isAdding: isAdding);
+      showEditorDialog(context: context, task: task, host: host, onTaskUpdated: onTaskUpdated, isAdding: isAdding);
     }
   }
 
@@ -245,7 +249,7 @@ class TaskEditor {
               ),
             ));
 
-            return SimpleDialog(title: Text(isAdding ? 'Create task' : 'Editing task'), children: dialogWidgets);
+            return SimpleDialog(title: Text(isAdding ? 'Create task' : 'Edit task'), children: dialogWidgets);
           },
         );
       }),
