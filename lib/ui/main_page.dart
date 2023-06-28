@@ -101,7 +101,7 @@ class _MainPageState extends State<MainPage> {
         title: Text((task.SubjectID != -1 ? "${host.getSubject(task.SubjectID)} - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
-          showTaskEditor(task);
+          TaskEditor.show(context: context, host: host, item: task, onTaskUpdated: updateTasks);
         },
       );
       items.add(LongPressDraggable(
@@ -287,33 +287,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void showTaskEditor(Task item) {
-    if (Platform.isAndroid) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TaskEditorPage(task: item, host: host),
-          ));
-    } else {
-      TaskEditor.showEditorDialog(
-          context: context,
-          task: item,
-          host: host,
-          onTaskCompleted: taskCompleted,
-          onTaskMarkedImportant: taskMarkedImportant,
-          onClose: updateTasks);
-    }
-  }
-
-  void taskCompleted(Task task, bool value, Function(Function())? setState) {
-    if (setState != null) {
-      setState(() {
-        task.IsCompleted = value;
-      });
-      updateTasks();
-    }
-  }
-
   void taskMarkedImportant(Task task, bool value, Function(Function())? setState) {
     if (setState != null) {
       setState(() {
@@ -325,8 +298,10 @@ class _MainPageState extends State<MainPage> {
 
   void createTask() {
     Task task = Task();
-    host.saveFile.Tasks.Add(task);
-    showTaskEditor(task);
+    setState(() {
+      host.saveFile.Tasks.Add(task);
+    });
+    TaskEditor.showEditorDialog(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
   }
 
   void createSaveFile() {
@@ -381,7 +356,7 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void updateTasks({bool showMessage = true}) {
+  void updateTasks({bool showMessage = false}) {
     setState(() {});
     if (showMessage) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Updated tasks')));

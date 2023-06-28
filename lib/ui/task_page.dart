@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
@@ -7,33 +9,28 @@ import 'package:homeworkplanner/models/main/task.dart';
 import '../models/tasksystem/task_host.dart';
 
 class TaskEditorPage extends StatefulWidget {
-  Task task;
-  TaskHost host;
+  final Task task;
+  final TaskHost host;
+  final bool isAdding;
 
-  TaskEditorPage({super.key, required this.task, required this.host});
+  TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host});
 
   @override
-  State<TaskEditorPage> createState() => _TaskEditorPageState(task: task, host: host);
+  State<TaskEditorPage> createState() => _TaskEditorPageState();
 }
 
 class _TaskEditorPageState extends State<TaskEditorPage> {
-  Task task;
-  TaskHost host;
-
-  _TaskEditorPageState({required this.task, required this.host});
-
   @override
   Widget build(BuildContext context) {
-    TaskEditor builder =
-        TaskEditor(onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
+    TaskEditor builder = TaskEditor(onTaskUpdated: () => setState(() {}), setState: setState, host: widget.host);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("Editing \"${task.toString()}\""),
+          title: Text(widget.isAdding ? "Create task" : "Edit '${widget.task.Name}'"),
           actions: [
             IconButton(
                 onPressed: () {
-                  host.saveFile.Tasks.Items.remove(task);
+                  widget.host.saveFile.Tasks.Items.remove(widget.task);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
                   ScaffoldMessenger.of(context).setState(() {});
@@ -42,38 +39,26 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
           ],
         ),
         body: ListView(
-          children: builder.build(task),
+          children: builder.build(widget.task),
         ));
-  }
-
-  void taskCompleted(Task task, bool value, Function(Function()) setState) {
-    setState(() {
-      task.IsCompleted = value;
-    });
-  }
-
-  void taskMarkedImportant(Task task, bool value, Function(Function()) setState) {
-    setState(() {
-      task.IsImportant = value;
-    });
   }
 }
 
 class TaskEditor {
-  final Function(Task, bool, Function(Function())) onTaskCompleted;
-  final Function(Task, bool, Function(Function())) onTaskMarkedImportant;
+  final Function() onTaskUpdated;
   final Function(Function()) setState;
+  bool isAdding;
   TaskHost? host;
 
-  TaskEditor({required this.onTaskCompleted, required this.onTaskMarkedImportant, required this.setState, required this.host});
+  TaskEditor({this.isAdding = false, required this.onTaskUpdated, required this.setState, required this.host});
 
   List<Widget> build(Task task) {
     Subject noSubject = Subject.getNoSubject();
     Subject? selectedSubject = task.SubjectID == -1 ? noSubject : host!.getSubjectById(task.SubjectID);
     List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
     subjectWidgets.add(DropdownMenuItem(
-      child: Text(noSubject.SubjectName),
       value: noSubject,
+      child: Text(noSubject.SubjectName),
     ));
     List<DropdownMenuItem<Subject>>? subjectWidgetsObtained = host?.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
       (e) {
@@ -99,6 +84,7 @@ class TaskEditor {
         setState(() {
           task.DueDate = value;
         });
+        onTaskUpdated();
       },
     );
     return [
@@ -115,6 +101,7 @@ class TaskEditor {
             setState(() {
               task.Name = value.trim();
             });
+            onTaskUpdated();
           },
         ),
       ),
@@ -134,6 +121,7 @@ class TaskEditor {
                 }
               },
             );
+            onTaskUpdated();
           },
         ),
       ),
@@ -151,6 +139,7 @@ class TaskEditor {
                     setState(() {
                       task.DueDate = null;
                     });
+                    onTaskUpdated();
                   },
                   child: Text('CLEAR')),
             )
@@ -171,6 +160,7 @@ class TaskEditor {
                 task.Description = value.trim();
               },
             );
+            onTaskUpdated();
           },
         ),
       ),
@@ -180,7 +170,7 @@ class TaskEditor {
           value: task.IsCompleted,
           onChanged: (value) {
             if (value != null) {
-              onTaskCompleted(task, value, setState);
+              taskCompleted(task, value);
             }
           },
           title: const Text('Completed'),
@@ -192,7 +182,7 @@ class TaskEditor {
           value: task.IsImportant,
           onChanged: (value) {
             if (value != null) {
-              onTaskMarkedImportant(task, value, setState);
+              taskMarkedImportant(task, value);
             }
           },
           title: const Text('Important'),
@@ -201,21 +191,36 @@ class TaskEditor {
     ];
   }
 
+  static void show(
+      {required BuildContext context,
+      required TaskHost host,
+      required Task item,
+      required Function() onTaskUpdated,
+      bool isAdding = false}) {
+    if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TaskEditorPage(task: item, host: host),
+          ));
+    } else {
+      showEditorDialog(context: context, task: item, host: host, onTaskUpdated: onTaskUpdated, isAdding: isAdding);
+    }
+  }
+
   static Future<void> showEditorDialog({
     required BuildContext context,
     required Task task,
     required TaskHost host,
-    required Function(Task, bool, Function(Function())) onTaskCompleted,
-    required Function(Task, bool, Function(Function())) onTaskMarkedImportant,
-    Function()? onClose,
+    required Function() onTaskUpdated,
+    bool isAdding = false,
   }) async {
     switch (await showDialog(
       context: context,
       builder: ((context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            TaskEditor pageBuilder = TaskEditor(
-                onTaskCompleted: onTaskCompleted, onTaskMarkedImportant: onTaskMarkedImportant, setState: setState, host: host);
+            TaskEditor pageBuilder = TaskEditor(onTaskUpdated: onTaskUpdated, setState: setState, host: host);
             List<Widget> dialogWidgets = List.empty(growable: true);
             dialogWidgets.addAll(pageBuilder.build(task));
             dialogWidgets.add(Padding(
@@ -240,16 +245,28 @@ class TaskEditor {
               ),
             ));
 
-            return SimpleDialog(title: const Text('Editing task'), children: dialogWidgets);
+            return SimpleDialog(title: Text(isAdding ? 'Create task' : 'Editing task'), children: dialogWidgets);
           },
         );
       }),
     )) {
       default:
-        if (onClose != null) {
-          onClose();
-        }
+        onTaskUpdated();
         break;
     }
+  }
+
+  void taskCompleted(Task task, bool value) {
+    setState(() {
+      task.IsCompleted = value;
+    });
+    onTaskUpdated();
+  }
+
+  void taskMarkedImportant(Task task, bool value) {
+    setState(() {
+      task.IsImportant = value;
+    });
+    onTaskUpdated();
   }
 }
