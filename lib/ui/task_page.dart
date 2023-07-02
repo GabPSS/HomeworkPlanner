@@ -157,27 +157,6 @@ class TaskEditor {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: Row(
-          children: [
-            Expanded(
-              child: dateTimeFormField,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      task.DueDate = null;
-                    });
-                    onTaskUpdated();
-                  },
-                  child: const Text('CLEAR')),
-            )
-          ],
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
           decoration: const InputDecoration(
               icon: Icon(Icons.description_outlined), border: OutlineInputBorder(), labelText: 'Description'),
