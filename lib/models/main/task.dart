@@ -60,21 +60,19 @@ class Task {
     return EnumConverters.intToTaskStatus(status);
   }
 
-  Icon GetIcon() {
+  Icon GetIcon([bool ignoreCompletedOrOverdue = false]) {
     IconData toReturn;
-    if (IsCompleted) {
-      toReturn = Icons.assignment_turned_in;
-    } else {
-      if (IsOverdue) {
-        toReturn = Icons.assignment_return;
-      } else {
-        IsScheduled && IsImportant
-            ? toReturn = Icons.assignment_late
-            : IsImportant
-                ? toReturn = Icons.assignment_late_outlined
-                : (IsScheduled ? toReturn = Icons.assignment : toReturn = Icons.assignment_outlined);
-      }
-    }
+    toReturn = IsCompleted && !ignoreCompletedOrOverdue
+        ? Icons.assignment_turned_in
+        : IsOverdue && !ignoreCompletedOrOverdue
+            ? Icons.assignment_late
+            : IsScheduled && IsImportant
+                ? Icons.label_important
+                : IsImportant
+                    ? Icons.label_important_outline
+                    : IsScheduled
+                        ? Icons.assignment
+                        : Icons.assignment_outlined;
     return Icon(toReturn, size: 32);
   }
 
