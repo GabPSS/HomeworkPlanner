@@ -21,6 +21,11 @@ class TaskHost {
   }
 
   Subject? getSubjectById(int id) {
+    //Special check for editSubject
+    if (id == -123) {
+      return null;
+    }
+
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
       if (saveFile.Subjects.Items[i].SubjectID == id) {
         return saveFile.Subjects.Items[i];

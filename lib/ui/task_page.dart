@@ -54,7 +54,7 @@ class TaskEditor {
   List<Widget> build(BuildContext context, Task task) {
     Subject noSubject = Subject.noSubjectTemplate();
     Subject editSubjects = Subject.editSubjectsTemplate();
-    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : host.getSubjectById(task.SubjectID);
+    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : (host.getSubjectById(task.SubjectID) ?? noSubject);
     List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
     subjectWidgets.add(DropdownMenuItem(
       value: noSubject,
@@ -89,6 +89,29 @@ class TaskEditor {
         onTaskUpdated();
       },
     );
+    var dropdownButtonFormField = DropdownButtonFormField(
+      decoration:
+          const InputDecoration(icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
+      items: subjectWidgets,
+      value: selectedSubject,
+      onChanged: (value) {
+        setState(
+          () {
+            if (value != null) {
+              task.SubjectID = value.SubjectID;
+              if (value.SubjectID == editSubjects.SubjectID) {
+                task.SubjectID = noSubject.SubjectID;
+              }
+              selectedSubject = value;
+            }
+          },
+        );
+        if (value == editSubjects) {
+          SubjectsPage.show(context, host, () => setState(() {}));
+        }
+        onTaskUpdated();
+      },
+    );
     return [
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -109,28 +132,7 @@ class TaskEditor {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: DropdownButtonFormField(
-          decoration: const InputDecoration(
-              icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
-          items: subjectWidgets,
-          value: selectedSubject,
-          onChanged: (value) {
-            if (value == editSubjects) {
-              selectedSubject = noSubject;
-              SubjectsPage.show(context, host, () => setState(() {}));
-              return;
-            }
-            setState(
-              () {
-                if (value != null) {
-                  task.SubjectID = value.SubjectID;
-                  selectedSubject = value;
-                }
-              },
-            );
-            onTaskUpdated();
-          },
-        ),
+        child: dropdownButtonFormField,
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
