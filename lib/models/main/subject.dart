@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'subject.g.dart';
@@ -8,7 +10,12 @@ class Subject {
 
   int SubjectID;
   String SubjectName;
-  int SubjectColor = 0; //TODO: See if changing this to an actual color object is possible
+  int SubjectColor = 0xFFABABAB;
+
+  Color get SubjectColorValue => Color(SubjectColor);
+  set SubjectColorValue(Color value) {
+    SubjectColor = value.value;
+  }
 
   //TODO: Implement autoincrementing logic and remove default values
   Subject({this.SubjectName = "", this.SubjectID = 0});

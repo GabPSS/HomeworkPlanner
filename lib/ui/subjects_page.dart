@@ -52,7 +52,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
         itemBuilder: (context, index) {
           var subject = host.saveFile.Subjects.Items[index];
           return ListTile(
-            leading: const Icon(Icons.assignment_ind),
+            leading: Icon(Icons.assignment_ind, color: subject.SubjectColorValue),
             title: Text(subject.SubjectName),
             onTap: () {
               showSubjectEditorDialog(context, subject);
