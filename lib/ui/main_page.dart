@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/reports_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
 import 'package:homeworkplanner/ui/task_page.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
@@ -254,7 +255,13 @@ class _MainPageState extends State<MainPage> {
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Day notes...')),
-                  const MenuItemButton(child: Text('Report...')),
+                  MenuItemButton(
+                      child: const Text('Report...'),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReportsPage(host: host),
+                          ))),
                   MenuItemButton(
                     child: const Text('Subjects...'),
                     onPressed: () {
