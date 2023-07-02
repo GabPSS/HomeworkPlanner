@@ -9,8 +9,15 @@ class SubjectList {
   List<Subject> Items = List.empty(growable: true);
 
   int add(String subject) {
-    //TODO: Implement adding subjects
-    throw UnimplementedError('SubjectList add() not implemented');
+    return addSubject(Subject(SubjectName: subject));
+  }
+
+  int addSubject(Subject subject) {
+    int subjectID = LastIndex + 1;
+    subject.SubjectID = subjectID;
+    Items.add(subject);
+    LastIndex = subjectID;
+    return subjectID;
   }
 
   SubjectList({int lastIndex = -1, List<Subject>? items}) {

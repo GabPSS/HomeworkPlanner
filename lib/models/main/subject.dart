@@ -1,3 +1,7 @@
+import 'dart:math';
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'subject.g.dart';
@@ -8,18 +12,36 @@ class Subject {
 
   int SubjectID;
   String SubjectName;
-  int SubjectColor = 0; //TODO: See if changing this to an actual color object is possible
+  int SubjectColor = 0xFFABABAB;
+
+  Color get SubjectColorValue => Color(SubjectColor);
+  set SubjectColorValue(Color value) {
+    SubjectColor = value.value;
+  }
 
   //TODO: Implement autoincrementing logic and remove default values
-  Subject({this.SubjectName = "", this.SubjectID = 0});
+  Subject({this.SubjectName = "", this.SubjectID = 0}) {
+    setRandomColor();
+  }
+
+  Subject.editSubjectsTemplate({this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
+
+  Subject.noSubjectTemplate({this.SubjectID: -1, this.SubjectName: defaultMissingSubjectText});
 
   @override
   String toString() {
     return SubjectName;
   }
 
-  static getNoSubject() {
-    return Subject(SubjectID: -1, SubjectName: defaultMissingSubjectText);
+  void setRandomColor() {
+    double h, s, v;
+    Random random = Random();
+    h = random.nextInt(360).toDouble();
+    s = random.nextInt(30) + 45;
+    v = random.nextInt(35) + 55;
+    s /= 100;
+    v /= 100;
+    SubjectColorValue = HSVColor.fromAHSV(1, h, s, v).toColor();
   }
 
   factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);

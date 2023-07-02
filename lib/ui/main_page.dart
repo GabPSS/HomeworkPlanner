@@ -89,7 +89,8 @@ class _MainPageState extends State<MainPage> {
         .toList();
 
     for (var i = 0; i < allTasks.length; i++) {
-      var task = allTasks[i];
+      Task task = allTasks[i];
+      String? subjectName = host.getSubjectNameById(task.SubjectID);
       Widget itemTile = ListTile(
         leading: IconButton(
             onPressed: () {
@@ -98,10 +99,10 @@ class _MainPageState extends State<MainPage> {
               });
             },
             icon: task.GetIcon()),
-        title: Text((task.SubjectID != -1 ? "${host.getSubject(task.SubjectID)} - " : "") + task.toString()),
+        title: Text((task.SubjectID != -1 && subjectName != null ? "${subjectName} - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
-          showTaskEditor(task);
+          TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
         },
       );
       items.add(LongPressDraggable(
@@ -257,13 +258,7 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Subjects...'),
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SubjectsPage(
-                              host: host,
-                            ),
-                          ));
+                      SubjectsPage.show(context, host, updateTasks);
                     },
                   ),
                   const MenuItemButton(child: Text('Clean up...')),
@@ -287,85 +282,12 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void showTaskEditor(Task item) {
-    if (Platform.isAndroid) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TaskEditorPage(task: item, host: host),
-          ));
-    } else {
-      _showTaskEditorDialog(item);
-    }
-  }
-
-  Future<void> _showTaskEditorDialog(Task task) async {
-    switch (await showDialog(
-      context: context,
-      builder: ((context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            TaskEditor pageBuilder = TaskEditor(
-                onTaskCompleted: taskCompleted, onTaskMarkedImportant: taskMarkedImportant, setState: setState, host: host);
-            List<Widget> dialogWidgets = List.empty(growable: true);
-            dialogWidgets.addAll(pageBuilder.build(task));
-            dialogWidgets.add(Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 16, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        host.saveFile.Tasks.Items.remove(task);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
-                      },
-                      icon: const Icon(Icons.delete)),
-                  const Spacer(),
-                  OutlinedButton(
-                    child: const Row(
-                      children: [Icon(Icons.check), Text('OK')],
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ],
-              ),
-            ));
-
-            return SimpleDialog(title: const Text('Editing task'), children: dialogWidgets);
-          },
-        );
-      }),
-    )) {
-      default:
-        updateTasks();
-        break;
-    }
-  }
-
-  void taskCompleted(Task task, bool value, Function(Function())? setState) {
-    if (setState != null) {
-      setState(() {
-        task.IsCompleted = value;
-      });
-      updateTasks();
-    }
-  }
-
-  void taskMarkedImportant(Task task, bool value, Function(Function())? setState) {
-    if (setState != null) {
-      setState(() {
-        task.IsImportant = value;
-      });
-      updateTasks();
-    }
-  }
-
   void createTask() {
     Task task = Task();
-    host.saveFile.Tasks.Add(task);
-    showTaskEditor(task);
+    setState(() {
+      host.saveFile.Tasks.Add(task);
+    });
+    TaskEditor.show(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
   }
 
   void createSaveFile() {
@@ -420,7 +342,7 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void updateTasks({bool showMessage = true}) {
+  void updateTasks({bool showMessage = false}) {
     setState(() {});
     if (showMessage) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Updated tasks')));

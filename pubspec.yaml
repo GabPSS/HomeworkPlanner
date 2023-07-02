@@ -8,9 +8,11 @@ environment:
 
 dependencies:
   build_runner: ^2.3.3
+  date_field: ^3.0.5
   file_picker: ^5.2.10
   flutter:
     sdk: flutter
+  flutter_colorpicker: ^1.0.3
   json_annotation: ^4.8.0
   json_serializable: ^6.6.1
 
