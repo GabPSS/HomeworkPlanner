@@ -6,13 +6,13 @@ import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 class SubjectsPage extends StatefulWidget {
-  TaskHost host;
-  Function() onSubjectUpdate;
+  final TaskHost host;
+  final Function() onSubjectUpdate;
 
-  SubjectsPage({super.key, required this.host, required this.onSubjectUpdate});
+  const SubjectsPage({super.key, required this.host, required this.onSubjectUpdate});
 
   @override
-  State<SubjectsPage> createState() => _SubjectsPageState(host: host);
+  State<SubjectsPage> createState() => _SubjectsPageState();
 
   static void show(BuildContext context, TaskHost host, Function() onSubjectUpdate) {
     if (Platform.isAndroid) {
@@ -35,23 +35,19 @@ class SubjectsPage extends StatefulWidget {
 }
 
 class _SubjectsPageState extends State<SubjectsPage> {
-  TaskHost host;
-
-  _SubjectsPageState({required this.host});
-
   @override
   Widget build(BuildContext context) {
     List<Widget> subjectWidgets = List<Widget>.empty(growable: true);
 
-    for (var i = 0; i < host.saveFile.Subjects.Items.length; i++) {
-      subjectWidgets.add(Text(host.saveFile.Subjects.Items[i].SubjectName));
+    for (var i = 0; i < widget.host.saveFile.Subjects.Items.length; i++) {
+      subjectWidgets.add(Text(widget.host.saveFile.Subjects.Items[i].SubjectName));
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Edit subjects')),
       body: ListView.builder(
         itemBuilder: (context, index) {
-          var subject = host.saveFile.Subjects.Items[index];
+          var subject = widget.host.saveFile.Subjects.Items[index];
           return ListTile(
             leading: Icon(Icons.assignment_ind, color: subject.SubjectColorValue),
             title: Text(subject.SubjectName),
@@ -75,7 +71,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                             onPressed: () {
                               Navigator.pop(context);
                               setState(() {
-                                host.saveFile.Subjects.Items.remove(subject);
+                                widget.host.saveFile.Subjects.Items.remove(subject);
                               });
                               widget.onSubjectUpdate();
                             },
@@ -87,7 +83,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 icon: const Icon(Icons.delete)),
           );
         },
-        itemCount: host.saveFile.Subjects.Items.length,
+        itemCount: widget.host.saveFile.Subjects.Items.length,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -105,25 +101,25 @@ class _SubjectsPageState extends State<SubjectsPage> {
       builder: (context) {
         List<Widget> dialogButtons = List.empty(growable: true);
 
-        dialogButtons.add(Spacer());
+        dialogButtons.add(const Spacer());
         if (isAdding) {
           dialogButtons.add(TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text('Cancel')));
+              child: const Text('Cancel')));
         }
         dialogButtons.add(TextButton(
             onPressed: () {
               setState(() {
                 if (isAdding) {
-                  host.saveFile.Subjects.addSubject(subject);
+                  widget.host.saveFile.Subjects.addSubject(subject);
                 }
               });
               widget.onSubjectUpdate();
               Navigator.pop(context);
             },
-            child: Text('OK')));
+            child: const Text('OK')));
 
         return SimpleDialog(
           title: Text(isAdding ? 'Add subject' : 'Edit subject'),
@@ -135,7 +131,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 onChanged: (value) {
                   subject.SubjectName = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   icon: Icon(Icons.assignment_ind),
                   border: OutlineInputBorder(),
                   labelText: 'Name',
