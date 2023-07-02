@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
@@ -139,6 +140,16 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   border: OutlineInputBorder(),
                   labelText: 'Name',
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ColorPicker(
+                enableAlpha: false,
+                pickerColor: subject.SubjectColorValue,
+                onColorChanged: (value) {
+                  subject.SubjectColorValue = value;
+                },
               ),
             ),
             Row(
