@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:homeworkplanner/ui/main_page.dart';
-import 'package:homeworkplanner/models/tasksystem/save_file.dart';
-import 'package:homeworkplanner/models/tasksystem/task_host.dart';
+import 'package:homeworkplanner/global_settings.dart';
+import 'package:homeworkplanner/ui/home_page.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
 class MainApp extends StatefulWidget {
@@ -15,14 +14,31 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  TaskHost host = TaskHost(saveFile: SaveFile());
+  GlobalSettings settings = GlobalSettings();
+  late Future<void> settingsInitFuture;
+
+  @override
+  void initState() {
+    settingsInitFuture = settings.initSettings();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         theme: ThemeData(primarySwatch: Colors.blue),
-        home: MainPage(
-          host: host,
-        ));
+        home: FutureBuilder(
+            future: settingsInitFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return HomePage(settings: settings);
+              } else {
+                return const Scaffold(
+                    body: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [CircularProgressIndicator()]));
+              }
+            }));
   }
 }

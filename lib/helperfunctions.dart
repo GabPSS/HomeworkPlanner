@@ -38,4 +38,13 @@ class HelperFunctions {
       }
     }
   }
+
+  static String getFileNameFromPath(String filePath) {
+    RegExp exp = RegExp(r"[^\\\/]*.$");
+    List<String?> matches = exp.allMatches(filePath).map((e) => e[0]).toList();
+    if (matches.isEmpty) {
+      return filePath;
+    }
+    return matches[0] ?? filePath;
+  }
 }

@@ -183,10 +183,9 @@ class _MainPageState extends State<MainPage> {
 
   AppBar buildAndroidAppBar() {
     return AppBar(
-      title: const Text('HomeworkPlanner'),
+      title: Text(HelperFunctions.getFileNameFromPath(host.saveFilePath ?? "Untitled plan")),
       actions: [
-        IconButton(onPressed: openFile, icon: const Icon(Icons.file_open)),
-        IconButton(onPressed: saveSavefile, icon: const Icon(Icons.save)),
+        IconButton(onPressed: () => host.save(context), icon: const Icon(Icons.save)),
         IconButton(onPressed: updateTasks, icon: const Icon(Icons.refresh))
       ],
     );
@@ -211,6 +210,14 @@ class _MainPageState extends State<MainPage> {
     if (Platform.isAndroid) {
       return const Row();
     } else {
+      List<MenuItemButton> recentFilesList = host.settings.recentFiles
+          .map((e) => MenuItemButton(
+                child: Text(HelperFunctions.getFileNameFromPath(e)),
+                onPressed: () => TaskHost.openFile(context, host.settings, (newHost) => setState(() => host = newHost), e),
+              ))
+          .toList()
+          .reversed
+          .toList();
       return Row(
         children: [
           Expanded(
@@ -229,12 +236,10 @@ class _MainPageState extends State<MainPage> {
                     const MenuItemButton(
                       child: Text('Import...'),
                     ),
-                    const SubmenuButton(menuChildren: [], child: Text('Recent files')),
-                    MenuItemButton(onPressed: saveSavefile, child: const Text('Save')),
-                    MenuItemButton(
-                      onPressed: saveAs,
-                      child: const Text('Save as...'),
-                    ),
+                    SubmenuButton(menuChildren: recentFilesList, child: const Text('Recent files')),
+                    MenuItemButton(onPressed: () => setState(() => host.save(context)), child: const Text('Save')),
+                    MenuItemButton(onPressed: () => setState(() => host.saveAs(context)), child: const Text('Save as...')),
+                    MenuItemButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
                     const MenuItemButton(child: Text('Exit'))
                   ],
                   child: const Text('File'),
@@ -297,57 +302,9 @@ class _MainPageState extends State<MainPage> {
     TaskEditor.show(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
   }
 
-  void createSaveFile() {
-    setState(() {
-      host = TaskHost(saveFile: SaveFile());
-    });
-  }
+  void createSaveFile() => setState(() => host = TaskHost(settings: host.settings, saveFile: SaveFile()));
 
-  void openFile() {
-    FilePicker.platform.pickFiles(dialogTitle: 'Select a homeworkplanner plan...').then((value) {
-      if (value != null && value.files.single.path != null) {
-        File(value.files.single.path!).readAsString().then((jsonvalue) {
-          setState(() {
-            host = TaskHost(saveFile: SaveFile.fromJson(jsonDecode(jsonvalue)));
-            host.saveFilePath = value.files.single.path;
-          });
-        });
-      }
-    });
-  }
-
-  void saveSavefile({String? path, bool noRetry = false}) {
-    path = path ?? host.saveFilePath;
-    if (path != null) {
-      try {
-        host.saveFilePath = path;
-        String jsonData = jsonEncode(host.saveFile.toJson());
-        File(path).writeAsString(jsonData);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved at ' + path)));
-      } catch (e) {
-        if (!noRetry) {
-          saveAs(noRetry: true);
-        } else {
-          //TODO: Implement an alert dialog with some options
-          throw UnimplementedError("Alert dialog not implemented here");
-        }
-      }
-    } else {
-      saveAs();
-    }
-  }
-
-  void saveAs({bool noRetry = false}) {
-    if (Platform.isAndroid) {
-      saveSavefile(path: "/storage/emulated/0/Download/Plan.hwpf");
-    } else {
-      FilePicker.platform.saveFile(dialogTitle: "Save plan as...", allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
-        if (value != null) {
-          saveSavefile(path: value);
-        }
-      });
-    }
-  }
+  void openFile() => TaskHost.openFile(context, host.settings, (newHost) => setState(() => host = newHost));
 
   void updateTasks({bool showMessage = false}) {
     setState(() {});
