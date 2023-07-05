@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
@@ -12,21 +10,25 @@ import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import '../models/tasksystem/task_host.dart';
 
 class MainPage extends StatefulWidget {
-  TaskHost host;
+  final TaskHost host;
 
-  MainPage({super.key, required this.host});
+  const MainPage({super.key, required this.host});
 
   @override
-  State<MainPage> createState() => _MainPageState(host: host);
+  State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  TaskHost host;
+  late TaskHost host;
   AppBar? appBar;
   BottomNavigationBar? bottomNav;
   int bottomNavSelectedIndex = 0;
 
-  _MainPageState({required this.host});
+  @override
+  void initState() {
+    host = widget.host;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +102,7 @@ class _MainPageState extends State<MainPage> {
               });
             },
             icon: task.GetIcon()),
-        title: Text((task.SubjectID != -1 && subjectName != null ? "${subjectName} - " : "") + task.toString()),
+        title: Text((task.SubjectID != -1 && subjectName != null ? "$subjectName - " : "") + task.toString()),
         subtitle: Text("Due: ${task.DueDate}"),
         onTap: () {
           TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
@@ -193,9 +195,9 @@ class _MainPageState extends State<MainPage> {
 
   BottomNavigationBar buildAndroidBottomNav() {
     return BottomNavigationBar(
-      items: [
-        const BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
-        const BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
+      items: const [
+        BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
+        BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
       ],
       currentIndex: bottomNavSelectedIndex,
       onTap: (value) {

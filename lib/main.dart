@@ -3,7 +3,7 @@ import 'package:homeworkplanner/global_settings.dart';
 import 'package:homeworkplanner/ui/home_page.dart';
 
 void main() {
-  runApp(MainApp());
+  runApp(const MainApp());
 }
 
 class MainApp extends StatefulWidget {
