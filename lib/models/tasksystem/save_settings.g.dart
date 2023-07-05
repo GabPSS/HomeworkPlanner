@@ -13,7 +13,8 @@ SaveSettings _$SaveSettingsFromJson(Map<String, dynamic> json) => SaveSettings(
       SortMethod: json['SortMethod'],
     );
 
-Map<String, dynamic> _$SaveSettingsToJson(SaveSettings instance) => <String, dynamic>{
+Map<String, dynamic> _$SaveSettingsToJson(SaveSettings instance) =>
+    <String, dynamic>{
       'FutureWeeks': instance.FutureWeeks,
       'DaysToDisplay': instance.DaysToDisplay,
       'DisplayPreviousTasks': instance.DisplayPreviousTasks,

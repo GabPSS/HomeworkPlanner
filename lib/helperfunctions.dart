@@ -1,4 +1,5 @@
 import 'package:homeworkplanner/enums.dart';
+import 'package:intl/intl.dart';
 
 class HelperFunctions {
   static int getDayCount(int data) {
@@ -6,6 +7,10 @@ class HelperFunctions {
     int dayCount = 0;
     iterateThroughWeek(numericData, () => dayCount++);
     return dayCount;
+  }
+
+  static DateTime getThisSaturday() {
+    return getSunday(DateTime.now()).add(Duration(days: 6));
   }
 
   static DateTime getSunday(DateTime dateTime) {
@@ -16,7 +21,7 @@ class HelperFunctions {
 
   static DateTime getToday() => DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
-  /// WARNING: [startDate] MUST be a saturday for this method to work
+  /// WARNING: [startDate] MUST be a saturday for this method to return an appropriate day of the week
   /// Returns: a DateTime 7 days before [startDate]
   static DateTime iterateThroughWeekFromDate(double daysOfWeekSum, DateTime startDate, Function(DateTime) callback) {
     DateTime selectedDate = startDate;
@@ -46,5 +51,33 @@ class HelperFunctions {
       return filePath;
     }
     return matches[0] ?? filePath;
+  }
+
+  static Duration stringToDuration(String value) {
+    List<int> timeSplit = value.split(':').map((e) => int.parse(e)).toList();
+    assert(timeSplit.length == 3 || timeSplit.length == 2);
+    return timeSplit.length == 2
+        ? Duration(hours: timeSplit[0], minutes: timeSplit[1])
+        : Duration(hours: timeSplit[0], minutes: timeSplit[1], seconds: timeSplit[2]);
+  }
+
+  static String durationToString(Duration value, [bool shortString = false]) {
+    NumberFormat f = NumberFormat('00');
+    String secs = f.format(value.inSeconds.toInt() % 60);
+    String mins = f.format(value.inMinutes.toInt() % 60);
+    String hrs = f.format(value.inHours.toInt() % 60);
+    return shortString ? "$hrs:$mins" : "$hrs:$mins:$secs";
+  }
+
+  static bool tryDurationShortStringValidation(String? value) {
+    if (value == null) {
+      return false;
+    }
+    var input = value.split(':');
+    return input.length == 2
+        ? int.tryParse(input[0]) != null && int.tryParse(input[1]) != null
+            ? true
+            : false
+        : false;
   }
 }

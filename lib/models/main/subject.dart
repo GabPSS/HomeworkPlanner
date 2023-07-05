@@ -14,6 +14,7 @@ class Subject {
   String SubjectName;
   int SubjectColor = 0xFFABABAB;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Color get SubjectColorValue => Color(SubjectColor);
   set SubjectColorValue(Color value) {
     SubjectColor = value.value;

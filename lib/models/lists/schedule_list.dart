@@ -5,7 +5,7 @@ part 'schedule_list.g.dart';
 
 @JsonSerializable()
 class ScheduleList {
-  var DaysToDisplay; //TODO: Implement DaysToDisplay
+  int DaysToDisplay = 62;
   List<Schedule> Items = List.empty(growable: true);
 
   ScheduleList({List<Schedule>? items}) {

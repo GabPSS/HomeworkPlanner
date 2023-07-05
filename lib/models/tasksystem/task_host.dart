@@ -27,9 +27,9 @@ class TaskHost {
     return null;
   }
 
-  Subject? getSubjectById(int id) {
-    //Special check for editSubject
-    if (id == -123) {
+  Subject? getSubjectById(int? id) {
+    //Special check for editSubject and noSubject
+    if (id == -123 || id == -1) {
       return null;
     }
 
