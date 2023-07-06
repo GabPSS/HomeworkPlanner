@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:date_field/date_field.dart';
 import 'package:flutter/material.dart';
+import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/schedules_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
 import '../models/tasksystem/task_host.dart';
 
@@ -112,6 +114,70 @@ class TaskEditor {
         onTaskUpdated();
       },
     );
+    var dateFieldRowWidgets = <Widget>[
+      Expanded(
+        child: dateTimeFormField,
+      ),
+    ].toList(growable: true);
+    if (task.SubjectID != -1 && task.SubjectID != -123) {
+      dateFieldRowWidgets.add(
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: TextButton(
+              onPressed: () {
+                assert(task.SubjectID != -1 && task.SubjectID != -123);
+                setState(() {
+                  DateTime? nextDate =
+                      host.getNextSubjectScheduledDate(task.SubjectID, task.DueDate ?? HelperFunctions.getToday());
+                  if (nextDate != null) {
+                    task.DueDate = nextDate;
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Subject not scheduled'),
+                        content: const Text(
+                            "Couldn't find the selected subject in the list of schedules. Try adding it, then try again."),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SchedulesPage(host: host),
+                                    ));
+                              },
+                              child: const Text('View schedules')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('OK'))
+                        ],
+                      ),
+                    );
+                  }
+                });
+                onTaskUpdated();
+              },
+              child: const Text('NEXT')),
+        ),
+      );
+    }
+    if (task.DueDate != null) {
+      dateFieldRowWidgets.add(Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: TextButton(
+            onPressed: () {
+              setState(() {
+                task.DueDate = null;
+              });
+              onTaskUpdated();
+            },
+            child: const Text('CLEAR')),
+      ));
+    }
     return [
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
@@ -137,22 +203,7 @@ class TaskEditor {
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Row(
-          children: [
-            Expanded(
-              child: dateTimeFormField,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: TextButton(
-                  onPressed: () {
-                    setState(() {
-                      task.DueDate = null;
-                    });
-                    onTaskUpdated();
-                  },
-                  child: const Text('CLEAR')),
-            )
-          ],
+          children: dateFieldRowWidgets,
         ),
       ),
       Padding(

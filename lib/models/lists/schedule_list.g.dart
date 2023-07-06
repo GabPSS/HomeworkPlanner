@@ -8,9 +8,12 @@ part of 'schedule_list.dart';
 
 ScheduleList _$ScheduleListFromJson(Map<String, dynamic> json) => ScheduleList()
   ..DaysToDisplay = json['DaysToDisplay']
-  ..Items = (json['Items'] as List<dynamic>).map((e) => Schedule.fromJson(e as Map<String, dynamic>)).toList();
+  ..Items = (json['Items'] as List<dynamic>)
+      .map((e) => Schedule.fromJson(e as Map<String, dynamic>))
+      .toList();
 
-Map<String, dynamic> _$ScheduleListToJson(ScheduleList instance) => <String, dynamic>{
+Map<String, dynamic> _$ScheduleListToJson(ScheduleList instance) =>
+    <String, dynamic>{
       'DaysToDisplay': instance.DaysToDisplay,
       'Items': instance.Items,
     };

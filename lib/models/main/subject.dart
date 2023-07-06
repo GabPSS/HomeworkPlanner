@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -14,6 +13,7 @@ class Subject {
   String SubjectName;
   int SubjectColor = 0xFFABABAB;
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   Color get SubjectColorValue => Color(SubjectColor);
   set SubjectColorValue(Color value) {
     SubjectColor = value.value;
@@ -26,7 +26,7 @@ class Subject {
 
   Subject.editSubjectsTemplate({this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
 
-  Subject.noSubjectTemplate({this.SubjectID: -1, this.SubjectName: defaultMissingSubjectText});
+  Subject.noSubjectTemplate({this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
 
   @override
   String toString() {

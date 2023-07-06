@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
+import 'package:homeworkplanner/ui/schedules_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
 import 'package:homeworkplanner/ui/task_page.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
@@ -276,7 +277,18 @@ class _MainPageState extends State<MainPage> {
                     },
                   ),
                   const MenuItemButton(child: Text('Clean up...')),
-                  const MenuItemButton(child: Text('Manage schedules...')),
+                  MenuItemButton(
+                    child: const Text('Manage schedules...'),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SchedulesPage(
+                              host: host,
+                            ),
+                          ));
+                    },
+                  ),
                 ], child: const Text('Tools')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Get help...')),

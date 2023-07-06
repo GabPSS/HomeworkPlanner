@@ -115,4 +115,23 @@ class EnumConverters {
         return 64;
     }
   }
+
+  static DaysToInclude dayOfWeekToDaysToInclude(DayOfWeek value) {
+    switch (value) {
+      case DayOfWeek.Sunday:
+        return DaysToInclude.Sunday;
+      case DayOfWeek.Monday:
+        return DaysToInclude.Monday;
+      case DayOfWeek.Tuesday:
+        return DaysToInclude.Tuesday;
+      case DayOfWeek.Wednesday:
+        return DaysToInclude.Wednesday;
+      case DayOfWeek.Thursday:
+        return DaysToInclude.Thursday;
+      case DayOfWeek.Friday:
+        return DaysToInclude.Friday;
+      case DayOfWeek.Saturday:
+        return DaysToInclude.Saturday;
+    }
+  }
 }
