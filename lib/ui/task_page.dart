@@ -135,9 +135,9 @@ class TaskEditor {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: Text('Subject not scheduled'),
-                        content:
-                            Text("Couldn't find the selected subject in the list of schedules. Try adding it, then try again."),
+                        title: const Text('Subject not scheduled'),
+                        content: const Text(
+                            "Couldn't find the selected subject in the list of schedules. Try adding it, then try again."),
                         actions: [
                           TextButton(
                               onPressed: () {
@@ -148,12 +148,12 @@ class TaskEditor {
                                       builder: (context) => SchedulesPage(host: host),
                                     ));
                               },
-                              child: Text('View schedules')),
+                              child: const Text('View schedules')),
                           TextButton(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: Text('OK'))
+                              child: const Text('OK'))
                         ],
                       ),
                     );
@@ -161,7 +161,7 @@ class TaskEditor {
                 });
                 onTaskUpdated();
               },
-              child: Text('NEXT')),
+              child: const Text('NEXT')),
         ),
       );
     }

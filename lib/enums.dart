@@ -2,9 +2,9 @@ enum TaskStatus { Overdue, None, Scheduled, ImportantUnscheduled, ImportantSched
 
 enum SortMethod { None, DueDate, ID, Alphabetically, Status, Subject, ExecDate, DateCompleted }
 
-enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+enum DayOfWeek { sunday, monday, tuesday, wednesday, thursday, friday, saturday }
 
-enum DaysToInclude { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+enum DaysToInclude { sunday, monday, tuesday, wednesday, thursday, friday, saturday }
 
 class EnumConverters {
   static int taskStatusToInt(TaskStatus value) {
@@ -47,19 +47,19 @@ class EnumConverters {
 
   static int dayOfWeekToInt(DayOfWeek value) {
     switch (value) {
-      case DayOfWeek.Sunday:
+      case DayOfWeek.sunday:
         return 0;
-      case DayOfWeek.Monday:
+      case DayOfWeek.monday:
         return 1;
-      case DayOfWeek.Tuesday:
+      case DayOfWeek.tuesday:
         return 2;
-      case DayOfWeek.Wednesday:
+      case DayOfWeek.wednesday:
         return 3;
-      case DayOfWeek.Thursday:
+      case DayOfWeek.thursday:
         return 4;
-      case DayOfWeek.Friday:
+      case DayOfWeek.friday:
         return 5;
-      case DayOfWeek.Saturday:
+      case DayOfWeek.saturday:
         return 6;
     }
   }
@@ -67,19 +67,19 @@ class EnumConverters {
   static DayOfWeek intToDayOfWeek(int value) {
     switch (value) {
       case 0:
-        return DayOfWeek.Sunday;
+        return DayOfWeek.sunday;
       case 1:
-        return DayOfWeek.Monday;
+        return DayOfWeek.monday;
       case 2:
-        return DayOfWeek.Tuesday;
+        return DayOfWeek.tuesday;
       case 3:
-        return DayOfWeek.Wednesday;
+        return DayOfWeek.wednesday;
       case 4:
-        return DayOfWeek.Thursday;
+        return DayOfWeek.thursday;
       case 5:
-        return DayOfWeek.Friday;
+        return DayOfWeek.friday;
       case 6:
-        return DayOfWeek.Saturday;
+        return DayOfWeek.saturday;
       default:
         throw Error();
     }
@@ -99,39 +99,39 @@ class EnumConverters {
 
   static int daysToIncludeToInt(DaysToInclude value) {
     switch (value) {
-      case DaysToInclude.Sunday:
+      case DaysToInclude.sunday:
         return 1;
-      case DaysToInclude.Monday:
+      case DaysToInclude.monday:
         return 2;
-      case DaysToInclude.Tuesday:
+      case DaysToInclude.tuesday:
         return 4;
-      case DaysToInclude.Wednesday:
+      case DaysToInclude.wednesday:
         return 8;
-      case DaysToInclude.Thursday:
+      case DaysToInclude.thursday:
         return 16;
-      case DaysToInclude.Friday:
+      case DaysToInclude.friday:
         return 32;
-      case DaysToInclude.Saturday:
+      case DaysToInclude.saturday:
         return 64;
     }
   }
 
   static DaysToInclude dayOfWeekToDaysToInclude(DayOfWeek value) {
     switch (value) {
-      case DayOfWeek.Sunday:
-        return DaysToInclude.Sunday;
-      case DayOfWeek.Monday:
-        return DaysToInclude.Monday;
-      case DayOfWeek.Tuesday:
-        return DaysToInclude.Tuesday;
-      case DayOfWeek.Wednesday:
-        return DaysToInclude.Wednesday;
-      case DayOfWeek.Thursday:
-        return DaysToInclude.Thursday;
-      case DayOfWeek.Friday:
-        return DaysToInclude.Friday;
-      case DayOfWeek.Saturday:
-        return DaysToInclude.Saturday;
+      case DayOfWeek.sunday:
+        return DaysToInclude.sunday;
+      case DayOfWeek.monday:
+        return DaysToInclude.monday;
+      case DayOfWeek.tuesday:
+        return DaysToInclude.tuesday;
+      case DayOfWeek.wednesday:
+        return DaysToInclude.wednesday;
+      case DayOfWeek.thursday:
+        return DaysToInclude.thursday;
+      case DayOfWeek.friday:
+        return DaysToInclude.friday;
+      case DayOfWeek.saturday:
+        return DaysToInclude.saturday;
     }
   }
 }

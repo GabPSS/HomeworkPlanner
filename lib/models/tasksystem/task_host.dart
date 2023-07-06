@@ -244,7 +244,7 @@ class TaskHost {
   }
 
   DateTime? getNextSubjectScheduledDate(int subjectId, DateTime searchStartDate) {
-    DateTime searchDate = searchStartDate.add(Duration(days: 1));
+    DateTime searchDate = searchStartDate.add(const Duration(days: 1));
 
     int dayOfWeek = EnumConverters.weekdayToInt(searchDate.weekday);
     int dayOffset = dayOfWeek;

@@ -10,7 +10,7 @@ class HelperFunctions {
   }
 
   static DateTime getThisSaturday() {
-    return getSunday(DateTime.now()).add(Duration(days: 6));
+    return getSunday(DateTime.now()).add(const Duration(days: 6));
   }
 
   static DateTime getSunday(DateTime dateTime) {

@@ -3,13 +3,12 @@ import 'package:homeworkplanner/enums.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/schedule.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
-import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 class SchedulesPage extends StatefulWidget {
-  TaskHost host;
+  final TaskHost host;
 
-  SchedulesPage({super.key, required this.host});
+  const SchedulesPage({super.key, required this.host});
 
   @override
   State<SchedulesPage> createState() => _SchedulesPageState();
@@ -20,14 +19,14 @@ class _SchedulesPageState extends State<SchedulesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Manage schedules'),
+          title: const Text('Manage schedules'),
         ),
         body: ListView(
           children: [
             buildPanel(),
             ListTile(
-              leading: Icon(Icons.add),
-              title: Text('Add schedule'),
+              leading: const Icon(Icons.add),
+              title: const Text('Add schedule'),
               onTap: () {
                 setState(() {
                   widget.host.saveFile.Schedules.Items.add(Schedule(StartTime: "00:00:00", EndTime: "00:00:00"));
@@ -42,9 +41,9 @@ class _SchedulesPageState extends State<SchedulesPage> {
     List<Widget> header = List.empty(growable: true);
     List<int> daysToDisplay = List.empty(growable: true);
 
-    header.add(Center(
+    header.add(const Center(
         child: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: EdgeInsets.all(8.0),
       child: Text('Schedules'),
     )));
 
@@ -66,11 +65,11 @@ class _SchedulesPageState extends State<SchedulesPage> {
               context: context,
               builder: (context) => StatefulBuilder(
                     builder: (context, setState) {
-                      return SimpleDialog(title: Text('Select days of week'), children: getDaysOfWeek(setState));
+                      return SimpleDialog(title: const Text('Select days of week'), children: getDaysOfWeek(setState));
                     },
                   ));
         },
-        icon: Icon(Icons.date_range)));
+        icon: const Icon(Icons.date_range)));
 
     List<TableRow> schedules = [TableRow(children: header)].toList(growable: true);
 
@@ -104,7 +103,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
                   onTapOutside: (event) => setState(() {}),
                 ),
               ),
-              Text('-'),
+              const Text('-'),
               Expanded(
                 child: TextFormField(
                   initialValue: schedule.shortEndTime,
@@ -156,13 +155,13 @@ class _SchedulesPageState extends State<SchedulesPage> {
                 widget.host.saveFile.Schedules.Items.remove(schedule);
               });
             },
-            icon: Icon(Icons.delete)),
+            icon: const Icon(Icons.delete)),
       ));
       return TableRow(children: cols);
     }));
 
     return Table(
-      columnWidths: {0: IntrinsicColumnWidth(), header.length - 1: IntrinsicColumnWidth()},
+      columnWidths: {0: const IntrinsicColumnWidth(), header.length - 1: const IntrinsicColumnWidth()},
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: schedules,
     );
