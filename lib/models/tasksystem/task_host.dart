@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/global_settings.dart';
+import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/lists/task_list.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
@@ -135,36 +136,6 @@ class TaskHost {
     saveFile.Subjects.Items.sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
   }
 
-  DateTime? GetNextSubjectScheduledDate(int subjectId, DateTime startDate) {
-    DateTime date = startDate.add(const Duration(days: 1));
-    int dayOfWeek = EnumConverters.weekdayToInt(date.weekday); //2
-
-    //Go through each day of week starting from today
-    int dayOffset = dayOfWeek;
-    do {
-      //Go through each schedule and see if any of them match subjectId at dayOffset position
-      for (int i = 0; i < saveFile.Schedules.Items.length; i++) {
-        int? scheduledSubject = saveFile.Schedules.Items[i].Subjects[dayOffset];
-        if (scheduledSubject != null && scheduledSubject == subjectId) {
-          //This means the next subject's day of week is found and is dayOffset!
-          //Next, get how many days until then and add that to date
-          if (EnumConverters.weekdayToInt(date.weekday) > dayOffset) {
-            dayOffset += 7;
-          }
-          dayOffset -= EnumConverters.weekdayToInt(date.weekday);
-          date = date.add(Duration(days: dayOffset));
-          return date;
-        }
-      }
-      dayOffset++;
-      if (dayOffset > 6) {
-        dayOffset = 0;
-      }
-    } while (dayOffset != dayOfWeek);
-
-    return null;
-  }
-
   static List<Task> filterCompletedTasks(List<Task> tasks) {
     List<Task> completedTasks = List<Task>.empty(growable: true);
     for (int i = 0; i < tasks.length; i++) {
@@ -258,5 +229,43 @@ class TaskHost {
         }
       });
     }
+  }
+
+  Map<String, bool> getScheduleDaysOfWeek() {
+    List<String> daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    List<bool> daysAllowed = [false, false, false, false, false, false, false];
+    HelperFunctions.iterateThroughWeekFromThisSaturday(
+      saveFile.Schedules.DaysToDisplay.toDouble(),
+      (day) {
+        daysAllowed[EnumConverters.weekdayToInt(day.weekday)] = true;
+      },
+    );
+    return Map.fromIterables(daysOfWeek, daysAllowed);
+  }
+
+  DateTime? getNextSubjectScheduledDate(int subjectId, DateTime searchStartDate) {
+    DateTime searchDate = searchStartDate.add(Duration(days: 1));
+
+    int dayOfWeek = EnumConverters.weekdayToInt(searchDate.weekday);
+    int dayOffset = dayOfWeek;
+
+    do {
+      for (var i = 0; i < saveFile.Schedules.Items.length; i++) {
+        int? scheduledSubject = saveFile.Schedules.Items[i].Subjects[dayOffset];
+        if (scheduledSubject != null && scheduledSubject == subjectId) {
+          if (dayOfWeek > dayOffset) {
+            dayOffset += 7;
+          }
+          dayOffset -= dayOfWeek;
+          return searchDate.add(Duration(days: dayOffset));
+        }
+        dayOffset++;
+        if (dayOffset > 6) {
+          dayOffset = 0;
+        }
+      }
+    } while (dayOffset != dayOfWeek);
+
+    return null;
   }
 }

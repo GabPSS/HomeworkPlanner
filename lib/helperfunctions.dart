@@ -19,6 +19,9 @@ class HelperFunctions {
     return dateTime.add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
   }
 
+  static DateTime iterateThroughWeekFromThisSaturday(double daysOfWeekSum, Function(DateTime) callback) =>
+      iterateThroughWeekFromDate(daysOfWeekSum, getThisSaturday(), callback);
+
   static DateTime getToday() => DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   /// WARNING: [startDate] MUST be a saturday for this method to return an appropriate day of the week

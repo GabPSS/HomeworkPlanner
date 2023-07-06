@@ -3,6 +3,7 @@ import 'package:homeworkplanner/enums.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/schedule.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
+import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 
 class SchedulesPage extends StatefulWidget {
@@ -38,20 +39,40 @@ class _SchedulesPageState extends State<SchedulesPage> {
   }
 
   Widget buildPanel() {
-    List<Widget> weekDaysList = List.empty(growable: true);
-    List<int> acceptableDays = List.empty(growable: true);
-    weekDaysList.add(Center(child: Text('Schedules')));
+    List<Widget> header = List.empty(growable: true);
+    List<int> daysToDisplay = List.empty(growable: true);
 
+    header.add(Center(
+        child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text('Schedules'),
+    )));
+
+    List<Widget> daysOfWeekWidgets = List.empty(growable: true);
     HelperFunctions.iterateThroughWeekFromDate(
       widget.host.saveFile.Schedules.DaysToDisplay.toDouble(),
       HelperFunctions.getThisSaturday(),
       (day) {
-        weekDaysList.add(Center(child: Text(EnumConverters.weekdayToDayOfWeek(day.weekday).name)));
-        acceptableDays.add(EnumConverters.weekdayToInt(day.weekday));
+        daysOfWeekWidgets.add(Center(child: Text(EnumConverters.weekdayToDayOfWeek(day.weekday).name)));
+        daysToDisplay.add(EnumConverters.weekdayToInt(day.weekday));
       },
     );
 
-    List<TableRow> schedules = [TableRow(children: weekDaysList)].toList(growable: true);
+    header.addAll(daysOfWeekWidgets.reversed.toList());
+
+    header.add(IconButton(
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (context) => StatefulBuilder(
+                    builder: (context, setState) {
+                      return SimpleDialog(title: Text('Select days of week'), children: getDaysOfWeek(setState));
+                    },
+                  ));
+        },
+        icon: Icon(Icons.date_range)));
+
+    List<TableRow> schedules = [TableRow(children: header)].toList(growable: true);
 
     var noSubject = Subject.noSubjectTemplate();
 
@@ -70,6 +91,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
             children: [
               Expanded(
                 child: TextFormField(
+                  textAlign: TextAlign.end,
                   initialValue: schedule.shortStartTime,
                   validator: (value) =>
                       HelperFunctions.tryDurationShortStringValidation(value) ? null : "Incorrect time format",
@@ -102,34 +124,74 @@ class _SchedulesPageState extends State<SchedulesPage> {
         ),
       ));
       for (int index = 0; index < schedule.Subjects.length; index++) {
-        if (acceptableDays.contains(index)) {
-          cols.add(DropdownButtonFormField(
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: widget.host.getSubjectById(schedule.Subjects[index])?.SubjectColorValue,
+        if (daysToDisplay.contains(index)) {
+          cols.add(Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: DropdownButtonFormField(
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: widget.host.getSubjectById(schedule.Subjects[index])?.SubjectColorValue,
+              ),
+              items: subjects
+                  .map((subject) => DropdownMenuItem(
+                        value: subject,
+                        child: Text(subject.SubjectName),
+                      ))
+                  .toList(),
+              value: widget.host.getSubjectById(schedule.Subjects[index]) ?? noSubject,
+              onChanged: (value) {
+                setState(() {
+                  schedule.Subjects[index] = value?.SubjectID;
+                });
+              },
             ),
-            items: subjects
-                .map((subject) => DropdownMenuItem(
-                      value: subject,
-                      child: Text(subject.SubjectName),
-                    ))
-                .toList(),
-            value: widget.host.getSubjectById(schedule.Subjects[index]) ?? noSubject,
-            onChanged: (value) {
-              setState(() {
-                schedule.Subjects[index] = value?.SubjectID;
-              });
-            },
           ));
         }
       }
+      cols.add(Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: IconButton(
+            onPressed: () {
+              setState(() {
+                widget.host.saveFile.Schedules.Items.remove(schedule);
+              });
+            },
+            icon: Icon(Icons.delete)),
+      ));
       return TableRow(children: cols);
     }));
 
     return Table(
-      columnWidths: {0: IntrinsicColumnWidth()},
+      columnWidths: {0: IntrinsicColumnWidth(), header.length - 1: IntrinsicColumnWidth()},
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: schedules,
     );
+  }
+
+  List<CheckboxListTile> getDaysOfWeek(Function(void Function()) setState) {
+    List<CheckboxListTile> checkboxes = List.empty(growable: true);
+    var scheduleDaysOfWeek = widget.host.getScheduleDaysOfWeek();
+
+    for (var i = 0; i < scheduleDaysOfWeek.length; i++) {
+      checkboxes.add(CheckboxListTile(
+        value: scheduleDaysOfWeek.values.elementAt(i),
+        title: Text(scheduleDaysOfWeek.keys.elementAt(i)),
+        onChanged: (value) {
+          setState(() {});
+          if (value != null && value) {
+            //Get days to display, convert value to DaysToInclude, add
+
+            widget.host.saveFile.Schedules.DaysToDisplay +=
+                EnumConverters.daysToIncludeToInt(EnumConverters.dayOfWeekToDaysToInclude(EnumConverters.intToDayOfWeek(i)));
+          } else {
+            widget.host.saveFile.Schedules.DaysToDisplay -=
+                EnumConverters.daysToIncludeToInt(EnumConverters.dayOfWeekToDaysToInclude(EnumConverters.intToDayOfWeek(i)));
+          }
+        },
+      ));
+    }
+
+    scheduleDaysOfWeek.forEach((key, value) {});
+    return checkboxes;
   }
 }
