@@ -259,10 +259,10 @@ class TaskHost {
           dayOffset -= dayOfWeek;
           return searchDate.add(Duration(days: dayOffset));
         }
-        dayOffset++;
-        if (dayOffset > 6) {
-          dayOffset = 0;
-        }
+      }
+      dayOffset++;
+      if (dayOffset > 6) {
+        dayOffset = 0;
       }
     } while (dayOffset != dayOfWeek);
 
