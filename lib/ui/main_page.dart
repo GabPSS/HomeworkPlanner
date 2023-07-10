@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
+import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
 import 'package:homeworkplanner/ui/schedules_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
 import 'package:homeworkplanner/ui/task_page.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
+import 'package:intl/intl.dart';
 
 import '../models/tasksystem/task_host.dart';
 
@@ -80,53 +82,73 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildAllTasksPanel() {
-    List<Widget> items = List.empty(growable: true);
-    items.add(const Padding(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text("All tasks"),
-    ));
-
     List<Task> allTasks = host.saveFile.Tasks.Items
         .where((element) =>
             host.saveFile.Settings.DisplayPreviousTasks ||
             !(element.IsCompleted && element.DateCompleted!.isBefore(HelperFunctions.getToday())))
         .toList();
 
+    List<Widget> widgets = List.empty(growable: true);
+    widgets.add(Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Text("All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
+    ));
+
     for (var i = 0; i < allTasks.length; i++) {
-      Task task = allTasks[i];
-      String? subjectName = host.getSubjectNameById(task.SubjectID);
-      Widget itemTile = ListTile(
-        leading: IconButton(
-            onPressed: () {
-              setState(() {
-                task.IsCompleted = !task.IsCompleted;
-              });
-            },
-            icon: task.GetIcon()),
-        title: Text((task.SubjectID != -1 && subjectName != null ? "$subjectName - " : "") + task.toString()),
-        subtitle: Text("Due: ${task.DueDate}"),
-        onTap: () {
-          TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
-        },
-      );
-      items.add(LongPressDraggable(
-        data: task,
-        dragAnchorStrategy: pointerDragAnchorStrategy,
-        feedback: task.GetIcon(),
-        child: itemTile,
-        onDragStarted: () {
-          setState(() {
-            task.ExecDate = null;
-            if (Platform.isAndroid) {
-              bottomNavSelectedIndex = 0;
-            }
-          });
-        },
-      ));
+      widgets.add(buildTaskWidget(allTasks[i]));
     }
 
     return ListView(
-      children: items,
+      children: widgets,
+    );
+  }
+
+  ListTile _buildTaskListTile(Task task, [bool compact = false]) {
+    String taskTitle;
+    if (compact) {
+      taskTitle = task.toString();
+    } else {
+      String subjectPrefix = (Subject.isIdValid(task.SubjectID, host) ? "${host.getSubjectNameById(task.SubjectID)} - " : "");
+      String dueSuffix = task.DueDate != null ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}" : "";
+      taskTitle = subjectPrefix + task.toString() + dueSuffix;
+    }
+
+    return ListTile(
+      leading: !compact
+          ? IconButton(
+              padding: const EdgeInsets.all(0),
+              onPressed: () {
+                setState(() {
+                  task.IsCompleted = !task.IsCompleted;
+                });
+              },
+              icon: task.GetIcon())
+          : null,
+      title: Text(
+        taskTitle,
+        style: TextStyle(decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
+      ),
+      subtitle: Text(!compact
+          ? (task.Description != "" ? task.Description : "No description")
+          : (task.DueDate != null ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}" : "No due date")),
+      onTap: () {
+        TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
+      },
+    );
+  }
+
+  LongPressDraggable<Task> buildTaskWidget(Task task, [bool compact = false]) {
+    return LongPressDraggable(
+      data: task,
+      dragAnchorStrategy: pointerDragAnchorStrategy,
+      feedback: task.GetIcon(),
+      child: _buildTaskListTile(task, compact),
+      onDragStarted: () => setState(() {
+        task.ExecDate = null;
+        if (Platform.isAndroid) {
+          bottomNavSelectedIndex = 0;
+        }
+      }),
     );
   }
 
@@ -136,7 +158,7 @@ class _MainPageState extends State<MainPage> {
 
     int rowCount = host.saveFile.Settings.FutureWeeks + 1;
 
-    DateTime selectedDay = HelperFunctions.getSunday(DateTime.now()).add(const Duration(days: 6));
+    DateTime selectedDay = HelperFunctions.getSunday(HelperFunctions.getToday()).add(const Duration(days: 6));
 
     for (int row = 0; row < rowCount; row++) {
       cols = List.empty(growable: true);
@@ -158,15 +180,22 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildTaskListForDate(DateTime selectedDay) {
     List<Widget> taskWidgets = List.empty(growable: true);
-    taskWidgets.add(Text("${selectedDay.day}/${selectedDay.month}"));
     List<Task> tasksForDate = host.getTasksPlannedForDate(selectedDay);
+    Iterable<Task> tasksCompletedForDate = tasksForDate.where((element) => element.IsCompleted);
 
-    taskWidgets.addAll(tasksForDate
-        .map<ListTile>((e) => ListTile(
-              title: Text(e.toString()),
-              subtitle: Text(e.DueDate != Task.minimumDateTime ? "Due ${e.DueDate.toString()}" : "No due date"),
-            ))
-        .toList());
+    bool isToday = selectedDay == HelperFunctions.getToday();
+    String taskCountSuffix = isToday ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})' : '';
+
+    taskWidgets.add(Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
+        style: TextStyle(fontWeight: isToday ? FontWeight.bold : FontWeight.normal),
+      ),
+    ));
+
+    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, true)).toList());
+
     return Expanded(
         child: DragTarget(
       builder: (context, candidateData, rejectedData) {

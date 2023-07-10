@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'subject.g.dart';
@@ -18,6 +19,13 @@ class Subject {
   set SubjectColorValue(Color value) {
     SubjectColor = value.value;
   }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  static bool isIdValid(int? id, TaskHost host) => id == null
+      ? false
+      : host.getSubjectById(id) == null
+          ? false
+          : true;
 
   //TODO: Implement autoincrementing logic and remove default values
   Subject({this.SubjectName = "", this.SubjectID = 0}) {
