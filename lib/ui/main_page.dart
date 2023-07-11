@@ -139,19 +139,22 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  LongPressDraggable<Task> buildTaskWidget(Task task, [bool compact = false]) {
-    return LongPressDraggable(
-      data: task,
-      dragAnchorStrategy: pointerDragAnchorStrategy,
-      feedback: task.GetIcon(),
-      child: _buildTaskListTile(task, compact),
-      onDragStarted: () => setState(() {
-        task.ExecDate = null;
-        if (onMobile) {
-          bottomNavSelectedIndex = 0;
-        }
-      }),
-    );
+  Widget buildTaskWidget(Task task, [bool compact = false]) {
+    var listTile = _buildTaskListTile(task, compact);
+    return host.settings.mobileLayout
+        ? listTile
+        : LongPressDraggable(
+            data: task,
+            dragAnchorStrategy: pointerDragAnchorStrategy,
+            feedback: task.GetIcon(),
+            child: listTile,
+            onDragStarted: () => setState(() {
+              task.ExecDate = null;
+              if (onMobile) {
+                bottomNavSelectedIndex = 0;
+              }
+            }),
+          );
   }
 
   Widget buildPlannerViewPanel() {
