@@ -30,6 +30,9 @@ class _MainPageState extends State<MainPage> {
   BottomNavigationBar? bottomNav;
   int bottomNavSelectedIndex = 0;
   bool onMobile = false;
+  CarouselController mobileCarouselController = CarouselController();
+  late List<DateTime> mobileDaysDisplayedList;
+  bool mobileMonthView = false;
 
   @override
   void initState() {
@@ -160,8 +163,10 @@ class _MainPageState extends State<MainPage> {
   Widget buildPlannerViewPanel() {
     List<Widget> rows = List.empty(growable: true);
     List<Widget> days = List.empty(growable: true);
-    List<Widget> tmpDays;
+    List<DateTime> tmpDaysDisplayed;
+    List<Widget> tmpDayWidgets;
     List<Widget> cols;
+    mobileDaysDisplayedList = List.empty(growable: true);
 
     int rowCount = host.saveFile.Settings.FutureWeeks + 1;
 
@@ -169,31 +174,38 @@ class _MainPageState extends State<MainPage> {
 
     for (int row = 0; row < rowCount; row++) {
       cols = List.empty(growable: true);
-      tmpDays = List.empty(growable: true);
+      tmpDayWidgets = List.empty(growable: true);
+      tmpDaysDisplayed = List.empty(growable: true);
 
       selectedDay = HelperFunctions.iterateThroughWeekFromDate(
         host.saveFile.Settings.DaysToDisplay.toDouble(),
         selectedDay,
-        (p0) {
-          var dateWidget = buildTaskListForDate(p0, !onMobile);
+        (date) {
+          var dateWidget = buildTaskListForDate(date, !onMobile);
           cols.add(dateWidget);
-          tmpDays.add(dateWidget);
+          tmpDayWidgets.add(dateWidget);
+          tmpDaysDisplayed.add(date);
         },
       ).add(const Duration(days: 14));
 
       cols = cols.reversed.cast<Widget>().toList(growable: true);
-      days.addAll(tmpDays.reversed);
+      days.addAll(tmpDayWidgets.reversed);
+      mobileDaysDisplayedList.addAll(tmpDaysDisplayed.reversed);
       rows.add(Expanded(child: Row(children: cols)));
     }
+
     if (!onMobile) {
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
       return Expanded(
           child: CarouselSlider(
               items: days,
+              carouselController: mobileCarouselController,
               options: CarouselOptions(
-                  scrollDirection: Axis.horizontal, viewportFraction: 1, height: MediaQuery.of(context).size.height)));
-      // return buildTaskListForDate(HelperFunctions.getToday());
+                scrollDirection: Axis.horizontal,
+                viewportFraction: 1,
+                height: MediaQuery.of(context).size.height,
+              )));
     }
   }
 
@@ -205,15 +217,66 @@ class _MainPageState extends State<MainPage> {
     bool isToday = selectedDay == HelperFunctions.getToday();
     String taskCountSuffix = isToday ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})' : '';
 
-    taskWidgets.add(Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
-        style: TextStyle(fontWeight: isToday ? FontWeight.bold : FontWeight.normal),
-      ),
-    ));
+    FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
+    double taskCompletionPercent = tasksForDate.isNotEmpty ? tasksCompletedForDate.length / tasksForDate.length : 0;
+    taskWidgets.add(onMobile
+        ? Column(
+            children: [
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(selectedDay.day.toString(), style: TextStyle(fontSize: 42, fontWeight: dayFontWeight)),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat('MMMM').format(selectedDay),
+                        style: TextStyle(fontWeight: dayFontWeight),
+                      ),
+                      Text(
+                        DateFormat('yyyy').format(selectedDay),
+                        style: TextStyle(fontWeight: dayFontWeight),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  taskCompletionPercent == 1
+                      ? const CircleAvatar(
+                          backgroundColor: Colors.green,
+                          child: Icon(
+                            Icons.done_all,
+                            color: Colors.white,
+                          ),
+                        )
+                      : taskCompletionPercent == 0
+                          ? const Icon(null)
+                          : CircularProgressIndicator(
+                              color: Colors.green,
+                              value: taskCompletionPercent,
+                            ),
+                  Padding(
+                    padding: const EdgeInsets.all(18.0),
+                    child: Text(
+                        "${tasksCompletedForDate.length}/${tasksForDate.length} task${tasksCompletedForDate.length != 1 ? "s" : ""} completed"),
+                  ),
+                ],
+              ),
+              const Divider(
+                height: 1,
+              )
+            ],
+          )
+        : Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
+              style: TextStyle(fontWeight: dayFontWeight),
+            ),
+          ));
 
-    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, true)).toList());
+    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, !onMobile)).toList());
 
     var finalTaskListWidget = DragTarget(
       builder: (context, candidateData, rejectedData) {
@@ -233,12 +296,36 @@ class _MainPageState extends State<MainPage> {
   }
 
   AppBar buildAndroidAppBar() {
+    var plannerActions = [
+      IconButton(
+          onPressed: () {
+            setState(() {
+              for (int dateIndex = 0; dateIndex < mobileDaysDisplayedList.length; dateIndex++) {
+                if (mobileDaysDisplayedList[dateIndex] == HelperFunctions.getToday()) {
+                  mobileCarouselController.jumpToPage(dateIndex);
+                }
+              }
+            });
+          },
+          icon: const Icon(Icons.today)),
+      IconButton(
+          onPressed: () => setState(() => mobileMonthView = !mobileMonthView),
+          icon: Icon(mobileMonthView ? Icons.calendar_view_month : Icons.calendar_view_day)),
+    ];
+
+    List<IconButton>? actionButtons;
+    switch (bottomNavSelectedIndex) {
+      case 0:
+        actionButtons = plannerActions;
+        break;
+      default:
+        actionButtons = null;
+        break;
+    }
+
     return AppBar(
       title: Text(HelperFunctions.getFileNameFromPath(host.saveFilePath ?? "Untitled plan")),
-      actions: [
-        IconButton(onPressed: () => host.save(context), icon: const Icon(Icons.save)),
-        IconButton(onPressed: updateTasks, icon: const Icon(Icons.refresh))
-      ],
+      actions: actionButtons,
     );
   }
 
