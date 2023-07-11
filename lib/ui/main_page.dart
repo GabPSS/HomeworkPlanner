@@ -1,4 +1,7 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
@@ -26,9 +29,11 @@ class _MainPageState extends State<MainPage> {
   AppBar? appBar;
   BottomNavigationBar? bottomNav;
   int bottomNavSelectedIndex = 0;
+  bool onMobile = false;
 
   @override
   void initState() {
+    onMobile = widget.host.settings.mobileLayout;
     host = widget.host;
     super.initState();
   }
@@ -36,12 +41,12 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     Widget currentPage;
-    if (Platform.isAndroid) {
+    if (onMobile) {
       appBar = buildAndroidAppBar();
       bottomNav = buildAndroidBottomNav();
       switch (bottomNavSelectedIndex) {
         case 0:
-          currentPage = Expanded(child: buildPlannerViewPanel());
+          currentPage = buildPlannerViewPanel();
           break;
         case 1:
           currentPage = Expanded(child: buildAllTasksPanel());
@@ -53,10 +58,7 @@ class _MainPageState extends State<MainPage> {
       currentPage = Expanded(
         child: Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: buildPlannerViewPanel(),
-            ),
+            buildPlannerViewPanel(),
             Expanded(
               flex: 1,
               child: buildAllTasksPanel(),
@@ -90,7 +92,7 @@ class _MainPageState extends State<MainPage> {
 
     List<Widget> widgets = List.empty(growable: true);
     widgets.add(Padding(
-      padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text("All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
     ));
 
@@ -145,40 +147,54 @@ class _MainPageState extends State<MainPage> {
       child: _buildTaskListTile(task, compact),
       onDragStarted: () => setState(() {
         task.ExecDate = null;
-        if (Platform.isAndroid) {
+        if (onMobile) {
           bottomNavSelectedIndex = 0;
         }
       }),
     );
   }
 
-  Column buildPlannerViewPanel() {
+  Widget buildPlannerViewPanel() {
     List<Widget> rows = List.empty(growable: true);
+    List<Widget> days = List.empty(growable: true);
+    List<Widget> tmpDays;
     List<Widget> cols;
 
     int rowCount = host.saveFile.Settings.FutureWeeks + 1;
 
-    DateTime selectedDay = HelperFunctions.getSunday(HelperFunctions.getToday()).add(const Duration(days: 6));
+    DateTime selectedDay = HelperFunctions.getThisSaturday();
 
     for (int row = 0; row < rowCount; row++) {
       cols = List.empty(growable: true);
+      tmpDays = List.empty(growable: true);
 
       selectedDay = HelperFunctions.iterateThroughWeekFromDate(
         host.saveFile.Settings.DaysToDisplay.toDouble(),
         selectedDay,
         (p0) {
-          cols.add(buildTaskListForDate(p0));
+          var dateWidget = buildTaskListForDate(p0, !onMobile);
+          cols.add(dateWidget);
+          tmpDays.add(dateWidget);
         },
       ).add(const Duration(days: 14));
 
       cols = cols.reversed.cast<Widget>().toList(growable: true);
+      days.addAll(tmpDays.reversed);
       rows.add(Expanded(child: Row(children: cols)));
     }
-
-    return Column(children: rows);
+    if (!onMobile) {
+      return Expanded(flex: 2, child: Column(children: rows));
+    } else {
+      return Expanded(
+          child: CarouselSlider(
+              items: days,
+              options: CarouselOptions(
+                  scrollDirection: Axis.horizontal, viewportFraction: 1, height: MediaQuery.of(context).size.height)));
+      // return buildTaskListForDate(HelperFunctions.getToday());
+    }
   }
 
-  Widget buildTaskListForDate(DateTime selectedDay) {
+  Widget buildTaskListForDate(DateTime selectedDay, [bool expand = true]) {
     List<Widget> taskWidgets = List.empty(growable: true);
     List<Task> tasksForDate = host.getTasksPlannedForDate(selectedDay);
     Iterable<Task> tasksCompletedForDate = tasksForDate.where((element) => element.IsCompleted);
@@ -196,8 +212,7 @@ class _MainPageState extends State<MainPage> {
 
     taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, true)).toList());
 
-    return Expanded(
-        child: DragTarget(
+    var finalTaskListWidget = DragTarget(
       builder: (context, candidateData, rejectedData) {
         return ListView(
           children: taskWidgets,
@@ -210,7 +225,8 @@ class _MainPageState extends State<MainPage> {
           }
         });
       },
-    ));
+    );
+    return expand ? Expanded(child: finalTaskListWidget) : finalTaskListWidget;
   }
 
   AppBar buildAndroidAppBar() {
@@ -239,7 +255,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Row buildDesktopMenuBar(BuildContext context) {
-    if (Platform.isAndroid) {
+    if (onMobile) {
       return const Row();
     } else {
       List<MenuItemButton> recentFilesList = host.settings.recentFiles

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -15,7 +17,7 @@ class SubjectsPage extends StatefulWidget {
   State<SubjectsPage> createState() => _SubjectsPageState();
 
   static void show(BuildContext context, TaskHost host, Function() onSubjectUpdate) {
-    if (Platform.isAndroid) {
+    if (host.settings.mobileLayout) {
       Navigator.push(
           context,
           MaterialPageRoute(

@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
 import 'package:date_field/date_field.dart';
@@ -57,7 +59,9 @@ class TaskEditor {
     Subject noSubject = Subject.noSubjectTemplate();
     Subject editSubjects = Subject.editSubjectsTemplate();
     Subject? selectedSubject = task.SubjectID == -1 ? noSubject : (host.getSubjectById(task.SubjectID) ?? noSubject);
+
     List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
+
     subjectWidgets.add(DropdownMenuItem(
       value: noSubject,
       child: Text(noSubject.SubjectName),
@@ -76,7 +80,7 @@ class TaskEditor {
     ).toList();
     subjectWidgets.addAll(subjectWidgetsObtained);
 
-    var dateTimeFormField = DateTimeField(
+    var dueDateWidget = DateTimeField(
       decoration: const InputDecoration(
         icon: Icon(Icons.date_range),
         border: OutlineInputBorder(),
@@ -91,7 +95,8 @@ class TaskEditor {
         onTaskUpdated();
       },
     );
-    var dropdownButtonFormField = DropdownButtonFormField(
+
+    var subjectsDropdownWidget = DropdownButtonFormField(
       decoration:
           const InputDecoration(icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
       items: subjectWidgets,
@@ -114,13 +119,14 @@ class TaskEditor {
         onTaskUpdated();
       },
     );
-    var dateFieldRowWidgets = <Widget>[
+
+    var dueDateRowWidgets = <Widget>[
       Expanded(
-        child: dateTimeFormField,
+        child: dueDateWidget,
       ),
     ].toList(growable: true);
     if (task.SubjectID != -1 && task.SubjectID != -123) {
-      dateFieldRowWidgets.add(
+      dueDateRowWidgets.add(
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: TextButton(
@@ -166,7 +172,7 @@ class TaskEditor {
       );
     }
     if (task.DueDate != null) {
-      dateFieldRowWidgets.add(Padding(
+      dueDateRowWidgets.add(Padding(
         padding: const EdgeInsets.all(4.0),
         child: TextButton(
             onPressed: () {
@@ -178,7 +184,8 @@ class TaskEditor {
             child: const Text('CLEAR')),
       ));
     }
-    return [
+
+    List<Widget> buildWidgets = <Widget>[
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
         child: TextFormField(
@@ -198,20 +205,61 @@ class TaskEditor {
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: dropdownButtonFormField,
+        child: subjectsDropdownWidget,
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Row(
-          children: dateFieldRowWidgets,
+          children: dueDateRowWidgets,
         ),
       ),
+    ].toList(growable: true);
+
+    if (host.settings.mobileLayout) {
+      List<Widget> scheduleDateRowWidgets = <Widget>[
+        Expanded(
+          child: DateTimeField(
+            decoration:
+                const InputDecoration(border: OutlineInputBorder(), labelText: 'Schedule date', icon: Icon(Icons.schedule)),
+            mode: DateTimeFieldPickerMode.date,
+            selectedDate: task.ExecDate,
+            onDateSelected: (value) {
+              setState(() {
+                task.ExecDate = value;
+              });
+              onTaskUpdated();
+            },
+          ),
+        ),
+      ].toList(growable: true);
+      if (task.IsScheduled) {
+        scheduleDateRowWidgets.add(Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: TextButton(
+              onPressed: () {
+                setState(() {
+                  task.ExecDate = null;
+                });
+                onTaskUpdated();
+              },
+              child: const Text('CLEAR')),
+        ));
+      }
+      buildWidgets.add(Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: Row(
+          children: scheduleDateRowWidgets,
+        ),
+      ));
+    }
+
+    buildWidgets.addAll(<Widget>[
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
           decoration: const InputDecoration(
               icon: Icon(Icons.description_outlined), border: OutlineInputBorder(), labelText: 'Description'),
-          maxLines: Platform.isAndroid ? 15 : 5,
+          maxLines: host.settings.mobileLayout ? 15 : 5,
           keyboardType: TextInputType.multiline,
           initialValue: task.Description,
           onChanged: (value) {
@@ -248,7 +296,8 @@ class TaskEditor {
           title: const Text('Important'),
         ),
       )
-    ];
+    ]);
+    return buildWidgets;
   }
 
   static void show(
@@ -257,7 +306,7 @@ class TaskEditor {
       required Task task,
       required Function() onTaskUpdated,
       bool isAdding = false}) {
-    if (Platform.isAndroid) {
+    if (host.settings.mobileLayout) {
       Navigator.push(
           context,
           MaterialPageRoute(

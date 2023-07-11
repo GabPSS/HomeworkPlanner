@@ -20,7 +20,6 @@ class Subject {
     SubjectColor = value.value;
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   static bool isIdValid(int? id, TaskHost host) => id == null
       ? false
       : host.getSubjectById(id) == null

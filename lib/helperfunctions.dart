@@ -10,7 +10,7 @@ class HelperFunctions {
   }
 
   static DateTime getThisSaturday() {
-    return getSunday(DateTime.now()).add(const Duration(days: 6));
+    return getSunday(getToday()).add(const Duration(days: 6));
   }
 
   static DateTime getSunday(DateTime dateTime) {
@@ -28,7 +28,7 @@ class HelperFunctions {
   /// Returns: a DateTime 7 days before [startDate]
   static DateTime iterateThroughWeekFromDate(double daysOfWeekSum, DateTime startDate, Function(DateTime) callback) {
     DateTime selectedDate = startDate;
-    for (double dayOfWeek = 64; dayOfWeek > 0; dayOfWeek /= 2) {
+    for (double dayOfWeek = 64; dayOfWeek >= 1; dayOfWeek /= 2) {
       if (daysOfWeekSum - dayOfWeek >= 0) {
         callback(selectedDate);
         daysOfWeekSum -= dayOfWeek;

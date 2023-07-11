@@ -220,7 +220,7 @@ class TaskHost {
   }
 
   void saveAs(BuildContext context) {
-    if (Platform.isAndroid) {
+    if (settings.mobileLayout) {
       save(context, "/storage/emulated/0/Download/Plan.hwpf");
     } else {
       FilePicker.platform.saveFile(dialogTitle: "Save plan as...", allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {

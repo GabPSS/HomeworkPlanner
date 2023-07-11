@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -29,8 +31,8 @@ class _HomePageState extends State<HomePage> {
               icon: const Icon(Icons.folder_open))
         ],
       ),
-      body: Platform.isAndroid ? buildRecentFilesWidget() : buildDesktopLayout(context),
-      floatingActionButton: Platform.isAndroid
+      body: widget.settings.mobileLayout ? buildRecentFilesWidget() : buildDesktopLayout(context),
+      floatingActionButton: widget.settings.mobileLayout
           ? FloatingActionButton(
               onPressed: () => openApp(context),
               child: const Icon(Icons.add),
