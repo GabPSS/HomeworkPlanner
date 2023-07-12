@@ -118,7 +118,11 @@ class _MainPageState extends State<MainPage> {
       taskTitle = subjectPrefix + task.toString() + dueSuffix;
     }
 
+    Color? tileColor = task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
+
     return ListTile(
+      iconColor: tileColor,
+      textColor: tileColor,
       leading: !compact
           ? IconButton(
               padding: const EdgeInsets.all(0),
@@ -310,7 +314,7 @@ class _MainPageState extends State<MainPage> {
           icon: const Icon(Icons.today)),
       IconButton(
           onPressed: () => setState(() => mobileMonthView = !mobileMonthView),
-          icon: Icon(mobileMonthView ? Icons.calendar_view_month : Icons.calendar_view_day)),
+          icon: Icon(mobileMonthView ? Icons.calendar_view_day : Icons.calendar_view_month)),
     ];
 
     List<IconButton>? actionButtons;

@@ -15,8 +15,9 @@ class TaskEditorPage extends StatefulWidget {
   final Task task;
   final TaskHost host;
   final bool isAdding;
+  final Function()? onTaskUpdated;
 
-  const TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host});
+  const TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host, this.onTaskUpdated});
 
   @override
   State<TaskEditorPage> createState() => _TaskEditorPageState();
@@ -25,7 +26,8 @@ class TaskEditorPage extends StatefulWidget {
 class _TaskEditorPageState extends State<TaskEditorPage> {
   @override
   Widget build(BuildContext context) {
-    TaskEditor builder = TaskEditor(onTaskUpdated: () => setState(() {}), setState: setState, host: widget.host);
+    TaskEditor builder =
+        TaskEditor(onTaskUpdated: widget.onTaskUpdated ?? () => setState(() {}), setState: setState, host: widget.host);
 
     return Scaffold(
         appBar: AppBar(
@@ -314,6 +316,7 @@ class TaskEditor {
               task: task,
               host: host,
               isAdding: isAdding,
+              onTaskUpdated: onTaskUpdated,
             ),
           ));
     } else {
