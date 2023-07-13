@@ -39,6 +39,9 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
                   ScaffoldMessenger.of(context).setState(() {});
+                  if (widget.onTaskUpdated != null) {
+                    widget.onTaskUpdated!();
+                  }
                 },
                 icon: const Icon(Icons.delete))
           ],

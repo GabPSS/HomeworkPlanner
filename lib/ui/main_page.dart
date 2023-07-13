@@ -185,7 +185,7 @@ class _MainPageState extends State<MainPage> {
         host.saveFile.Settings.DaysToDisplay.toDouble(),
         selectedDay,
         (date) {
-          var dateWidget = buildTaskListForDate(date, !onMobile);
+          var dateWidget = buildTaskListForDate(date, !onMobile || mobileMonthView);
           cols.add(dateWidget);
           tmpDayWidgets.add(dateWidget);
           tmpDaysDisplayed.add(date);
@@ -198,7 +198,8 @@ class _MainPageState extends State<MainPage> {
       rows.add(Expanded(child: Row(children: cols)));
     }
 
-    if (!onMobile) {
+    if (!onMobile || mobileMonthView) {
+      //TODO: Remove later
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
       return Expanded(
@@ -223,7 +224,7 @@ class _MainPageState extends State<MainPage> {
 
     FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
     double taskCompletionPercent = tasksForDate.isNotEmpty ? tasksCompletedForDate.length / tasksForDate.length : 0;
-    taskWidgets.add(onMobile
+    taskWidgets.add(onMobile && !mobileMonthView
         ? Column(
             children: [
               Row(
@@ -280,7 +281,7 @@ class _MainPageState extends State<MainPage> {
             ),
           ));
 
-    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, !onMobile)).toList());
+    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, !onMobile || mobileMonthView)).toList());
 
     var finalTaskListWidget = DragTarget(
       builder: (context, candidateData, rejectedData) {
