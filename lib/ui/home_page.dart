@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/global_settings.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
+import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 import 'package:homeworkplanner/ui/main_page.dart';
@@ -27,11 +28,14 @@ class _HomePageState extends State<HomePage> {
         title: const Text('HomeworkPlanner'),
         actions: [
           IconButton(
-              onPressed: () => TaskHost.openFile(context, widget.settings, (host) => openApp(context, host)),
+              onPressed: () => TaskHost.openFile(
+                  context, widget.settings, (host) => openApp(context, host)),
               icon: const Icon(Icons.folder_open))
         ],
       ),
-      body: widget.settings.mobileLayout ? buildRecentFilesWidget() : buildDesktopLayout(context),
+      body: widget.settings.mobileLayout
+          ? buildRecentFilesWidget()
+          : buildDesktopLayout(context),
       floatingActionButton: widget.settings.mobileLayout
           ? FloatingActionButton(
               onPressed: () => openApp(context),
@@ -43,7 +47,10 @@ class _HomePageState extends State<HomePage> {
 
   Row buildDesktopLayout(BuildContext context) {
     return Row(
-      children: [Expanded(flex: 2, child: buildRecentFilesWidget()), Expanded(child: buildDesktopActionsColumn(context))],
+      children: [
+        Expanded(flex: 2, child: buildRecentFilesWidget()),
+        Expanded(child: buildDesktopActionsColumn(context))
+      ],
     );
   }
 
@@ -82,9 +89,7 @@ class _HomePageState extends State<HomePage> {
         ListTile(
           leading: const Icon(Icons.web),
           title: const Text('HomeworkPlanner website...'),
-          onTap: () {
-            launchUrl(Uri.parse("https://github.com/GabPSS/HomeworkPlanner"));
-          },
+          onTap: () => MainApp.getHelp(),
         ),
       ],
     );
@@ -115,7 +120,8 @@ class _HomePageState extends State<HomePage> {
             leading: const Icon(Icons.calendar_today),
             title: Text(HelperFunctions.getFileNameFromPath(e)),
             subtitle: Text(e),
-            onTap: () => TaskHost.openFile(context, widget.settings, (host) => openApp(context, host), e),
+            onTap: () => TaskHost.openFile(
+                context, widget.settings, (host) => openApp(context, host), e),
           )));
 
       recentFilesWidget = ListView(

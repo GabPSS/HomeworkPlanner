@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
+import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
@@ -90,13 +91,15 @@ class _MainPageState extends State<MainPage> {
     List<Task> allTasks = host.saveFile.Tasks.Items
         .where((element) =>
             host.saveFile.Settings.DisplayPreviousTasks ||
-            !(element.IsCompleted && element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+            !(element.IsCompleted &&
+                element.DateCompleted!.isBefore(HelperFunctions.getToday())))
         .toList();
 
     List<Widget> widgets = List.empty(growable: true);
     widgets.add(Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: Text("All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
+      child: Text(
+          "All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
     ));
 
     for (var i = 0; i < allTasks.length; i++) {
@@ -113,12 +116,17 @@ class _MainPageState extends State<MainPage> {
     if (compact) {
       taskTitle = task.toString();
     } else {
-      String subjectPrefix = (Subject.isIdValid(task.SubjectID, host) ? "${host.getSubjectNameById(task.SubjectID)} - " : "");
-      String dueSuffix = task.DueDate != null ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}" : "";
+      String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
+          ? "${host.getSubjectNameById(task.SubjectID)} - "
+          : "");
+      String dueSuffix = task.DueDate != null
+          ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+          : "";
       taskTitle = subjectPrefix + task.toString() + dueSuffix;
     }
 
-    Color? tileColor = task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
+    Color? tileColor =
+        task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
 
     return ListTile(
       iconColor: tileColor,
@@ -135,13 +143,20 @@ class _MainPageState extends State<MainPage> {
           : null,
       title: Text(
         taskTitle,
-        style: TextStyle(decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
+        style: TextStyle(
+            decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
       ),
       subtitle: Text(!compact
           ? (task.Description != "" ? task.Description : "No description")
-          : (task.DueDate != null ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}" : "No due date")),
+          : (task.DueDate != null
+              ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+              : "No due date")),
       onTap: () {
-        TaskEditor.show(context: context, host: host, task: task, onTaskUpdated: updateTasks);
+        TaskEditor.show(
+            context: context,
+            host: host,
+            task: task,
+            onTaskUpdated: updateTasks);
       },
     );
   }
@@ -185,7 +200,8 @@ class _MainPageState extends State<MainPage> {
         host.saveFile.Settings.DaysToDisplay.toDouble(),
         selectedDay,
         (date) {
-          var dateWidget = buildTaskListForDate(date, !onMobile || mobileMonthView);
+          var dateWidget =
+              buildTaskListForDate(date, !onMobile || mobileMonthView);
           cols.add(dateWidget);
           tmpDayWidgets.add(dateWidget);
           tmpDaysDisplayed.add(date);
@@ -199,7 +215,6 @@ class _MainPageState extends State<MainPage> {
     }
 
     if (!onMobile || mobileMonthView) {
-      //TODO: Remove later
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
       return Expanded(
@@ -217,13 +232,18 @@ class _MainPageState extends State<MainPage> {
   Widget buildTaskListForDate(DateTime selectedDay, [bool expand = true]) {
     List<Widget> taskWidgets = List.empty(growable: true);
     List<Task> tasksForDate = host.getTasksPlannedForDate(selectedDay);
-    Iterable<Task> tasksCompletedForDate = tasksForDate.where((element) => element.IsCompleted);
+    Iterable<Task> tasksCompletedForDate =
+        tasksForDate.where((element) => element.IsCompleted);
 
     bool isToday = selectedDay == HelperFunctions.getToday();
-    String taskCountSuffix = isToday ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})' : '';
+    String taskCountSuffix = isToday
+        ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})'
+        : '';
 
     FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
-    double taskCompletionPercent = tasksForDate.isNotEmpty ? tasksCompletedForDate.length / tasksForDate.length : 0;
+    double taskCompletionPercent = tasksForDate.isNotEmpty
+        ? tasksCompletedForDate.length / tasksForDate.length
+        : 0;
     taskWidgets.add(onMobile && !mobileMonthView
         ? Column(
             children: [
@@ -231,7 +251,9 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(12.0),
-                    child: Text(selectedDay.day.toString(), style: TextStyle(fontSize: 42, fontWeight: dayFontWeight)),
+                    child: Text(selectedDay.day.toString(),
+                        style:
+                            TextStyle(fontSize: 42, fontWeight: dayFontWeight)),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,7 +303,10 @@ class _MainPageState extends State<MainPage> {
             ),
           ));
 
-    taskWidgets.addAll(tasksForDate.map<Widget>((task) => buildTaskWidget(task, !onMobile || mobileMonthView)).toList());
+    taskWidgets.addAll(tasksForDate
+        .map<Widget>(
+            (task) => buildTaskWidget(task, !onMobile || mobileMonthView))
+        .toList());
 
     var finalTaskListWidget = DragTarget(
       builder: (context, candidateData, rejectedData) {
@@ -292,7 +317,8 @@ class _MainPageState extends State<MainPage> {
       onAccept: (data) {
         setState(() {
           if (data is Task) {
-            data.ExecDate = DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
+            data.ExecDate =
+                DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
           }
         });
       },
@@ -305,8 +331,11 @@ class _MainPageState extends State<MainPage> {
       IconButton(
           onPressed: () {
             setState(() {
-              for (int dateIndex = 0; dateIndex < mobileDaysDisplayedList.length; dateIndex++) {
-                if (mobileDaysDisplayedList[dateIndex] == HelperFunctions.getToday()) {
+              for (int dateIndex = 0;
+                  dateIndex < mobileDaysDisplayedList.length;
+                  dateIndex++) {
+                if (mobileDaysDisplayedList[dateIndex] ==
+                    HelperFunctions.getToday()) {
                   mobileCarouselController.jumpToPage(dateIndex);
                 }
               }
@@ -315,7 +344,9 @@ class _MainPageState extends State<MainPage> {
           icon: const Icon(Icons.today)),
       IconButton(
           onPressed: () => setState(() => mobileMonthView = !mobileMonthView),
-          icon: Icon(mobileMonthView ? Icons.calendar_view_day : Icons.calendar_view_month)),
+          icon: Icon(mobileMonthView
+              ? Icons.calendar_view_day
+              : Icons.calendar_view_month)),
     ];
 
     List<IconButton>? actionButtons;
@@ -329,7 +360,8 @@ class _MainPageState extends State<MainPage> {
     }
 
     return AppBar(
-      title: Text(HelperFunctions.getFileNameFromPath(host.saveFilePath ?? "Untitled plan")),
+      title: Text(HelperFunctions.getFileNameFromPath(
+          host.saveFilePath ?? "Untitled plan")),
       actions: actionButtons,
     );
   }
@@ -337,8 +369,10 @@ class _MainPageState extends State<MainPage> {
   BottomNavigationBar buildAndroidBottomNav() {
     return BottomNavigationBar(
       items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
-        BottomNavigationBarItem(icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
+        BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month_outlined), label: "Planner"),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.list_alt_outlined), label: 'Tasks')
       ],
       currentIndex: bottomNavSelectedIndex,
       onTap: (value) {
@@ -356,7 +390,8 @@ class _MainPageState extends State<MainPage> {
       List<MenuItemButton> recentFilesList = host.settings.recentFiles
           .map((e) => MenuItemButton(
                 child: Text(HelperFunctions.getFileNameFromPath(e)),
-                onPressed: () => TaskHost.openFile(context, host.settings, (newHost) => setState(() => host = newHost), e),
+                onPressed: () => TaskHost.openFile(context, host.settings,
+                    (newHost) => setState(() => host = newHost), e),
               ))
           .toList()
           .reversed
@@ -379,10 +414,18 @@ class _MainPageState extends State<MainPage> {
                     const MenuItemButton(
                       child: Text('Import...'),
                     ),
-                    SubmenuButton(menuChildren: recentFilesList, child: const Text('Recent files')),
-                    MenuItemButton(onPressed: () => setState(() => host.save(context)), child: const Text('Save')),
-                    MenuItemButton(onPressed: () => setState(() => host.saveAs(context)), child: const Text('Save as...')),
-                    MenuItemButton(child: const Text('Close'), onPressed: () => Navigator.pop(context)),
+                    SubmenuButton(
+                        menuChildren: recentFilesList,
+                        child: const Text('Recent files')),
+                    MenuItemButton(
+                        onPressed: () => setState(() => host.save(context)),
+                        child: const Text('Save')),
+                    MenuItemButton(
+                        onPressed: () => setState(() => host.saveAs(context)),
+                        child: const Text('Save as...')),
+                    MenuItemButton(
+                        child: const Text('Close'),
+                        onPressed: () => Navigator.pop(context)),
                     const MenuItemButton(child: Text('Exit'))
                   ],
                   child: const Text('File'),
@@ -397,9 +440,10 @@ class _MainPageState extends State<MainPage> {
                     MenuItemButton(child: Text('Remaining only')),
                     MenuItemButton(child: Text('Everything')),
                   ], child: Text('Unschedule tasks')),
-                  const SubmenuButton(
-                      menuChildren: [MenuItemButton(child: Text('Completed')), MenuItemButton(child: Text('Everything'))],
-                      child: Text('Remove tasks'))
+                  const SubmenuButton(menuChildren: [
+                    MenuItemButton(child: Text('Completed')),
+                    MenuItemButton(child: Text('Everything'))
+                  ], child: Text('Remove tasks'))
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Day notes...')),
@@ -418,27 +462,23 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const MenuItemButton(child: Text('Clean up...')),
                   MenuItemButton(
-                    child: const Text('Manage schedules...'),
-                    onPressed: () {
-                      Navigator.push(
+                      child: const Text('Manage schedules...'),
+                      onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SchedulesPage(
-                              host: host,
-                            ),
-                          ));
-                    },
-                  ),
+                              builder: (context) => SchedulesPage(host: host))))
                 ], child: const Text('Tools')),
                 SubmenuButton(menuChildren: [
-                  const MenuItemButton(child: Text('Get help...')),
                   MenuItemButton(
-                    child: const Text('About...'),
-                    onPressed: () {
-                      showAboutDialog(
-                          context: context, applicationName: 'HomeworkPlanner', applicationLegalese: '(C) Gabriel P. 2023');
-                    },
-                  )
+                    child: const Text('Get help...'),
+                    onPressed: () => MainApp.getHelp(),
+                  ),
+                  MenuItemButton(
+                      child: const Text('About...'),
+                      onPressed: () => showAboutDialog(
+                          context: context,
+                          applicationName: 'HomeworkPlanner',
+                          applicationLegalese: '(C) Gabriel P. 2023'))
                 ], child: const Text('About'))
               ],
             ),
@@ -453,17 +493,25 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       host.saveFile.Tasks.Add(task);
     });
-    TaskEditor.show(context: context, task: task, host: host, onTaskUpdated: updateTasks, isAdding: true);
+    TaskEditor.show(
+        context: context,
+        task: task,
+        host: host,
+        onTaskUpdated: updateTasks,
+        isAdding: true);
   }
 
-  void createSaveFile() => setState(() => host = TaskHost(settings: host.settings, saveFile: SaveFile()));
+  void createSaveFile() => setState(
+      () => host = TaskHost(settings: host.settings, saveFile: SaveFile()));
 
-  void openFile() => TaskHost.openFile(context, host.settings, (newHost) => setState(() => host = newHost));
+  void openFile() => TaskHost.openFile(
+      context, host.settings, (newHost) => setState(() => host = newHost));
 
   void updateTasks({bool showMessage = false}) {
     setState(() {});
     if (showMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Updated tasks')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Updated tasks')));
     }
   }
 }
