@@ -17,7 +17,12 @@ class TaskEditorPage extends StatefulWidget {
   final bool isAdding;
   final Function()? onTaskUpdated;
 
-  const TaskEditorPage({super.key, this.isAdding = false, required this.task, required this.host, this.onTaskUpdated});
+  const TaskEditorPage(
+      {super.key,
+      this.isAdding = false,
+      required this.task,
+      required this.host,
+      this.onTaskUpdated});
 
   @override
   State<TaskEditorPage> createState() => _TaskEditorPageState();
@@ -26,18 +31,25 @@ class TaskEditorPage extends StatefulWidget {
 class _TaskEditorPageState extends State<TaskEditorPage> {
   @override
   Widget build(BuildContext context) {
-    TaskEditor builder =
-        TaskEditor(onTaskUpdated: widget.onTaskUpdated ?? () => setState(() {}), setState: setState, host: widget.host);
+    TaskEditor builder = TaskEditor(
+        onTaskUpdated: widget.onTaskUpdated ?? () => setState(() {}),
+        setState: setState,
+        host: widget.host);
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.isAdding ? "Create task" : (widget.task.Name != "" ? "Edit '${widget.task.Name}'" : "Edit task")),
+          title: Text(widget.isAdding
+              ? "Create task"
+              : (widget.task.Name != ""
+                  ? "Edit '${widget.task.Name}'"
+                  : "Edit task")),
           actions: [
             IconButton(
                 onPressed: () {
                   widget.host.saveFile.Tasks.Items.remove(widget.task);
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Task deleted')));
                   ScaffoldMessenger.of(context).setState(() {});
                   if (widget.onTaskUpdated != null) {
                     widget.onTaskUpdated!();
@@ -58,14 +70,21 @@ class TaskEditor {
   bool isAdding;
   TaskHost host;
 
-  TaskEditor({this.isAdding = false, required this.onTaskUpdated, required this.setState, required this.host});
+  TaskEditor(
+      {this.isAdding = false,
+      required this.onTaskUpdated,
+      required this.setState,
+      required this.host});
 
   List<Widget> build(BuildContext context, Task task) {
     Subject noSubject = Subject.noSubjectTemplate();
     Subject editSubjects = Subject.editSubjectsTemplate();
-    Subject? selectedSubject = task.SubjectID == -1 ? noSubject : (host.getSubjectById(task.SubjectID) ?? noSubject);
+    Subject? selectedSubject = task.SubjectID == -1
+        ? noSubject
+        : (host.getSubjectById(task.SubjectID) ?? noSubject);
 
-    List<DropdownMenuItem<Subject>>? subjectWidgets = List.empty(growable: true);
+    List<DropdownMenuItem<Subject>>? subjectWidgets =
+        List.empty(growable: true);
 
     subjectWidgets.add(DropdownMenuItem(
       value: noSubject,
@@ -75,7 +94,8 @@ class TaskEditor {
       value: editSubjects,
       child: Text(editSubjects.SubjectName),
     ));
-    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained = host.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
+    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained =
+        host.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
       (e) {
         return DropdownMenuItem<Subject>(
           value: e,
@@ -102,8 +122,10 @@ class TaskEditor {
     );
 
     var subjectsDropdownWidget = DropdownButtonFormField(
-      decoration:
-          const InputDecoration(icon: Icon(Icons.assignment_ind_outlined), border: OutlineInputBorder(), labelText: 'Subject'),
+      decoration: const InputDecoration(
+          icon: Icon(Icons.assignment_ind_outlined),
+          border: OutlineInputBorder(),
+          labelText: 'Subject'),
       items: subjectWidgets,
       value: selectedSubject,
       onChanged: (value) {
@@ -138,8 +160,9 @@ class TaskEditor {
               onPressed: () {
                 assert(task.SubjectID != -1 && task.SubjectID != -123);
                 setState(() {
-                  DateTime? nextDate =
-                      host.getNextSubjectScheduledDate(task.SubjectID, task.DueDate ?? HelperFunctions.getToday());
+                  DateTime? nextDate = host.getNextSubjectScheduledDate(
+                      task.SubjectID,
+                      task.DueDate ?? HelperFunctions.getToday());
                   if (nextDate != null) {
                     task.DueDate = nextDate;
                   } else {
@@ -156,7 +179,8 @@ class TaskEditor {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SchedulesPage(host: host),
+                                      builder: (context) =>
+                                          SchedulesPage(host: host),
                                     ));
                               },
                               child: const Text('View schedules')),
@@ -224,8 +248,10 @@ class TaskEditor {
       List<Widget> scheduleDateRowWidgets = <Widget>[
         Expanded(
           child: DateTimeField(
-            decoration:
-                const InputDecoration(border: OutlineInputBorder(), labelText: 'Schedule date', icon: Icon(Icons.schedule)),
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Schedule date',
+                icon: Icon(Icons.schedule)),
             mode: DateTimeFieldPickerMode.date,
             selectedDate: task.ExecDate,
             onDateSelected: (value) {
@@ -263,7 +289,9 @@ class TaskEditor {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: TextFormField(
           decoration: const InputDecoration(
-              icon: Icon(Icons.description_outlined), border: OutlineInputBorder(), labelText: 'Description'),
+              icon: Icon(Icons.description_outlined),
+              border: OutlineInputBorder(),
+              labelText: 'Description'),
           maxLines: host.settings.mobileLayout ? 15 : 5,
           keyboardType: TextInputType.multiline,
           initialValue: task.Description,
@@ -323,7 +351,12 @@ class TaskEditor {
             ),
           ));
     } else {
-      showEditorDialog(context: context, task: task, host: host, onTaskUpdated: onTaskUpdated, isAdding: isAdding);
+      showEditorDialog(
+          context: context,
+          task: task,
+          host: host,
+          onTaskUpdated: onTaskUpdated,
+          isAdding: isAdding);
     }
   }
 
@@ -339,7 +372,8 @@ class TaskEditor {
       builder: ((context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            TaskEditor pageBuilder = TaskEditor(onTaskUpdated: onTaskUpdated, setState: setState, host: host);
+            TaskEditor pageBuilder = TaskEditor(
+                onTaskUpdated: onTaskUpdated, setState: setState, host: host);
             List<Widget> dialogWidgets = List.empty(growable: true);
             dialogWidgets.addAll(pageBuilder.build(context, task));
             dialogWidgets.add(Padding(
@@ -350,7 +384,8 @@ class TaskEditor {
                       onPressed: () {
                         Navigator.pop(context);
                         host.saveFile.Tasks.Items.remove(task);
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Task deleted')));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Task deleted')));
                       },
                       icon: const Icon(Icons.delete)),
                   const Spacer(),
@@ -364,7 +399,9 @@ class TaskEditor {
               ),
             ));
 
-            return SimpleDialog(title: Text(isAdding ? 'Create task' : 'Edit task'), children: dialogWidgets);
+            return SimpleDialog(
+                title: Text(isAdding ? 'Create task' : 'Edit task'),
+                children: dialogWidgets);
           },
         );
       }),

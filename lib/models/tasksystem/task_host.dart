@@ -47,7 +47,8 @@ class TaskHost {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].ExecDate != null) {
         DateTime execDate = saveFile.Tasks.Items[i].ExecDate!;
-        if (DateTime(execDate.year, execDate.month, execDate.day) == DateTime(date.year, date.month, date.day)) {
+        if (DateTime(execDate.year, execDate.month, execDate.day) ==
+            DateTime(date.year, date.month, date.day)) {
           tasks.add(saveFile.Tasks.Items[i]);
         }
       }
@@ -75,7 +76,8 @@ class TaskHost {
   static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
-        tasks.sort((Task x, Task y) => y.DueDate == null ? -1 : (x.DueDate?.compareTo(y.DueDate!) ?? -1));
+        tasks.sort((Task x, Task y) =>
+            y.DueDate == null ? -1 : (x.DueDate?.compareTo(y.DueDate!) ?? -1));
         break;
       case SortMethod.ID:
         tasks.sort((Task x, Task y) => x.TaskID - y.TaskID);
@@ -84,18 +86,24 @@ class TaskHost {
         tasks.sort((Task x, Task y) => x.Name.compareTo(y.Name));
         break;
       case SortMethod.Status:
-        tasks.sort(
-            (Task x, Task y) => EnumConverters.taskStatusToInt(x.GetStatus()) - EnumConverters.taskStatusToInt(y.GetStatus()));
+        tasks.sort((Task x, Task y) =>
+            EnumConverters.taskStatusToInt(x.GetStatus()) -
+            EnumConverters.taskStatusToInt(y.GetStatus()));
         break;
       case SortMethod.Subject:
         tasks.sort((Task x, Task y) => x.SubjectID - y.SubjectID);
         break;
       case SortMethod.ExecDate:
-        tasks.sort((Task x, Task y) => y.ExecDate != null ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1) : -1);
+        tasks.sort((Task x, Task y) => y.ExecDate != null
+            ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1)
+            : -1);
         break;
       case SortMethod.DateCompleted:
-        tasks.sort((Task x, Task y) =>
-            y.DateCompleted != null ? (x.DateCompleted != null ? x.DateCompleted!.compareTo(y.DateCompleted!) : 1) : -1);
+        tasks.sort((Task x, Task y) => y.DateCompleted != null
+            ? (x.DateCompleted != null
+                ? x.DateCompleted!.compareTo(y.DateCompleted!)
+                : 1)
+            : -1);
         break;
       default:
         break;
@@ -103,7 +111,8 @@ class TaskHost {
     return tasks;
   }
 
-  void RemoveCompletedTasks() => saveFile.Tasks.Items.removeWhere((x) => x.IsCompleted); //TODO: Test if this is the right order
+  void RemoveCompletedTasks() =>
+      saveFile.Tasks.Items.removeWhere((task) => task.IsCompleted);
 
   void RemoveAllTasks() => saveFile.Tasks = TaskList();
 
@@ -133,7 +142,8 @@ class TaskHost {
   }
 
   void SortSubjectsByName() {
-    saveFile.Subjects.Items.sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
+    saveFile.Subjects.Items
+        .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
@@ -156,9 +166,13 @@ class TaskHost {
     return remainingTasks;
   }
 
-  static void openFile(BuildContext context, GlobalSettings settings, Function(TaskHost host) onLoad, [String? filePath]) {
+  static void openFile(BuildContext context, GlobalSettings settings,
+      Function(TaskHost host) onLoad,
+      [String? filePath]) {
     if (filePath == null) {
-      FilePicker.platform.pickFiles(dialogTitle: 'Select a homeworkplanner plan...').then((value) {
+      FilePicker.platform
+          .pickFiles(dialogTitle: 'Select a homeworkplanner plan...')
+          .then((value) {
         String? path = value?.files.single.path;
         if (value != null && path != null) {
           _openFileFromPath(path, context, settings, onLoad);
@@ -169,14 +183,17 @@ class TaskHost {
     }
   }
 
-  static Future<void> _openFileFromPath(
-      String path, BuildContext context, GlobalSettings settings, Function(TaskHost host) onLoad) async {
+  static Future<void> _openFileFromPath(String path, BuildContext context,
+      GlobalSettings settings, Function(TaskHost host) onLoad) async {
     var file = File(path);
     if (await file.exists()) {
       try {
         file.readAsString().then((jsonvalue) {
           settings.addRecentFile(path);
-          onLoad(TaskHost(settings: settings, saveFile: SaveFile.fromJson(jsonDecode(jsonvalue)), saveFilePath: path));
+          onLoad(TaskHost(
+              settings: settings,
+              saveFile: SaveFile.fromJson(jsonDecode(jsonvalue)),
+              saveFilePath: path));
         });
       } catch (e) {
         _showReadWriteFailedDialog(context);
@@ -188,7 +205,8 @@ class TaskHost {
     }
   }
 
-  static void _showReadWriteFailedDialog(BuildContext context, [bool saving = false]) {
+  static void _showReadWriteFailedDialog(BuildContext context,
+      [bool saving = false]) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -196,7 +214,10 @@ class TaskHost {
         content: Text(!saving
             ? "Couldn't read the file specified. It might have been corrupted, or the system couldn't access it.\nIf the file was created with an earlier version of HomeworkPlanner, try converting it to a newer version first, then try opening it again"
             : "Couldn't save the plan to the specified path. Make sure you have access to it, and that it isn't in a disconnected volume on nonexistant directory, then try again"),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context), child: const Text('OK'))
+        ],
       ),
     );
   }
@@ -208,7 +229,8 @@ class TaskHost {
         saveFilePath = path;
         String jsonData = jsonEncode(saveFile.toJson());
         File(path).writeAsString(jsonData);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('File saved at $path')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('File saved at $path')));
         settings.addRecentFile(path);
       } catch (e) {
         _showReadWriteFailedDialog(context, true);
@@ -223,7 +245,9 @@ class TaskHost {
     if (settings.mobileLayout) {
       save(context, "/storage/emulated/0/Download/Plan.hwpf");
     } else {
-      FilePicker.platform.saveFile(dialogTitle: "Save plan as...", allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
+      FilePicker.platform.saveFile(
+          dialogTitle: "Save plan as...",
+          allowedExtensions: ['hwpf', 'txt', '*.*']).then((value) {
         if (value != null) {
           save(context, value);
         }
@@ -232,7 +256,15 @@ class TaskHost {
   }
 
   Map<String, bool> getScheduleDaysOfWeek() {
-    List<String> daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    List<String> daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ];
     List<bool> daysAllowed = [false, false, false, false, false, false, false];
     HelperFunctions.iterateThroughWeekFromThisSaturday(
       saveFile.Schedules.DaysToDisplay.toDouble(),
@@ -243,7 +275,8 @@ class TaskHost {
     return Map.fromIterables(daysOfWeek, daysAllowed);
   }
 
-  DateTime? getNextSubjectScheduledDate(int subjectId, DateTime searchStartDate) {
+  DateTime? getNextSubjectScheduledDate(
+      int subjectId, DateTime searchStartDate) {
     DateTime searchDate = searchStartDate.add(const Duration(days: 1));
 
     int dayOfWeek = EnumConverters.weekdayToInt(searchDate.weekday);
