@@ -1,3 +1,4 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/global_settings.dart';
 import 'package:homeworkplanner/ui/home_page.dart';
@@ -25,20 +26,25 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        theme: ThemeData(primarySwatch: Colors.blue),
-        home: FutureBuilder(
-            future: settingsInitFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return HomePage(settings: settings);
-              } else {
-                return const Scaffold(
-                    body: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [CircularProgressIndicator()]));
-              }
-            }));
+    return DynamicColorBuilder(
+      builder: (lightDynamic, darkDynamic) {
+        return MaterialApp(
+          theme: ThemeData(colorScheme: lightDynamic),
+          darkTheme: ThemeData(colorScheme: darkDynamic),
+          home: FutureBuilder(
+              future: settingsInitFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return HomePage(settings: settings);
+                } else {
+                  return const Scaffold(
+                      body: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [CircularProgressIndicator()]));
+                }
+              }));
+      },
+    );
   }
 }

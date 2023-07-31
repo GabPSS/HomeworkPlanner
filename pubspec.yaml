@@ -10,6 +10,7 @@ dependencies:
   build_runner: ^2.3.3
   carousel_slider: ^4.2.1
   date_field: ^3.0.5
+  dynamic_color: ^1.6.6
   file_picker: ^5.2.10
   flutter:
     sdk: flutter
