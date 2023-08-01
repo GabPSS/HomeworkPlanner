@@ -26,14 +26,15 @@ class Subject {
           ? false
           : true;
 
-  //TODO: Implement autoincrementing logic and remove default values
   Subject({this.SubjectName = "", this.SubjectID = 0}) {
     setRandomColor();
   }
 
-  Subject.editSubjectsTemplate({this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
+  Subject.editSubjectsTemplate(
+      {this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
 
-  Subject.noSubjectTemplate({this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
+  Subject.noSubjectTemplate(
+      {this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
 
   @override
   String toString() {
@@ -51,7 +52,8 @@ class Subject {
     SubjectColorValue = HSVColor.fromAHSV(1, h, s, v).toColor();
   }
 
-  factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);
+  factory Subject.fromJson(Map<String, dynamic> json) =>
+      _$SubjectFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubjectToJson(this);
 }

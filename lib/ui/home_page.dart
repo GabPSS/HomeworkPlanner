@@ -1,7 +1,3 @@
-// ignore_for_file: unused_import
-
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/global_settings.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
@@ -9,7 +5,6 @@ import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 import 'package:homeworkplanner/ui/main_page.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   final GlobalSettings settings;

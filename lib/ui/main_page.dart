@@ -346,8 +346,8 @@ class _MainPageState extends State<MainPage> {
   }
 
   AppBar buildMobileAppBar() {
-    var saveButton =
-        IconButton(onPressed: () => host.save(context), icon: Icon(Icons.save));
+    var saveButton = IconButton(
+        onPressed: () => host.save(context), icon: const Icon(Icons.save));
     List<Widget> plannerActions = <Widget>[saveButton].toList(growable: true);
 
     var taskListActions = <Widget>[saveButton].toList(growable: true);
