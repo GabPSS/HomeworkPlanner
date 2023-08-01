@@ -224,6 +224,7 @@ class _MainPageState extends State<MainPage> {
     if (!onMobile || displayDesktopLayout) {
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
+      mobileCarouselTodayPageOffset = 10000;
       var carousel = Expanded(
           child: CarouselSlider.builder(
               carouselController: mobileCarouselController,
