@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'subject.g.dart';
@@ -19,14 +20,21 @@ class Subject {
     SubjectColor = value.value;
   }
 
-  //TODO: Implement autoincrementing logic and remove default values
+  static bool isIdValid(int? id, TaskHost host) => id == null
+      ? false
+      : host.getSubjectById(id) == null
+          ? false
+          : true;
+
   Subject({this.SubjectName = "", this.SubjectID = 0}) {
     setRandomColor();
   }
 
-  Subject.editSubjectsTemplate({this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
+  Subject.editSubjectsTemplate(
+      {this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
 
-  Subject.noSubjectTemplate({this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
+  Subject.noSubjectTemplate(
+      {this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
 
   @override
   String toString() {
@@ -44,7 +52,8 @@ class Subject {
     SubjectColorValue = HSVColor.fromAHSV(1, h, s, v).toColor();
   }
 
-  factory Subject.fromJson(Map<String, dynamic> json) => _$SubjectFromJson(json);
+  factory Subject.fromJson(Map<String, dynamic> json) =>
+      _$SubjectFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubjectToJson(this);
 }

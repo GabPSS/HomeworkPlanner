@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,17 +11,20 @@ class SubjectsPage extends StatefulWidget {
   final TaskHost host;
   final Function() onSubjectUpdate;
 
-  const SubjectsPage({super.key, required this.host, required this.onSubjectUpdate});
+  const SubjectsPage(
+      {super.key, required this.host, required this.onSubjectUpdate});
 
   @override
   State<SubjectsPage> createState() => _SubjectsPageState();
 
-  static void show(BuildContext context, TaskHost host, Function() onSubjectUpdate) {
-    if (Platform.isAndroid) {
+  static void show(
+      BuildContext context, TaskHost host, Function() onSubjectUpdate) {
+    if (host.settings.mobileLayout) {
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SubjectsPage(host: host, onSubjectUpdate: onSubjectUpdate),
+            builder: (context) =>
+                SubjectsPage(host: host, onSubjectUpdate: onSubjectUpdate),
           ));
     } else {
       showDialog(
@@ -40,7 +45,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
     List<Widget> subjectWidgets = List<Widget>.empty(growable: true);
 
     for (var i = 0; i < widget.host.saveFile.Subjects.Items.length; i++) {
-      subjectWidgets.add(Text(widget.host.saveFile.Subjects.Items[i].SubjectName));
+      subjectWidgets
+          .add(Text(widget.host.saveFile.Subjects.Items[i].SubjectName));
     }
 
     return Scaffold(
@@ -49,7 +55,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
         itemBuilder: (context, index) {
           var subject = widget.host.saveFile.Subjects.Items[index];
           return ListTile(
-            leading: Icon(Icons.assignment_ind, color: subject.SubjectColorValue),
+            leading:
+                Icon(Icons.assignment_ind, color: subject.SubjectColorValue),
             title: Text(subject.SubjectName),
             onTap: () {
               showSubjectEditorDialog(context, subject);
@@ -60,7 +67,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
                     context: context,
                     builder: (context) => AlertDialog(
                       title: Text("Delete '${subject.SubjectName}'?"),
-                      content: const Text("You won't be able to recover it once it's gone"),
+                      content: const Text(
+                          "You won't be able to recover it once it's gone"),
                       actions: [
                         TextButton(
                             onPressed: () {
@@ -71,7 +79,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
                             onPressed: () {
                               Navigator.pop(context);
                               setState(() {
-                                widget.host.saveFile.Subjects.Items.remove(subject);
+                                widget.host.saveFile.Subjects.Items
+                                    .remove(subject);
                               });
                               widget.onSubjectUpdate();
                             },
@@ -95,7 +104,8 @@ class _SubjectsPageState extends State<SubjectsPage> {
     );
   }
 
-  Future<dynamic> showSubjectEditorDialog(BuildContext context, Subject subject, [bool isAdding = false]) {
+  Future<dynamic> showSubjectEditorDialog(BuildContext context, Subject subject,
+      [bool isAdding = false]) {
     return showDialog(
       context: context,
       builder: (context) {

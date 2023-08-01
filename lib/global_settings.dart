@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GlobalSettings {
@@ -15,10 +17,13 @@ class GlobalSettings {
     _preferences.setStringList('recents', value);
   }
 
-  bool get enableRecentFiles => _preferences.getBool('enableRecentFiles') ?? true;
+  bool get enableRecentFiles =>
+      _preferences.getBool('enableRecentFiles') ?? true;
   set enableRecentFiles(value) {
     _preferences.setBool('enableRecentFiles', value);
   }
+
+  bool mobileLayout = Platform.isAndroid || Platform.isIOS;
 
   Future<void> initSettings() async {
     _preferences = await SharedPreferences.getInstance();

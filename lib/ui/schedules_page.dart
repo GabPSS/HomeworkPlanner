@@ -29,7 +29,8 @@ class _SchedulesPageState extends State<SchedulesPage> {
               title: const Text('Add schedule'),
               onTap: () {
                 setState(() {
-                  widget.host.saveFile.Schedules.Items.add(Schedule(StartTime: "00:00:00", EndTime: "00:00:00"));
+                  widget.host.saveFile.Schedules.Items.add(
+                      Schedule(StartTime: "00:00:00", EndTime: "00:00:00"));
                 });
               },
             )
@@ -52,7 +53,8 @@ class _SchedulesPageState extends State<SchedulesPage> {
       widget.host.saveFile.Schedules.DaysToDisplay.toDouble(),
       HelperFunctions.getThisSaturday(),
       (day) {
-        daysOfWeekWidgets.add(Center(child: Text(EnumConverters.weekdayToDayOfWeek(day.weekday).name)));
+        daysOfWeekWidgets.add(Center(
+            child: Text(EnumConverters.weekdayToDayOfWeek(day.weekday).name)));
         daysToDisplay.add(EnumConverters.weekdayToInt(day.weekday));
       },
     );
@@ -65,13 +67,16 @@ class _SchedulesPageState extends State<SchedulesPage> {
               context: context,
               builder: (context) => StatefulBuilder(
                     builder: (context, setState) {
-                      return SimpleDialog(title: const Text('Select days of week'), children: getDaysOfWeek(setState));
+                      return SimpleDialog(
+                          title: const Text('Select days of week'),
+                          children: getDaysOfWeek(setState));
                     },
                   ));
         },
         icon: const Icon(Icons.date_range)));
 
-    List<TableRow> schedules = [TableRow(children: header)].toList(growable: true);
+    List<TableRow> schedules =
+        [TableRow(children: header)].toList(growable: true);
 
     var noSubject = Subject.noSubjectTemplate();
 
@@ -93,10 +98,13 @@ class _SchedulesPageState extends State<SchedulesPage> {
                   textAlign: TextAlign.end,
                   initialValue: schedule.shortStartTime,
                   validator: (value) =>
-                      HelperFunctions.tryDurationShortStringValidation(value) ? null : "Incorrect time format",
+                      HelperFunctions.tryDurationShortStringValidation(value)
+                          ? null
+                          : "Incorrect time format",
                   onChanged: (value) {
                     if (formKey.currentState!.validate()) {
-                      schedule.startTime = HelperFunctions.stringToDuration(value);
+                      schedule.startTime =
+                          HelperFunctions.stringToDuration(value);
                     }
                   },
                   onEditingComplete: () => setState(() {}),
@@ -108,10 +116,13 @@ class _SchedulesPageState extends State<SchedulesPage> {
                 child: TextFormField(
                   initialValue: schedule.shortEndTime,
                   validator: (value) =>
-                      HelperFunctions.tryDurationShortStringValidation(value) ? null : "Incorrect time format",
+                      HelperFunctions.tryDurationShortStringValidation(value)
+                          ? null
+                          : "Incorrect time format",
                   onChanged: (value) {
                     if (formKey.currentState!.validate()) {
-                      schedule.endTime = HelperFunctions.stringToDuration(value);
+                      schedule.endTime =
+                          HelperFunctions.stringToDuration(value);
                     }
                   },
                   onEditingComplete: () => setState(() {}),
@@ -129,7 +140,9 @@ class _SchedulesPageState extends State<SchedulesPage> {
             child: DropdownButtonFormField(
               decoration: InputDecoration(
                 filled: true,
-                fillColor: widget.host.getSubjectById(schedule.Subjects[index])?.SubjectColorValue,
+                fillColor: widget.host
+                    .getSubjectById(schedule.Subjects[index])
+                    ?.SubjectColorValue,
               ),
               items: subjects
                   .map((subject) => DropdownMenuItem(
@@ -137,7 +150,8 @@ class _SchedulesPageState extends State<SchedulesPage> {
                         child: Text(subject.SubjectName),
                       ))
                   .toList(),
-              value: widget.host.getSubjectById(schedule.Subjects[index]) ?? noSubject,
+              value: widget.host.getSubjectById(schedule.Subjects[index]) ??
+                  noSubject,
               onChanged: (value) {
                 setState(() {
                   schedule.Subjects[index] = value?.SubjectID;
@@ -161,7 +175,10 @@ class _SchedulesPageState extends State<SchedulesPage> {
     }));
 
     return Table(
-      columnWidths: {0: const IntrinsicColumnWidth(), header.length - 1: const IntrinsicColumnWidth()},
+      columnWidths: {
+        0: const IntrinsicColumnWidth(),
+        header.length - 1: const IntrinsicColumnWidth()
+      },
       defaultVerticalAlignment: TableCellVerticalAlignment.middle,
       children: schedules,
     );
@@ -181,10 +198,14 @@ class _SchedulesPageState extends State<SchedulesPage> {
             //Get days to display, convert value to DaysToInclude, add
 
             widget.host.saveFile.Schedules.DaysToDisplay +=
-                EnumConverters.daysToIncludeToInt(EnumConverters.dayOfWeekToDaysToInclude(EnumConverters.intToDayOfWeek(i)));
+                EnumConverters.daysToIncludeToInt(
+                    EnumConverters.dayOfWeekToDaysToInclude(
+                        EnumConverters.intToDayOfWeek(i)));
           } else {
             widget.host.saveFile.Schedules.DaysToDisplay -=
-                EnumConverters.daysToIncludeToInt(EnumConverters.dayOfWeekToDaysToInclude(EnumConverters.intToDayOfWeek(i)));
+                EnumConverters.daysToIncludeToInt(
+                    EnumConverters.dayOfWeekToDaysToInclude(
+                        EnumConverters.intToDayOfWeek(i)));
           }
         },
       ));
