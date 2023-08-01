@@ -23,20 +23,24 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    bool isMobile =
+        HelperFunctions.getIsPortrait(context) && widget.settings.mobileLayout;
+
+    List<IconButton>? appBarMobileActions = isMobile
+        ? [
+            IconButton(
+                onPressed: () => TaskHost.openFile(
+                    context, widget.settings, (host) => openApp(context, host)),
+                icon: const Icon(Icons.folder_open))
+          ]
+        : null;
     return Scaffold(
       appBar: AppBar(
         title: const Text('HomeworkPlanner'),
-        actions: [
-          IconButton(
-              onPressed: () => TaskHost.openFile(
-                  context, widget.settings, (host) => openApp(context, host)),
-              icon: const Icon(Icons.folder_open))
-        ],
+        actions: appBarMobileActions,
       ),
-      body: widget.settings.mobileLayout
-          ? buildRecentFilesWidget()
-          : buildDesktopLayout(context),
-      floatingActionButton: widget.settings.mobileLayout
+      body: isMobile ? buildRecentFilesWidget() : buildDesktopLayout(context),
+      floatingActionButton: isMobile
           ? FloatingActionButton(
               onPressed: () => openApp(context),
               child: const Icon(Icons.add),
@@ -116,13 +120,16 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(16.0),
         child: Text('Recent files'),
       ));
-      recentFilesWidgets.addAll(recentFiles.map((e) => ListTile(
-            leading: const Icon(Icons.calendar_today),
-            title: Text(HelperFunctions.getFileNameFromPath(e)),
-            subtitle: Text(e),
-            onTap: () => TaskHost.openFile(
-                context, widget.settings, (host) => openApp(context, host), e),
-          )));
+      recentFilesWidgets.addAll(recentFiles
+          .map((e) => ListTile(
+                leading: const Icon(Icons.calendar_today),
+                title: Text(HelperFunctions.getFileNameFromPath(e)),
+                subtitle: Text(e),
+                onTap: () => TaskHost.openFile(context, widget.settings,
+                    (host) => openApp(context, host), e),
+              ))
+          .toList()
+          .reversed);
 
       recentFilesWidget = ListView(
         children: recentFilesWidgets,

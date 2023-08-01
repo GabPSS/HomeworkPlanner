@@ -1,6 +1,3 @@
-// ignore_for_file: unused_import
-
-import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
@@ -31,9 +28,15 @@ class _MainPageState extends State<MainPage> {
   BottomNavigationBar? bottomNav;
   int bottomNavSelectedIndex = 0;
   bool onMobile = false;
+  bool onTablet = false;
   CarouselController mobileCarouselController = CarouselController();
+  int mobileCarouselTodayPageOffset = 10000;
+  bool _setCarouselPageToToday = false;
   late List<DateTime> mobileDaysDisplayedList;
-  bool mobileMonthView = false;
+  bool _displayDesktopLayout = false;
+
+  bool get displayDesktopLayout => onTablet ? onTablet : _displayDesktopLayout;
+  set displayDesktopLayout(bool value) => _displayDesktopLayout = value;
 
   @override
   void initState() {
@@ -44,9 +47,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    onTablet = !HelperFunctions.getIsPortrait(context);
     Widget currentPage;
     if (onMobile) {
-      appBar = buildAndroidAppBar();
+      appBar = buildMobileAppBar();
+    }
+    if (onMobile && !onTablet) {
       bottomNav = buildAndroidBottomNav();
       switch (bottomNavSelectedIndex) {
         case 0:
@@ -59,6 +65,7 @@ class _MainPageState extends State<MainPage> {
           throw UnimplementedError('Page not implemented');
       }
     } else {
+      bottomNav = null;
       currentPage = Expanded(
         child: Row(
           children: [
@@ -163,7 +170,7 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildTaskWidget(Task task, [bool compact = false]) {
     var listTile = _buildTaskListTile(task, compact);
-    return host.settings.mobileLayout
+    return onMobile && !onTablet
         ? listTile
         : LongPressDraggable(
             data: task,
@@ -201,7 +208,7 @@ class _MainPageState extends State<MainPage> {
         selectedDay,
         (date) {
           var dateWidget =
-              buildTaskListForDate(date, !onMobile || mobileMonthView);
+              buildTaskListForDate(date, !onMobile || displayDesktopLayout);
           cols.add(dateWidget);
           tmpDayWidgets.add(dateWidget);
           tmpDaysDisplayed.add(date);
@@ -214,18 +221,29 @@ class _MainPageState extends State<MainPage> {
       rows.add(Expanded(child: Row(children: cols)));
     }
 
-    if (!onMobile || mobileMonthView) {
+    if (!onMobile || displayDesktopLayout) {
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
-      return Expanded(
-          child: CarouselSlider(
-              items: days,
+      var carousel = Expanded(
+          child: CarouselSlider.builder(
               carouselController: mobileCarouselController,
+              itemCount: 1,
+              itemBuilder: (context, index, realIndex) {
+                if (_setCarouselPageToToday) {
+                  mobileCarouselTodayPageOffset = realIndex;
+                  _setCarouselPageToToday = false;
+                }
+                return buildTaskListForDate(
+                    HelperFunctions.getToday().add(Duration(
+                        days: realIndex - mobileCarouselTodayPageOffset)),
+                    !onMobile || displayDesktopLayout);
+              },
               options: CarouselOptions(
-                scrollDirection: Axis.horizontal,
-                viewportFraction: 1,
-                height: MediaQuery.of(context).size.height,
-              )));
+                  scrollDirection: Axis.horizontal,
+                  viewportFraction: 1,
+                  height: MediaQuery.of(context).size.height,
+                  enableInfiniteScroll: true)));
+      return carousel;
     }
   }
 
@@ -244,7 +262,7 @@ class _MainPageState extends State<MainPage> {
     double taskCompletionPercent = tasksForDate.isNotEmpty
         ? tasksCompletedForDate.length / tasksForDate.length
         : 0;
-    taskWidgets.add(onMobile && !mobileMonthView
+    taskWidgets.add(onMobile && !displayDesktopLayout
         ? Column(
             children: [
               Row(
@@ -305,7 +323,7 @@ class _MainPageState extends State<MainPage> {
 
     taskWidgets.addAll(tasksForDate
         .map<Widget>(
-            (task) => buildTaskWidget(task, !onMobile || mobileMonthView))
+            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
         .toList());
 
     var finalTaskListWidget = DragTarget(
@@ -326,33 +344,82 @@ class _MainPageState extends State<MainPage> {
     return expand ? Expanded(child: finalTaskListWidget) : finalTaskListWidget;
   }
 
-  AppBar buildAndroidAppBar() {
-    var plannerActions = [
-      IconButton(
-          onPressed: () {
-            setState(() {
-              for (int dateIndex = 0;
-                  dateIndex < mobileDaysDisplayedList.length;
-                  dateIndex++) {
-                if (mobileDaysDisplayedList[dateIndex] ==
-                    HelperFunctions.getToday()) {
-                  mobileCarouselController.jumpToPage(dateIndex);
-                }
-              }
-            });
-          },
-          icon: const Icon(Icons.today)),
-      IconButton(
-          onPressed: () => setState(() => mobileMonthView = !mobileMonthView),
-          icon: Icon(mobileMonthView
-              ? Icons.calendar_view_day
-              : Icons.calendar_view_month)),
-    ];
+  AppBar buildMobileAppBar() {
+    var saveButton =
+        IconButton(onPressed: () => host.save(context), icon: Icon(Icons.save));
+    List<Widget> plannerActions = <Widget>[saveButton].toList(growable: true);
 
-    List<IconButton>? actionButtons;
+    var taskListActions = <Widget>[saveButton].toList(growable: true);
+
+    if (!onTablet) {
+      plannerActions.add(IconButton(
+          onPressed: () => setState(() {
+                _setCarouselPageToToday = true;
+                // mobileCarouselController.jumpToPage(1);
+              }),
+          icon: const Icon(Icons.today)));
+      plannerActions.add(IconButton(
+          onPressed: () =>
+              setState(() => displayDesktopLayout = !displayDesktopLayout),
+          icon: Icon(displayDesktopLayout
+              ? Icons.calendar_view_day
+              : Icons.calendar_view_month)));
+    }
+
+    var popupMenuButton = PopupMenuButton(
+      itemBuilder: (context) => const [
+        PopupMenuItem(
+          value: 'subjects',
+          child: Text('Subjects'),
+        ),
+        PopupMenuItem(
+          value: 'schedules',
+          child: Text('Schedules'),
+        ),
+        PopupMenuItem(
+          value: 'report',
+          child: Text('Task report'),
+        ),
+        PopupMenuItem(
+          value: 'about',
+          child: Text('About'),
+        ),
+      ],
+      onSelected: (value) {
+        switch (value) {
+          case 'subjects':
+            SubjectsPage.show(context, host, () => setState(() {}));
+            break;
+          case 'schedules':
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SchedulesPage(host: host)));
+            break;
+          case 'report':
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ReportsPage(host: host)));
+            break;
+          case 'about':
+            showAbout(context);
+            break;
+          default:
+        }
+      },
+    );
+
+    plannerActions.add(popupMenuButton);
+    taskListActions.add(popupMenuButton);
+
+    List<Widget>? actionButtons;
     switch (bottomNavSelectedIndex) {
       case 0:
         actionButtons = plannerActions;
+        break;
+      case 1:
+        actionButtons = taskListActions;
         break;
       default:
         actionButtons = null;
@@ -475,10 +542,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                   MenuItemButton(
                       child: const Text('About...'),
-                      onPressed: () => showAboutDialog(
-                          context: context,
-                          applicationName: 'HomeworkPlanner',
-                          applicationLegalese: '(C) Gabriel P. 2023'))
+                      onPressed: () => showAbout(context))
                 ], child: const Text('About'))
               ],
             ),
@@ -486,6 +550,13 @@ class _MainPageState extends State<MainPage> {
         ],
       );
     }
+  }
+
+  void showAbout(BuildContext context) {
+    return showAboutDialog(
+        context: context,
+        applicationName: 'HomeworkPlanner',
+        applicationLegalese: '(C) Gabriel P. 2023');
   }
 
   void createTask() {
