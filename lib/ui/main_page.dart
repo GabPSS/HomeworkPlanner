@@ -187,41 +187,41 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildPlannerViewPanel() {
-    List<Widget> rows = List.empty(growable: true);
-    List<Widget> days = List.empty(growable: true);
-    List<DateTime> tmpDaysDisplayed;
-    List<Widget> tmpDayWidgets;
-    List<Widget> cols;
-    mobileDaysDisplayedList = List.empty(growable: true);
-
-    int rowCount = host.saveFile.Settings.FutureWeeks + 1;
-
-    DateTime selectedDay = HelperFunctions.getThisSaturday();
-
-    for (int row = 0; row < rowCount; row++) {
-      cols = List.empty(growable: true);
-      tmpDayWidgets = List.empty(growable: true);
-      tmpDaysDisplayed = List.empty(growable: true);
-
-      selectedDay = HelperFunctions.iterateThroughWeekFromDate(
-        host.saveFile.Settings.DaysToDisplay.toDouble(),
-        selectedDay,
-        (date) {
-          var dateWidget =
-              buildTaskListForDate(date, !onMobile || displayDesktopLayout);
-          cols.add(dateWidget);
-          tmpDayWidgets.add(dateWidget);
-          tmpDaysDisplayed.add(date);
-        },
-      ).add(const Duration(days: 14));
-
-      cols = cols.reversed.cast<Widget>().toList(growable: true);
-      days.addAll(tmpDayWidgets.reversed);
-      mobileDaysDisplayedList.addAll(tmpDaysDisplayed.reversed);
-      rows.add(Expanded(child: Row(children: cols)));
-    }
-
     if (!onMobile || displayDesktopLayout) {
+      List<Widget> rows = List.empty(growable: true);
+      List<Widget> days = List.empty(growable: true);
+      List<DateTime> tmpDaysDisplayed;
+      List<Widget> tmpDayWidgets;
+      List<Widget> cols;
+      mobileDaysDisplayedList = List.empty(growable: true);
+
+      int rowCount = host.saveFile.Settings.FutureWeeks + 1;
+
+      DateTime selectedDay = HelperFunctions.getThisSaturday();
+
+      for (int row = 0; row < rowCount; row++) {
+        cols = List.empty(growable: true);
+        tmpDayWidgets = List.empty(growable: true);
+        tmpDaysDisplayed = List.empty(growable: true);
+
+        selectedDay = HelperFunctions.iterateThroughWeekFromDate(
+          host.saveFile.Settings.DaysToDisplay.toDouble(),
+          selectedDay,
+          (date) {
+            var dateWidget =
+                buildTaskListForDate(date, !onMobile || displayDesktopLayout);
+            cols.add(dateWidget);
+            tmpDayWidgets.add(dateWidget);
+            tmpDaysDisplayed.add(date);
+          },
+        ).add(const Duration(days: 14));
+
+        cols = cols.reversed.cast<Widget>().toList(growable: true);
+        days.addAll(tmpDayWidgets.reversed);
+        mobileDaysDisplayedList.addAll(tmpDaysDisplayed.reversed);
+        rows.add(Expanded(child: Row(children: cols)));
+      }
+
       return Expanded(flex: 2, child: Column(children: rows));
     } else {
       mobileCarouselTodayPageOffset = 10000;
