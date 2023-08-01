@@ -23,7 +23,7 @@ class GlobalSettings {
     _preferences.setBool('enableRecentFiles', value);
   }
 
-  bool mobileLayout = true;
+  bool mobileLayout = Platform.isAndroid || Platform.isIOS;
 
   Future<void> initSettings() async {
     _preferences = await SharedPreferences.getInstance();
