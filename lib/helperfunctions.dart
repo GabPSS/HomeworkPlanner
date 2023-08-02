@@ -91,10 +91,11 @@ class HelperFunctions {
   }
 
   static bool getIsPortrait(BuildContext context) {
-    // Line below by Yash. License: CC BY-S4 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
-    // https://stackoverflow.com/a/52319524
-    // Changes made
-
-    return MediaQuery.of(context).size.aspectRatio < 1;
+    try {
+      double? aspectRatio2 = context.size?.aspectRatio;
+      return (aspectRatio2 ?? 2) < 1;
+    } catch (e) {
+      return false;
+    }
   }
 }
