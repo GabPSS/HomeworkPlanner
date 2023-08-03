@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/models/lists/task_list.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../enums.dart';
 import '../main/task.dart';
@@ -166,18 +168,21 @@ class TaskHost {
     return remainingTasks;
   }
 
-  static void openFile(BuildContext context, GlobalSettings settings,
+  static Future<void> openFile(BuildContext context, GlobalSettings settings,
       Function(TaskHost host) onLoad,
-      [String? filePath]) {
+      [String? filePath]) async {
     if (filePath == null) {
-      FilePicker.platform
-          .pickFiles(dialogTitle: 'Select a homeworkplanner plan...')
-          .then((value) {
-        String? path = value?.files.single.path;
-        if (value != null && path != null) {
-          _openFileFromPath(path, context, settings, onLoad);
-        }
-      });
+      if (settings.mobileLayout) {
+        await FilePicker.platform.clearTemporaryFiles();
+      }
+
+      FilePickerResult? result = await FilePicker.platform
+          .pickFiles(dialogTitle: 'Select a homeworkplanner plan...');
+
+      String? path = result?.files.single.path;
+      if (path != null) {
+        _openFileFromPath(path, context, settings, onLoad);
+      }
     } else {
       _openFileFromPath(filePath, context, settings, onLoad);
     }
@@ -222,13 +227,13 @@ class TaskHost {
     );
   }
 
-  void save(BuildContext context, [String? path]) {
+  Future<void> save(BuildContext context, [String? path]) async {
     path ??= saveFilePath;
     if (path != null) {
       try {
         saveFilePath = path;
-        String jsonData = jsonEncode(saveFile.toJson());
-        File(path).writeAsString(jsonData);
+        String jsonData = _getJsonSaveFile();
+        await File(path).writeAsString(jsonData);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('File saved at $path')));
         settings.addRecentFile(path);
@@ -240,6 +245,8 @@ class TaskHost {
       saveAs(context);
     }
   }
+
+  String _getJsonSaveFile() => jsonEncode(saveFile.toJson());
 
   void saveAs(BuildContext context) {
     if (settings.mobileLayout) {
@@ -253,6 +260,19 @@ class TaskHost {
         }
       });
     }
+  }
+
+  Future<void> share(BuildContext context) async {
+    await save(context);
+    String dataString = jsonEncode(saveFile.toJson());
+    Uint8List data = utf8.encoder.convert(dataString);
+    XFile xFile;
+    if (saveFilePath == null) {
+      xFile = XFile.fromData(data);
+    } else {
+      xFile = XFile.fromData(data, path: saveFilePath);
+    }
+    Share.shareXFiles([xFile]);
   }
 
   Map<String, bool> getScheduleDaysOfWeek() {

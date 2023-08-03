@@ -352,6 +352,13 @@ class _MainPageState extends State<MainPage> {
 
     var taskListActions = <Widget>[saveButton].toList(growable: true);
 
+    if (onMobile) {
+      var shareButton = IconButton(
+          onPressed: () => host.share(context), icon: Icon(Icons.share));
+      plannerActions.add(shareButton);
+      taskListActions.add(shareButton);
+    }
+
     if (!onTablet) {
       plannerActions.add(IconButton(
           onPressed: () => setState(() {
