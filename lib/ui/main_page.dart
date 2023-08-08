@@ -376,7 +376,7 @@ class _MainPageState extends State<MainPage> {
 
     if (onMobile) {
       var shareButton = IconButton(
-          onPressed: () => host.share(context), icon: Icon(Icons.share));
+          onPressed: () => host.share(context), icon: const Icon(Icons.share));
       plannerActions.add(shareButton);
       taskListActions.add(shareButton);
     }
