@@ -95,28 +95,29 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildAllTasksPanel() {
-    List<Task> allTasks = host.saveFile.Tasks.Items
-        .where((element) =>
-            host.saveFile.Settings.DisplayPreviousTasks ||
-            !(element.IsCompleted &&
-                element.DateCompleted!.isBefore(HelperFunctions.getToday())))
-        .toList();
+    List<Task> tasks =
+        TaskHost.sortTasks(host.saveFile.Settings.sortMethod, allTasks);
 
     List<Widget> widgets = List.empty(growable: true);
     widgets.add(Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
-          "All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
+          "All tasks (${tasks.where((element) => !element.IsCompleted).length})"),
     ));
 
-    for (var i = 0; i < allTasks.length; i++) {
-      widgets.add(buildTaskWidget(allTasks[i]));
+    for (Task task in tasks) {
+      widgets.add(buildTaskWidget(task));
     }
 
-    return ListView(
-      children: widgets,
-    );
+    return ListView(children: widgets);
   }
+
+  List<Task> get allTasks => host.saveFile.Tasks.Items
+      .where((element) =>
+          host.saveFile.Settings.DisplayPreviousTasks ||
+          !(element.IsCompleted &&
+              element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+      .toList();
 
   Widget _buildTaskWidget(Task task, [bool compact = false]) {
     String taskTitle;
@@ -272,20 +273,50 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildTaskListForDate(DateTime selectedDay, [bool expand = true]) {
     List<Widget> taskWidgets = List.empty(growable: true);
-    List<Task> tasksForDate = host.getTasksPlannedForDate(selectedDay);
+
+    List<Task> tasksForDate = TaskHost.sortTasks(
+        host.saveFile.Settings.sortMethod,
+        host.getTasksPlannedForDate(selectedDay));
     Iterable<Task> tasksCompletedForDate =
         tasksForDate.where((element) => element.IsCompleted);
 
-    bool isToday = selectedDay == HelperFunctions.getToday();
-    String taskCountSuffix = isToday
-        ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})'
-        : '';
+    taskWidgets.add(buildTaskListHeader(
+        selectedDay, tasksCompletedForDate.length, tasksForDate.length));
 
+    taskWidgets.addAll(tasksForDate
+        .map<Widget>(
+            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
+        .toList());
+
+    Widget taskListWidget = DragTarget(
+      builder: (context, candidateData, rejectedData) {
+        return ListView(
+          children: taskWidgets,
+        );
+      },
+      onAccept: (data) {
+        setState(() {
+          if (data is Task) {
+            data.ExecDate = HelperFunctions.getDateFromDateTime(selectedDay);
+          }
+        });
+      },
+    );
+    return expand ? Expanded(child: taskListWidget) : taskListWidget;
+  }
+
+  Widget buildTaskListHeader(
+      DateTime selectedDay, int completedTasksCount, int tasksCount) {
+    bool isToday = selectedDay == HelperFunctions.getToday();
     FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
-    double taskCompletionPercent = tasksForDate.isNotEmpty
-        ? tasksCompletedForDate.length / tasksForDate.length
-        : 0;
-    taskWidgets.add(onMobile && !displayDesktopLayout
+
+    String taskCountSuffix =
+        isToday ? ' ($completedTasksCount/$tasksCount)' : '';
+
+    double taskCompletionPercent =
+        tasksCount != 0 ? completedTasksCount / tasksCount : 0;
+
+    return onMobile && !displayDesktopLayout
         ? Column(
             children: [
               Row(
@@ -327,7 +358,7 @@ class _MainPageState extends State<MainPage> {
                   Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Text(
-                        "${tasksCompletedForDate.length}/${tasksForDate.length} task${tasksCompletedForDate.length != 1 ? "s" : ""} completed"),
+                        "$completedTasksCount/$tasksCount task${completedTasksCount != 1 ? "s" : ""} completed"),
                   ),
                 ],
               ),
@@ -342,29 +373,7 @@ class _MainPageState extends State<MainPage> {
               "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
               style: TextStyle(fontWeight: dayFontWeight),
             ),
-          ));
-
-    taskWidgets.addAll(tasksForDate
-        .map<Widget>(
-            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
-        .toList());
-
-    var finalTaskListWidget = DragTarget(
-      builder: (context, candidateData, rejectedData) {
-        return ListView(
-          children: taskWidgets,
-        );
-      },
-      onAccept: (data) {
-        setState(() {
-          if (data is Task) {
-            data.ExecDate =
-                DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
-          }
-        });
-      },
-    );
-    return expand ? Expanded(child: finalTaskListWidget) : finalTaskListWidget;
+          );
   }
 
   AppBar buildMobileAppBar() {

@@ -75,7 +75,7 @@ class TaskHost {
     }
   }
 
-  static List<Task> SortTasks(SortMethod sortMethod, List<Task> tasks) {
+  static List<Task> sortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
         tasks.sort((Task x, Task y) =>
