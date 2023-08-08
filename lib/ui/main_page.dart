@@ -118,8 +118,12 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  ListTile _buildTaskListTile(Task task, [bool compact = false]) {
+  Widget _buildTaskListTile(Task task, [bool compact = false]) {
     String taskTitle;
+    String dueDateString = (task.DueDate != null
+        ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+        : "No due date");
+
     if (compact) {
       taskTitle = task.toString();
     } else {
@@ -134,6 +138,34 @@ class _MainPageState extends State<MainPage> {
 
     Color? tileColor =
         task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
+
+    onTap() {
+      TaskEditor.show(
+          context: context, host: host, task: task, onTaskUpdated: updateTasks);
+    }
+
+    if (compact) {
+      return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(taskTitle,
+                  style: TextStyle(
+                      color: tileColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      decoration: task.IsCompleted
+                          ? TextDecoration.lineThrough
+                          : null)),
+              Text(dueDateString, style: TextStyle(color: tileColor))
+            ],
+          ),
+        ),
+      );
+    }
 
     return ListTile(
       iconColor: tileColor,
@@ -155,16 +187,8 @@ class _MainPageState extends State<MainPage> {
       ),
       subtitle: Text(!compact
           ? (task.Description != "" ? task.Description : "No description")
-          : (task.DueDate != null
-              ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
-              : "No due date")),
-      onTap: () {
-        TaskEditor.show(
-            context: context,
-            host: host,
-            task: task,
-            onTaskUpdated: updateTasks);
-      },
+          : dueDateString),
+      onTap: onTap,
     );
   }
 
