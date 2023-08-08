@@ -124,16 +124,17 @@ class _MainPageState extends State<MainPage> {
         ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
         : "No due date");
 
-    if (compact) {
-      taskTitle = task.toString();
-    } else {
-      String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
-          ? "${host.getSubjectNameById(task.SubjectID)} - "
-          : "");
+    String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
+        ? "${host.getSubjectNameById(task.SubjectID)} - "
+        : "");
+
+    taskTitle = subjectPrefix + task.toString();
+
+    if (!compact) {
       String dueSuffix = task.DueDate != null
           ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}"
           : "";
-      taskTitle = subjectPrefix + task.toString() + dueSuffix;
+      taskTitle += dueSuffix;
     }
 
     Color? tileColor =
