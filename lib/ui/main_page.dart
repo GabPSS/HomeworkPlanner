@@ -118,7 +118,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _buildTaskListTile(Task task, [bool compact = false]) {
+  Widget _buildTaskWidget(Task task, [bool compact = false]) {
     String taskTitle;
     String dueDateString = (task.DueDate != null
         ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
@@ -190,7 +190,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildTaskWidget(Task task, [bool compact = false]) {
-    var listTile = _buildTaskListTile(task, compact);
+    var listTile = _buildTaskWidget(task, compact);
     return onMobile && !onTablet
         ? listTile
         : LongPressDraggable(
