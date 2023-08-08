@@ -124,16 +124,17 @@ class _MainPageState extends State<MainPage> {
         ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
         : "No due date");
 
-    if (compact) {
-      taskTitle = task.toString();
-    } else {
-      String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
-          ? "${host.getSubjectNameById(task.SubjectID)} - "
-          : "");
+    String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
+        ? "${host.getSubjectNameById(task.SubjectID)} - "
+        : "");
+
+    taskTitle = subjectPrefix + task.toString();
+
+    if (!compact) {
       String dueSuffix = task.DueDate != null
           ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}"
           : "";
-      taskTitle = subjectPrefix + task.toString() + dueSuffix;
+      taskTitle += dueSuffix;
     }
 
     Color? tileColor =
@@ -372,6 +373,13 @@ class _MainPageState extends State<MainPage> {
     List<Widget> plannerActions = <Widget>[saveButton].toList(growable: true);
 
     var taskListActions = <Widget>[saveButton].toList(growable: true);
+
+    if (onMobile) {
+      var shareButton = IconButton(
+          onPressed: () => host.share(context), icon: const Icon(Icons.share));
+      plannerActions.add(shareButton);
+      taskListActions.add(shareButton);
+    }
 
     if (!onTablet) {
       plannerActions.add(IconButton(
