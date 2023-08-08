@@ -118,8 +118,12 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  ListTile _buildTaskListTile(Task task, [bool compact = false]) {
+  Widget _buildTaskWidget(Task task, [bool compact = false]) {
     String taskTitle;
+    String dueDateString = (task.DueDate != null
+        ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+        : "No due date");
+
     if (compact) {
       taskTitle = task.toString();
     } else {
@@ -135,41 +139,58 @@ class _MainPageState extends State<MainPage> {
     Color? tileColor =
         task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
 
+    onTap() {
+      TaskEditor.show(
+          context: context, host: host, task: task, onTaskUpdated: updateTasks);
+    }
+
+    if (compact) {
+      return InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(taskTitle,
+                  style: TextStyle(
+                      color: tileColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      decoration: task.IsCompleted
+                          ? TextDecoration.lineThrough
+                          : null)),
+              Text(dueDateString, style: TextStyle(color: tileColor))
+            ],
+          ),
+        ),
+      );
+    }
+
     return ListTile(
       iconColor: tileColor,
       textColor: tileColor,
-      leading: !compact
-          ? IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                setState(() {
-                  task.IsCompleted = !task.IsCompleted;
-                });
-              },
-              icon: task.GetIcon())
-          : null,
+      leading: IconButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () {
+            setState(() {
+              task.IsCompleted = !task.IsCompleted;
+            });
+          },
+          icon: task.GetIcon()),
       title: Text(
         taskTitle,
         style: TextStyle(
             decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
       ),
-      subtitle: Text(!compact
-          ? (task.Description != "" ? task.Description : "No description")
-          : (task.DueDate != null
-              ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
-              : "No due date")),
-      onTap: () {
-        TaskEditor.show(
-            context: context,
-            host: host,
-            task: task,
-            onTaskUpdated: updateTasks);
-      },
+      subtitle:
+          Text(task.Description != "" ? task.Description : "No description"),
+      onTap: onTap,
     );
   }
 
   Widget buildTaskWidget(Task task, [bool compact = false]) {
-    var listTile = _buildTaskListTile(task, compact);
+    var listTile = _buildTaskWidget(task, compact);
     return onMobile && !onTablet
         ? listTile
         : LongPressDraggable(
