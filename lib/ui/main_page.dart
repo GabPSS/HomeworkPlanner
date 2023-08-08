@@ -170,24 +170,21 @@ class _MainPageState extends State<MainPage> {
     return ListTile(
       iconColor: tileColor,
       textColor: tileColor,
-      leading: !compact
-          ? IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {
-                setState(() {
-                  task.IsCompleted = !task.IsCompleted;
-                });
-              },
-              icon: task.GetIcon())
-          : null,
+      leading: IconButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () {
+            setState(() {
+              task.IsCompleted = !task.IsCompleted;
+            });
+          },
+          icon: task.GetIcon()),
       title: Text(
         taskTitle,
         style: TextStyle(
             decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
       ),
-      subtitle: Text(!compact
-          ? (task.Description != "" ? task.Description : "No description")
-          : dueDateString),
+      subtitle:
+          Text(task.Description != "" ? task.Description : "No description"),
       onTap: onTap,
     );
   }
