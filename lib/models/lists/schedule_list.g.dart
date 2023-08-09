@@ -7,7 +7,7 @@ part of 'schedule_list.dart';
 // **************************************************************************
 
 ScheduleList _$ScheduleListFromJson(Map<String, dynamic> json) => ScheduleList()
-  ..DaysToDisplay = json['DaysToDisplay']
+  ..DaysToDisplay = json['DaysToDisplay'] as int
   ..Items = (json['Items'] as List<dynamic>)
       .map((e) => Schedule.fromJson(e as Map<String, dynamic>))
       .toList();

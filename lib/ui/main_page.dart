@@ -95,28 +95,29 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildAllTasksPanel() {
-    List<Task> allTasks = host.saveFile.Tasks.Items
-        .where((element) =>
-            host.saveFile.Settings.DisplayPreviousTasks ||
-            !(element.IsCompleted &&
-                element.DateCompleted!.isBefore(HelperFunctions.getToday())))
-        .toList();
+    List<Task> tasks =
+        TaskHost.sortTasks(host.saveFile.Settings.sortMethod, allTasks);
 
     List<Widget> widgets = List.empty(growable: true);
     widgets.add(Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
-          "All tasks (${allTasks.where((element) => !element.IsCompleted).length})"),
+          "All tasks (${tasks.where((element) => !element.IsCompleted).length})"),
     ));
 
-    for (var i = 0; i < allTasks.length; i++) {
-      widgets.add(buildTaskWidget(allTasks[i]));
+    for (Task task in tasks) {
+      widgets.add(buildTaskWidget(task));
     }
 
-    return ListView(
-      children: widgets,
-    );
+    return ListView(children: widgets);
   }
+
+  List<Task> get allTasks => host.saveFile.Tasks.Items
+      .where((element) =>
+          host.saveFile.Settings.DisplayPreviousTasks ||
+          !(element.IsCompleted &&
+              element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+      .toList();
 
   Widget _buildTaskWidget(Task task, [bool compact = false]) {
     String taskTitle;
@@ -272,20 +273,50 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildTaskListForDate(DateTime selectedDay, [bool expand = true]) {
     List<Widget> taskWidgets = List.empty(growable: true);
-    List<Task> tasksForDate = host.getTasksPlannedForDate(selectedDay);
+
+    List<Task> tasksForDate = TaskHost.sortTasks(
+        host.saveFile.Settings.sortMethod,
+        host.getTasksPlannedForDate(selectedDay));
     Iterable<Task> tasksCompletedForDate =
         tasksForDate.where((element) => element.IsCompleted);
 
-    bool isToday = selectedDay == HelperFunctions.getToday();
-    String taskCountSuffix = isToday
-        ? ' (${tasksCompletedForDate.length}/${tasksForDate.length})'
-        : '';
+    taskWidgets.add(buildTaskListHeader(
+        selectedDay, tasksCompletedForDate.length, tasksForDate.length));
 
+    taskWidgets.addAll(tasksForDate
+        .map<Widget>(
+            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
+        .toList());
+
+    Widget taskListWidget = DragTarget(
+      builder: (context, candidateData, rejectedData) {
+        return ListView(
+          children: taskWidgets,
+        );
+      },
+      onAccept: (data) {
+        setState(() {
+          if (data is Task) {
+            data.ExecDate = HelperFunctions.getDateFromDateTime(selectedDay);
+          }
+        });
+      },
+    );
+    return expand ? Expanded(child: taskListWidget) : taskListWidget;
+  }
+
+  Widget buildTaskListHeader(
+      DateTime selectedDay, int completedTasksCount, int tasksCount) {
+    bool isToday = selectedDay == HelperFunctions.getToday();
     FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
-    double taskCompletionPercent = tasksForDate.isNotEmpty
-        ? tasksCompletedForDate.length / tasksForDate.length
-        : 0;
-    taskWidgets.add(onMobile && !displayDesktopLayout
+
+    String taskCountSuffix =
+        isToday ? ' ($completedTasksCount/$tasksCount)' : '';
+
+    double taskCompletionPercent =
+        tasksCount != 0 ? completedTasksCount / tasksCount : 0;
+
+    return onMobile && !displayDesktopLayout
         ? Column(
             children: [
               Row(
@@ -327,7 +358,7 @@ class _MainPageState extends State<MainPage> {
                   Padding(
                     padding: const EdgeInsets.all(18.0),
                     child: Text(
-                        "${tasksCompletedForDate.length}/${tasksForDate.length} task${tasksCompletedForDate.length != 1 ? "s" : ""} completed"),
+                        "$completedTasksCount/$tasksCount task${completedTasksCount != 1 ? "s" : ""} completed"),
                   ),
                 ],
               ),
@@ -342,29 +373,7 @@ class _MainPageState extends State<MainPage> {
               "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
               style: TextStyle(fontWeight: dayFontWeight),
             ),
-          ));
-
-    taskWidgets.addAll(tasksForDate
-        .map<Widget>(
-            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
-        .toList());
-
-    var finalTaskListWidget = DragTarget(
-      builder: (context, candidateData, rejectedData) {
-        return ListView(
-          children: taskWidgets,
-        );
-      },
-      onAccept: (data) {
-        setState(() {
-          if (data is Task) {
-            data.ExecDate =
-                DateTime(selectedDay.year, selectedDay.month, selectedDay.day);
-          }
-        });
-      },
-    );
-    return expand ? Expanded(child: finalTaskListWidget) : finalTaskListWidget;
+          );
   }
 
   AppBar buildMobileAppBar() {
@@ -533,14 +542,20 @@ class _MainPageState extends State<MainPage> {
                     child: const Text('New...'),
                   ),
                   const MenuItemButton(child: Text('Import...')),
-                  const SubmenuButton(menuChildren: [
-                    MenuItemButton(child: Text('Remaining only')),
-                    MenuItemButton(child: Text('Everything')),
-                  ], child: Text('Unschedule tasks')),
-                  const SubmenuButton(menuChildren: [
-                    MenuItemButton(child: Text('Completed')),
-                    MenuItemButton(child: Text('Everything'))
-                  ], child: Text('Remove tasks'))
+                  MenuItemButton(
+                    child: const Text('Unschedule all'),
+                    onPressed: () => unscheduleAll(context),
+                  ),
+                  SubmenuButton(menuChildren: [
+                    MenuItemButton(
+                      child: const Text('Completed'),
+                      onPressed: () => removeCompleted(context),
+                    ),
+                    MenuItemButton(
+                      child: const Text('Everything'),
+                      onPressed: () => removeAllTasks(context),
+                    )
+                  ], child: const Text('Remove tasks'))
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Day notes...')),
@@ -557,7 +572,10 @@ class _MainPageState extends State<MainPage> {
                       SubjectsPage.show(context, host, updateTasks);
                     },
                   ),
-                  const MenuItemButton(child: Text('Clean up...')),
+                  MenuItemButton(
+                    child: const Text('Clean up...'),
+                    onPressed: () => cleanUp(context),
+                  ),
                   MenuItemButton(
                       child: const Text('Manage schedules...'),
                       onPressed: () => Navigator.push(
@@ -614,5 +632,93 @@ class _MainPageState extends State<MainPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Updated tasks')));
     }
+  }
+
+  void unscheduleAll(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Unschedule all tasks?'),
+        content: const Text(
+            "This will clear all of your task schedules, so you can replan everything. \n\nNOTE: This will NOT delete any tasks."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.unscheduleAllTasks());
+              },
+              child: const Text('Unschedule')),
+        ],
+      ),
+    );
+  }
+
+  void removeAllTasks(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete all tasks?'),
+        content: const Text(
+            "This will clear all of your tasks, but keep everything else. \n\nWARNING: This PERMANENTLY DELETE all tasks scheduled."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.removeAllTasks());
+              },
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+  }
+
+  void removeCompleted(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete all completed tasks?'),
+        content: const Text(
+            "This will clear all of your completed tasks, but keep everything else. \n\nWARNING: This PERMANENTLY DELETE all matching tasks."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.removeCompletedTasks());
+              },
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+  }
+
+  void cleanUp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Perform cleanup?'),
+        content: const Text(
+            "This action will clean up the save file internally, in order to make it easier to manually modify if necessary.\n\nThis does not visually affect any tasks or schedules."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.cleanUp());
+              },
+              child: const Text('Clean up')),
+        ],
+      ),
+    );
   }
 }

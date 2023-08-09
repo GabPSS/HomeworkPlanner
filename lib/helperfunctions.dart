@@ -21,6 +21,9 @@ class HelperFunctions {
         .add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
   }
 
+  static DateTime getDateFromDateTime(DateTime dateTime) =>
+      DateTime(dateTime.year, dateTime.month, dateTime.day);
+
   static DateTime iterateThroughWeekFromThisSaturday(
           double daysOfWeekSum, Function(DateTime) callback) =>
       iterateThroughWeekFromDate(daysOfWeekSum, getThisSaturday(), callback);

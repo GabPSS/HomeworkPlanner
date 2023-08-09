@@ -23,7 +23,7 @@ class _ReportsPageState extends State<ReportsPage> {
         .where((element) => element.IsCompleted)
         .toList();
     if (taskList.isNotEmpty) {
-      TaskHost.SortTasks(SortMethod.DateCompleted, taskList);
+      TaskHost.sortTasks(SortMethod.DateCompleted, taskList);
 
       pageContents = ListView.builder(
         itemBuilder: (context, index) {
