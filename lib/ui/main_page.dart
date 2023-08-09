@@ -572,7 +572,10 @@ class _MainPageState extends State<MainPage> {
                       SubjectsPage.show(context, host, updateTasks);
                     },
                   ),
-                  const MenuItemButton(child: Text('Clean up...')),
+                  MenuItemButton(
+                    child: const Text('Clean up...'),
+                    onPressed: () => cleanUp(context),
+                  ),
                   MenuItemButton(
                       child: const Text('Manage schedules...'),
                       onPressed: () => Navigator.push(
@@ -692,6 +695,28 @@ class _MainPageState extends State<MainPage> {
                 setState(() => host.removeCompletedTasks());
               },
               child: const Text('Delete')),
+        ],
+      ),
+    );
+  }
+
+  void cleanUp(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Perform cleanup?'),
+        content: const Text(
+            "This action will clean up the save file internally, in order to make it easier to manually modify if necessary.\n\nThis does not visually affect any tasks or schedules."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.cleanUp());
+              },
+              child: const Text('Clean up')),
         ],
       ),
     );

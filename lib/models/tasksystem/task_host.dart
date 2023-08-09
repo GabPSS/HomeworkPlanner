@@ -118,7 +118,7 @@ class TaskHost {
 
   void removeAllTasks() => saveFile.Tasks = TaskList();
 
-  void ResetTaskIDs() {
+  void resetTaskIDs() {
     int i;
     for (i = 0; i < saveFile.Tasks.Items.length; i++) {
       saveFile.Tasks.Items[i].TaskID = i;
@@ -126,26 +126,44 @@ class TaskHost {
     saveFile.Tasks.LastIndex = i - 1;
   }
 
-  void ResetSubjectIDs() {
-    int new_sid;
-    for (new_sid = 0; new_sid < saveFile.Subjects.Items.length; new_sid++) {
-      int old_sid = saveFile.Subjects.Items[new_sid].SubjectID;
+  void resetSubjectIDs([int? startIndex]) {
+    startIndex ??= saveFile.Subjects.LastIndex;
 
-      for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-        if (saveFile.Tasks.Items[i].SubjectID == old_sid) {
-          saveFile.Tasks.Items[i].SubjectID = new_sid;
-        }
-      }
+    int newId;
+    for (newId = startIndex; newId < saveFile.Subjects.Items.length; newId++) {
+      int oldId = saveFile.Subjects.Items[newId].SubjectID;
 
-      saveFile.Subjects.Items[new_sid].SubjectID = new_sid;
+      updateSubjectId(oldId, newId);
+
+      saveFile.Subjects.Items[newId].SubjectID = newId;
     }
 
-    saveFile.Subjects.LastIndex = new_sid - 1;
+    saveFile.Subjects.LastIndex = newId - 1;
+
+    if (startIndex != 0) {
+      resetSubjectIDs(0);
+    }
   }
 
-  void SortSubjectsByName() {
+  void updateSubjectId(int oldId, int newId) {
+    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
+      if (saveFile.Tasks.Items[i].SubjectID == oldId) {
+        saveFile.Tasks.Items[i].SubjectID = newId;
+      }
+    }
+  }
+
+  void sortSubjectsByName() {
     saveFile.Subjects.Items
         .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
+  }
+
+  void cleanUp() {
+    saveFile.Tasks.Items =
+        sortTasks(SortMethod.Alphabetically, saveFile.Tasks.Items);
+    resetTaskIDs();
+    sortSubjectsByName();
+    resetSubjectIDs();
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
