@@ -93,12 +93,6 @@ class HelperFunctions {
         : false;
   }
 
-  static bool getIsPortrait(BuildContext context) {
-    try {
-      double? aspectRatio2 = context.size?.aspectRatio;
-      return (aspectRatio2 ?? 2) < 1;
-    } catch (e) {
-      return false;
-    }
-  }
+  static bool getIsPortrait(BuildContext context) =>
+      MediaQuery.of(context).orientation == Orientation.portrait;
 }
