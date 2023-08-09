@@ -546,10 +546,16 @@ class _MainPageState extends State<MainPage> {
                     child: const Text('Unschedule all'),
                     onPressed: () => unscheduleAll(context),
                   ),
-                  const SubmenuButton(menuChildren: [
-                    MenuItemButton(child: Text('Completed')),
-                    MenuItemButton(child: Text('Everything'))
-                  ], child: Text('Remove tasks'))
+                  SubmenuButton(menuChildren: [
+                    MenuItemButton(
+                      child: const Text('Completed'),
+                      onPressed: () => removeCompleted(context),
+                    ),
+                    MenuItemButton(
+                      child: const Text('Everything'),
+                      onPressed: () => removeAllTasks(context),
+                    )
+                  ], child: const Text('Remove tasks'))
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
                   const MenuItemButton(child: Text('Day notes...')),
@@ -642,6 +648,50 @@ class _MainPageState extends State<MainPage> {
                 setState(() => host.unscheduleAllTasks());
               },
               child: const Text('Unschedule')),
+        ],
+      ),
+    );
+  }
+
+  void removeAllTasks(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete all tasks?'),
+        content: const Text(
+            "This will clear all of your tasks, but keep everything else. \n\nWARNING: This PERMANENTLY DELETE all tasks scheduled."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.removeAllTasks());
+              },
+              child: const Text('Delete')),
+        ],
+      ),
+    );
+  }
+
+  void removeCompleted(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete all completed tasks?'),
+        content: const Text(
+            "This will clear all of your completed tasks, but keep everything else. \n\nWARNING: This PERMANENTLY DELETE all matching tasks."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.removeCompletedTasks());
+              },
+              child: const Text('Delete')),
         ],
       ),
     );

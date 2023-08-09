@@ -113,10 +113,10 @@ class TaskHost {
     return tasks;
   }
 
-  void RemoveCompletedTasks() =>
+  void removeCompletedTasks() =>
       saveFile.Tasks.Items.removeWhere((task) => task.IsCompleted);
 
-  void RemoveAllTasks() => saveFile.Tasks = TaskList();
+  void removeAllTasks() => saveFile.Tasks = TaskList();
 
   void ResetTaskIDs() {
     int i;
