@@ -542,10 +542,10 @@ class _MainPageState extends State<MainPage> {
                     child: const Text('New...'),
                   ),
                   const MenuItemButton(child: Text('Import...')),
-                  const SubmenuButton(menuChildren: [
-                    MenuItemButton(child: Text('Remaining only')),
-                    MenuItemButton(child: Text('Everything')),
-                  ], child: Text('Unschedule tasks')),
+                  MenuItemButton(
+                    child: const Text('Unschedule all'),
+                    onPressed: () => unscheduleAll(context),
+                  ),
                   const SubmenuButton(menuChildren: [
                     MenuItemButton(child: Text('Completed')),
                     MenuItemButton(child: Text('Everything'))
@@ -623,5 +623,27 @@ class _MainPageState extends State<MainPage> {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Updated tasks')));
     }
+  }
+
+  void unscheduleAll(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Unschedule all tasks?'),
+        content: const Text(
+            "This will clear all of your task schedules, so you can replan everything. \n\nNOTE: This will NOT delete any tasks."),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() => host.unscheduleAllTasks());
+              },
+              child: const Text('Unschedule')),
+        ],
+      ),
+    );
   }
 }

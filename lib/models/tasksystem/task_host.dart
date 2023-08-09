@@ -58,7 +58,7 @@ class TaskHost {
     return tasks;
   }
 
-  int GetTaskIndexById(int id) {
+  int getTaskIndexById(int id) {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].TaskID == id) {
         return i;
@@ -67,9 +67,9 @@ class TaskHost {
     return -1;
   }
 
-  void unscheduleAllTasks({bool excludeCompleted = false}) {
+  void unscheduleAllTasks() {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (!saveFile.Tasks.Items[i].IsCompleted || !excludeCompleted) {
+      if (!saveFile.Tasks.Items[i].IsCompleted) {
         saveFile.Tasks.Items[i].ExecDate = null;
       }
     }
