@@ -165,7 +165,7 @@ class TaskHost {
     sortSubjectsByName();
     resetSubjectIDs();
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: const Text('Savefile cleanup successful')));
+        const SnackBar(content: Text('Savefile cleanup successful')));
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
