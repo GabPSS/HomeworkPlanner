@@ -714,7 +714,7 @@ class _MainPageState extends State<MainPage> {
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => host.cleanUp());
+                setState(() => host.cleanUp(context));
               },
               child: const Text('Clean up')),
         ],
