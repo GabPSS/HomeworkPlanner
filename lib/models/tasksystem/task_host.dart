@@ -127,25 +127,25 @@ class TaskHost {
   }
 
   void resetSubjectIDs([int? startIndex]) {
-    startIndex ??= saveFile.Subjects.LastIndex;
+    startIndex ??= saveFile.Subjects.LastIndex + 1;
 
-    int newId;
-    for (newId = startIndex; newId < saveFile.Subjects.Items.length; newId++) {
-      int oldId = saveFile.Subjects.Items[newId].SubjectID;
-
-      updateSubjectId(oldId, newId);
-
-      saveFile.Subjects.Items[newId].SubjectID = newId;
+    int newId = startIndex;
+    for (int count = 0; count < saveFile.Subjects.Items.length; count++) {
+      updateSubjectId(saveFile.Subjects.Items[count], newId);
+      newId++;
     }
 
-    saveFile.Subjects.LastIndex = newId - 1;
+    saveFile.Subjects.LastIndex = newId;
 
     if (startIndex != 0) {
       resetSubjectIDs(0);
     }
   }
 
-  void updateSubjectId(int oldId, int newId) {
+  void updateSubjectId(Subject subject, int newId) {
+    int oldId = subject.SubjectID;
+    subject.SubjectID = newId;
+
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].SubjectID == oldId) {
         saveFile.Tasks.Items[i].SubjectID = newId;
@@ -158,12 +158,14 @@ class TaskHost {
         .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
   }
 
-  void cleanUp() {
+  void cleanUp(BuildContext context) {
     saveFile.Tasks.Items =
         sortTasks(SortMethod.Alphabetically, saveFile.Tasks.Items);
     resetTaskIDs();
     sortSubjectsByName();
     resetSubjectIDs();
+    ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Savefile cleanup successful')));
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
