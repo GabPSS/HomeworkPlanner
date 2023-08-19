@@ -13,10 +13,11 @@ class SaveFile {
   SubjectList Subjects = SubjectList();
   ScheduleList Schedules = ScheduleList();
   // DayNoteList DayNotes;
-  List<DayNote> DayNotes = List.empty();
+  List<DayNote> DayNotes = List.empty(growable: true);
   SaveSettings Settings = SaveSettings();
 
-  factory SaveFile.fromJson(Map<String, dynamic> json) => _$SaveFileFromJson(json);
+  factory SaveFile.fromJson(Map<String, dynamic> json) =>
+      _$SaveFileFromJson(json);
 
   Map<String, dynamic> toJson() => _$SaveFileToJson(this);
 

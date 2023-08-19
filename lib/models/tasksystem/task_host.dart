@@ -12,6 +12,7 @@ import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../enums.dart';
+import '../main/day_note.dart';
 import '../main/task.dart';
 
 class TaskHost {
@@ -341,4 +342,10 @@ class TaskHost {
 
     return null;
   }
+
+  List<DayNote> getNotesForDate(DateTime date,
+          [bool getCancelledNotes = false]) =>
+      saveFile.DayNotes.where((element) =>
+              element.Date == date && element.Cancelled == getCancelledNotes)
+          .toList();
 }
