@@ -2,8 +2,10 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/main.dart';
+import 'package:homeworkplanner/models/main/day_note.dart';
 import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/note_dialog.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
 import 'package:homeworkplanner/ui/schedules_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
@@ -271,8 +273,8 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Widget buildTaskListForDate(DateTime selectedDay, [bool expand = true]) {
-    List<Widget> taskWidgets = List.empty(growable: true);
+  Widget buildTaskListForDate(DateTime selectedDay, [bool expanded = true]) {
+    List<DayNote> cancelledNotes = host.getNotesForDate(selectedDay, true);
 
     List<Task> tasksForDate = TaskHost.sortTasks(
         host.saveFile.Settings.sortMethod,
@@ -280,8 +282,25 @@ class _MainPageState extends State<MainPage> {
     Iterable<Task> tasksCompletedForDate =
         tasksForDate.where((element) => element.IsCompleted);
 
-    taskWidgets.add(buildTaskListHeader(
-        selectedDay, tasksCompletedForDate.length, tasksForDate.length));
+    Widget header = buildTaskListHeader(
+        selectedDay,
+        tasksCompletedForDate.length,
+        tasksForDate.length,
+        cancelledNotes.isNotEmpty);
+
+    if (cancelledNotes.isNotEmpty) {
+      var widgets = <Widget>[header].toList(growable: true);
+      widgets
+          .addAll(buildDayNoteWidgets(cancelledNotes, () => setState(() {})));
+      var cancelWidget = Column(
+        children: widgets,
+      );
+      return expanded ? Expanded(child: cancelWidget) : cancelWidget;
+    }
+
+    List<Widget> taskWidgets = List.empty(growable: true);
+
+    taskWidgets.add(header);
 
     taskWidgets.addAll(tasksForDate
         .map<Widget>(
@@ -302,78 +321,127 @@ class _MainPageState extends State<MainPage> {
         });
       },
     );
-    return expand ? Expanded(child: taskListWidget) : taskListWidget;
+    return expanded ? Expanded(child: taskListWidget) : taskListWidget;
   }
 
   Widget buildTaskListHeader(
-      DateTime selectedDay, int completedTasksCount, int tasksCount) {
+      DateTime selectedDay, int completedTasksCount, int tasksCount,
+      [bool isCancelled = false]) {
     bool isToday = selectedDay == HelperFunctions.getToday();
     FontWeight dayFontWeight = isToday ? FontWeight.bold : FontWeight.normal;
 
-    String taskCountSuffix =
-        isToday ? ' ($completedTasksCount/$tasksCount)' : '';
+    String titleSuffix = isCancelled
+        ? " - Cancelled"
+        : isToday
+            ? ' ($completedTasksCount/$tasksCount)'
+            : '';
 
-    double taskCompletionPercent =
-        tasksCount != 0 ? completedTasksCount / tasksCount : 0;
+    String mobileTitleSuffix = isCancelled
+        ? "Cancelled"
+        : "$completedTasksCount/$tasksCount task${completedTasksCount != 1 ? "s" : ""} completed";
 
-    return onMobile && !displayDesktopLayout
-        ? Column(
-            children: [
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Text(selectedDay.day.toString(),
-                        style:
-                            TextStyle(fontSize: 42, fontWeight: dayFontWeight)),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        DateFormat('MMMM').format(selectedDay),
-                        style: TextStyle(fontWeight: dayFontWeight),
-                      ),
-                      Text(
-                        DateFormat('yyyy').format(selectedDay),
-                        style: TextStyle(fontWeight: dayFontWeight),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  taskCompletionPercent == 1
-                      ? const CircleAvatar(
-                          backgroundColor: Colors.green,
-                          child: Icon(
-                            Icons.done_all,
-                            color: Colors.white,
-                          ),
-                        )
-                      : taskCompletionPercent == 0
-                          ? const Icon(null)
-                          : CircularProgressIndicator(
-                              color: Colors.green,
-                              value: taskCompletionPercent,
-                            ),
-                  Padding(
-                    padding: const EdgeInsets.all(18.0),
-                    child: Text(
-                        "$completedTasksCount/$tasksCount task${completedTasksCount != 1 ? "s" : ""} completed"),
-                  ),
-                ],
-              ),
-              const Divider(
-                height: 1,
-              )
-            ],
-          )
-        : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "${selectedDay.day}/${selectedDay.month}$taskCountSuffix",
-              style: TextStyle(fontWeight: dayFontWeight),
+    double taskCompletionPercent = isCancelled
+        ? 0
+        : (tasksCount != 0 ? completedTasksCount / tasksCount : 0);
+
+    List<DayNote> notesForDate = host.getNotesForDate(selectedDay);
+
+    if (onMobile && !displayDesktopLayout) {
+      var mobileHeaderChildren = <Widget>[
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Text(selectedDay.day.toString(),
+                  style: TextStyle(fontSize: 42, fontWeight: dayFontWeight)),
             ),
-          );
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  DateFormat('MMMM').format(selectedDay),
+                  style: TextStyle(fontWeight: dayFontWeight),
+                ),
+                Text(
+                  DateFormat('yyyy').format(selectedDay),
+                  style: TextStyle(fontWeight: dayFontWeight),
+                ),
+              ],
+            ),
+            const Spacer(),
+            taskCompletionPercent == 1
+                ? const CircleAvatar(
+                    backgroundColor: Colors.green,
+                    child: Icon(
+                      Icons.done_all,
+                      color: Colors.white,
+                    ),
+                  )
+                : taskCompletionPercent == 0
+                    ? const Icon(null)
+                    : CircularProgressIndicator(
+                        color: Colors.green,
+                        value: taskCompletionPercent,
+                      ),
+            Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Text(mobileTitleSuffix),
+            ),
+          ],
+        ),
+      ].toList(growable: true);
+
+      if (notesForDate.isNotEmpty) {
+        mobileHeaderChildren.addAll(buildDayNoteWidgets(notesForDate));
+      }
+
+      mobileHeaderChildren.add(const Divider(height: 1));
+      return Column(
+        children: mobileHeaderChildren,
+      );
+    } else {
+      TextButton notesButton = TextButton(
+          onPressed: () => showDesktopNotesDialog(notesForDate),
+          child: Text(
+              "${notesForDate.length} ${notesForDate.length == 1 ? 'note' : 'notes'}"));
+
+      List<Widget> headerRowChildren = <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "${selectedDay.day}/${selectedDay.month}$titleSuffix",
+            style: TextStyle(fontWeight: dayFontWeight),
+          ),
+        ),
+      ].toList(growable: true);
+
+      if (notesForDate.isNotEmpty) {
+        headerRowChildren.add(notesButton);
+      }
+
+      return Row(
+        children: headerRowChildren,
+      );
+    }
+  }
+
+  Iterable<Widget> buildDayNoteWidgets(List<DayNote> notesForDate,
+          [Function()? onUpdate]) =>
+      notesForDate.map((note) => buildDayNoteListTile(note, onUpdate));
+
+  Widget buildDayNoteListTile(DayNote note, [Function()? onUpdate]) {
+    return ListTile(
+      leading: Icon(note.Cancelled ? Icons.error_outline : Icons.lightbulb),
+      title: Text(note.Message),
+      onTap: () {
+        var dialog = NoteDialog(
+          host,
+          note: note,
+          onUpdate: onUpdate,
+        );
+        dialog.show(context);
+      },
+    );
   }
 
   AppBar buildMobileAppBar() {
@@ -408,6 +476,10 @@ class _MainPageState extends State<MainPage> {
     var popupMenuButton = PopupMenuButton(
       itemBuilder: (context) => const [
         PopupMenuItem(
+          value: 'note',
+          child: Text('Add note'),
+        ),
+        PopupMenuItem(
           value: 'subjects',
           child: Text('Subjects'),
         ),
@@ -426,6 +498,9 @@ class _MainPageState extends State<MainPage> {
       ],
       onSelected: (value) {
         switch (value) {
+          case 'note':
+            addNote();
+            break;
           case 'subjects':
             SubjectsPage.show(context, host, () => setState(() {}));
             break;
@@ -558,7 +633,12 @@ class _MainPageState extends State<MainPage> {
                   ], child: const Text('Remove tasks'))
                 ], child: const Text('Tasks')),
                 SubmenuButton(menuChildren: [
-                  const MenuItemButton(child: Text('Day notes...')),
+                  MenuItemButton(
+                    child: const Text('Add note...'),
+                    onPressed: () => addNote(),
+                  )
+                ], child: const Text('Notes')),
+                SubmenuButton(menuChildren: [
                   MenuItemButton(
                       child: const Text('Report...'),
                       onPressed: () => Navigator.push(
@@ -577,7 +657,7 @@ class _MainPageState extends State<MainPage> {
                     onPressed: () => cleanUp(context),
                   ),
                   MenuItemButton(
-                      child: const Text('Manage schedules...'),
+                      child: const Text('Class schedules...'),
                       onPressed: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -719,6 +799,37 @@ class _MainPageState extends State<MainPage> {
               child: const Text('Clean up')),
         ],
       ),
+    );
+  }
+
+  void addNote() {
+    NoteDialog(host, onUpdate: () => setState(() {})).show(context);
+  }
+
+  void showDesktopNotesDialog(List<DayNote> notes) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(notes.length.toString() +
+              (notes.length == 1 ? ' note' : ' notes')),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                  children: buildDayNoteWidgets(notes, () => setState(() {}))
+                      .toList());
+            },
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+                child: const Text('Close'))
+          ],
+        );
+      },
     );
   }
 }
