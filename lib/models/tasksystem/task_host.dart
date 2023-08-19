@@ -346,7 +346,4 @@ class TaskHost {
       saveFile.DayNotes.where((element) =>
               element.Date == date && element.Cancelled == getCancelledNotes)
           .toList();
-
-  bool checkDayIsCancelled(DateTime date) =>
-      getNotesForDate(date, true).isNotEmpty;
 }
