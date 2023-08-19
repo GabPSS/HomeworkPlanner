@@ -392,7 +392,8 @@ class _MainPageState extends State<MainPage> {
       ].toList(growable: true);
 
       if (notesForDate.isNotEmpty) {
-        mobileHeaderChildren.addAll(buildDayNoteWidgets(notesForDate));
+        mobileHeaderChildren
+            .addAll(buildDayNoteWidgets(notesForDate, () => setState(() {})));
       }
 
       mobileHeaderChildren.add(const Divider(height: 1));
