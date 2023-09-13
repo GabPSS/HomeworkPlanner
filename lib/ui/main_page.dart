@@ -197,7 +197,7 @@ class _MainPageState extends State<MainPage> {
     var listTile = _buildTaskWidget(task, compact);
     return onMobile && !onTablet
         ? listTile
-        : LongPressDraggable(
+        : Draggable(
             data: task,
             dragAnchorStrategy: pointerDragAnchorStrategy,
             feedback: task.GetIcon(),
