@@ -30,15 +30,17 @@ class _MainPageState extends State<MainPage> {
   BottomNavigationBar? bottomNav;
   int bottomNavSelectedIndex = 0;
   bool onMobile = false;
-  bool onTablet = false;
+  bool onLandscape = false;
   CarouselController mobileCarouselController = CarouselController();
   int mobileCarouselTodayPageOffset = 10000;
   bool _setCarouselPageToToday = false;
   late List<DateTime> mobileDaysDisplayedList;
   bool _displayDesktopLayout = false;
 
-  bool get displayDesktopLayout => onTablet ? onTablet : _displayDesktopLayout;
-  set displayDesktopLayout(bool value) => _displayDesktopLayout = value;
+  bool get showLandscapeLayoutAnyway =>
+      onLandscape ? onLandscape : _displayDesktopLayout;
+  bool get onNonLandscapeMobile => onMobile && !onLandscape;
+  set showLandscapeLayoutAnyway(bool value) => _displayDesktopLayout = value;
 
   @override
   void initState() {
@@ -49,12 +51,12 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    onTablet = !HelperFunctions.getIsPortrait(context);
+    onLandscape = !HelperFunctions.getIsPortrait(context);
     Widget currentPage;
     if (onMobile) {
       appBar = buildMobileAppBar();
     }
-    if (onMobile && !onTablet) {
+    if (onNonLandscapeMobile) {
       bottomNav = buildAndroidBottomNav();
       switch (bottomNavSelectedIndex) {
         case 0:
@@ -195,8 +197,25 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildTaskWidget(Task task, [bool compact = false]) {
     var listTile = _buildTaskWidget(task, compact);
-    return onMobile && !onTablet
+    return onNonLandscapeMobile
         ? listTile
+        : _buildTaskDraggable(task, listTile);
+  }
+
+  Draggable<Task> _buildTaskDraggable(Task task, Widget listTile) {
+    return onMobile
+        ? LongPressDraggable(
+            data: task,
+            dragAnchorStrategy: pointerDragAnchorStrategy,
+            feedback: task.GetIcon(),
+            child: listTile,
+            onDragStarted: () => setState(() {
+              task.ExecDate = null;
+              if (onMobile) {
+                bottomNavSelectedIndex = 0;
+              }
+            }),
+          )
         : Draggable(
             data: task,
             dragAnchorStrategy: pointerDragAnchorStrategy,
@@ -212,7 +231,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget buildPlannerViewPanel() {
-    if (!onMobile || displayDesktopLayout) {
+    if (!onMobile || showLandscapeLayoutAnyway) {
       List<Widget> rows = List.empty(growable: true);
       List<Widget> days = List.empty(growable: true);
       List<DateTime> tmpDaysDisplayed;
@@ -233,8 +252,8 @@ class _MainPageState extends State<MainPage> {
           host.saveFile.Settings.DaysToDisplay.toDouble(),
           selectedDay,
           (date) {
-            var dateWidget =
-                buildTaskListForDate(date, !onMobile || displayDesktopLayout);
+            var dateWidget = buildTaskListForDate(
+                date, !onMobile || showLandscapeLayoutAnyway);
             cols.add(dateWidget);
             tmpDayWidgets.add(dateWidget);
             tmpDaysDisplayed.add(date);
@@ -262,7 +281,7 @@ class _MainPageState extends State<MainPage> {
                 return buildTaskListForDate(
                     HelperFunctions.getToday().add(Duration(
                         days: realIndex - mobileCarouselTodayPageOffset)),
-                    !onMobile || displayDesktopLayout);
+                    !onMobile || showLandscapeLayoutAnyway);
               },
               options: CarouselOptions(
                   scrollDirection: Axis.horizontal,
@@ -303,8 +322,8 @@ class _MainPageState extends State<MainPage> {
     taskWidgets.add(header);
 
     taskWidgets.addAll(tasksForDate
-        .map<Widget>(
-            (task) => buildTaskWidget(task, !onMobile || displayDesktopLayout))
+        .map<Widget>((task) =>
+            buildTaskWidget(task, !onMobile || showLandscapeLayoutAnyway))
         .toList());
 
     Widget taskListWidget = DragTarget(
@@ -346,7 +365,7 @@ class _MainPageState extends State<MainPage> {
 
     List<DayNote> notesForDate = host.getNotesForDate(selectedDay);
 
-    if (onMobile && !displayDesktopLayout) {
+    if (onMobile && !showLandscapeLayoutAnyway) {
       var mobileHeaderChildren = <Widget>[
         Row(
           children: [
@@ -459,7 +478,7 @@ class _MainPageState extends State<MainPage> {
       taskListActions.add(shareButton);
     }
 
-    if (!onTablet) {
+    if (!onLandscape) {
       plannerActions.add(IconButton(
           onPressed: () => setState(() {
                 _setCarouselPageToToday = true;
@@ -467,9 +486,9 @@ class _MainPageState extends State<MainPage> {
               }),
           icon: const Icon(Icons.today)));
       plannerActions.add(IconButton(
-          onPressed: () =>
-              setState(() => displayDesktopLayout = !displayDesktopLayout),
-          icon: Icon(displayDesktopLayout
+          onPressed: () => setState(
+              () => showLandscapeLayoutAnyway = !showLandscapeLayoutAnyway),
+          icon: Icon(showLandscapeLayoutAnyway
               ? Icons.calendar_view_day
               : Icons.calendar_view_month)));
     }
