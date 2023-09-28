@@ -79,8 +79,13 @@ class TaskHost {
   static List<Task> sortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
-        tasks.sort((Task x, Task y) =>
-            y.DueDate == null ? -1 : (x.DueDate?.compareTo(y.DueDate!) ?? -1));
+        tasks.sort((Task x, Task y) => y.DueDate == null && x.DueDate == null
+            ? 0
+            : y.DueDate == null
+                ? 1
+                : x.DueDate == null
+                    ? -1
+                    : x.DueDate!.compareTo(y.DueDate!));
         break;
       case SortMethod.ID:
         tasks.sort((Task x, Task y) => x.TaskID - y.TaskID);
