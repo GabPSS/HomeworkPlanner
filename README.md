@@ -6,7 +6,9 @@ With its origins back in a desktop app of the same name, this version of Homewor
 
 Unlike modern task management applications that overload you with several features and details to add about your tasks, making catching up on your to-dos feel more like an accounting job of some kind, HomeworkPlanner is designed to be a simpler, cleaner option, focused primarily on what a student needs most: To know exactly how many tasks they need to do, which they are going to do today, and which they are leaving for another time. 
 
-Key features include:
+# Features
+
+Key features:
 
 - Task system with the following task attributes: Name, subject, description, due date, exec date, description (for adding details), importance (which is boolean, either it is or not), and completion (is it or not completed, and which day was it). This is all that is stored about any single task.
 - Subject system, with support for setting colors to subjects.
@@ -18,3 +20,13 @@ Key features include:
 - Open source, so you can inspect the code and contribute if you feel like it
 
 This system was programmed in hope that it might be useful. It was made possible by several open-source packages whose licenses are included in the program's about screen. See them for any info on copyright related to the components which this project references.
+
+# Building & Contributing
+
+To build, you only need to install the [Flutter SDK](https://docs.flutter.dev/get-started/install), then clone the repo and start poking things around as you may fit.
+
+Contributions welcome! As a project, this planning system aims to be as simple as possible, but feel free to work on any features or issues you might feel increments it.
+
+## Historical note
+
+HomeworkPlanner is based on Flutter, but the project was initially developed in C#. As such, core classes like TaskHost were ported with code similar to the C# equivalent. Enums that were previously available in C# were recreated with converters added. If you are able to replace them with something else (since in Flutter declaring enums with values isn't as easy as in C#), feel free to do so, but this is how things are for the moment.
