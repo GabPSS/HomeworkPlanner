@@ -34,7 +34,7 @@ class _ReportsPageState extends State<ReportsPage> {
             subject += " - ";
           }
           return ListTile(
-            leading: task.GetIcon(true),
+            leading: task.getIcon(true),
             title: Text("$subject${task.Name}"),
             subtitle:
                 Text('Due: ${task.DueDate}, Completed: ${task.DateCompleted}'),

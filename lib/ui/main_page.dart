@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/main/day_note.dart';
-import 'package:homeworkplanner/models/main/subject.dart';
 import 'package:homeworkplanner/models/main/task.dart';
 import 'package:homeworkplanner/ui/note_dialog.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
@@ -11,6 +10,7 @@ import 'package:homeworkplanner/ui/schedules_page.dart';
 import 'package:homeworkplanner/ui/subjects_page.dart';
 import 'package:homeworkplanner/ui/task_page.dart';
 import 'package:homeworkplanner/models/tasksystem/save_file.dart';
+import 'package:homeworkplanner/ui/task_widget.dart';
 import 'package:intl/intl.dart';
 
 import '../models/tasksystem/task_host.dart';
@@ -110,7 +110,16 @@ class _MainPageState extends State<MainPage> {
     ));
 
     for (Task task in tasks) {
-      widgets.add(buildTaskWidget(task));
+      widgets.add(TaskWidget(
+        host: host,
+        task: task,
+        onTaskUpdate: updateTasks,
+        onDragStarted: () {
+          if (onMobile) {
+            bottomNavSelectedIndex = 0;
+          }
+        },
+      ));
     }
 
     return ListView(children: widgets);
@@ -122,113 +131,6 @@ class _MainPageState extends State<MainPage> {
           !(element.IsCompleted &&
               element.DateCompleted!.isBefore(HelperFunctions.getToday())))
       .toList();
-
-  Widget _buildTaskWidget(Task task, [bool compact = false]) {
-    String taskTitle;
-    String dueDateString = (task.DueDate != null
-        ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
-        : "No due date");
-
-    String subjectPrefix = (Subject.isIdValid(task.SubjectID, host)
-        ? "${host.getSubjectNameById(task.SubjectID)} - "
-        : "");
-
-    taskTitle = subjectPrefix + task.toString();
-
-    if (!compact) {
-      String dueSuffix = task.DueDate != null
-          ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}"
-          : "";
-      taskTitle += dueSuffix;
-    }
-
-    Color? tileColor =
-        task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
-
-    onTap() {
-      TaskEditor.show(
-          context: context, host: host, task: task, onTaskUpdated: updateTasks);
-    }
-
-    if (compact) {
-      return InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(taskTitle,
-                  style: TextStyle(
-                      color: tileColor,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      decoration: task.IsCompleted
-                          ? TextDecoration.lineThrough
-                          : null)),
-              Text(dueDateString, style: TextStyle(color: tileColor))
-            ],
-          ),
-        ),
-      );
-    }
-
-    return ListTile(
-      iconColor: tileColor,
-      textColor: tileColor,
-      leading: IconButton(
-          padding: const EdgeInsets.all(0),
-          onPressed: () {
-            setState(() {
-              task.IsCompleted = !task.IsCompleted;
-            });
-          },
-          icon: task.GetIcon()),
-      title: Text(
-        taskTitle,
-        style: TextStyle(
-            decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
-      ),
-      subtitle:
-          Text(task.Description != "" ? task.Description : "No description"),
-      onTap: onTap,
-    );
-  }
-
-  Widget buildTaskWidget(Task task, [bool compact = false]) {
-    var listTile = _buildTaskWidget(task, compact);
-    return onNonLandscapeMobile
-        ? listTile
-        : _buildTaskDraggable(task, listTile);
-  }
-
-  Draggable<Task> _buildTaskDraggable(Task task, Widget listTile) {
-    return onMobile
-        ? LongPressDraggable(
-            data: task,
-            dragAnchorStrategy: pointerDragAnchorStrategy,
-            feedback: task.GetIcon(),
-            child: listTile,
-            onDragStarted: () => setState(() {
-              task.ExecDate = null;
-              if (onMobile) {
-                bottomNavSelectedIndex = 0;
-              }
-            }),
-          )
-        : Draggable(
-            data: task,
-            dragAnchorStrategy: pointerDragAnchorStrategy,
-            feedback: task.GetIcon(),
-            child: listTile,
-            onDragStarted: () => setState(() {
-              task.ExecDate = null;
-              if (onMobile) {
-                bottomNavSelectedIndex = 0;
-              }
-            }),
-          );
-  }
 
   Widget buildPlannerViewPanel() {
     if (!onMobile || showLandscapeLayoutAnyway) {
@@ -297,7 +199,7 @@ class _MainPageState extends State<MainPage> {
 
     List<Task> tasksForDate = TaskHost.sortTasks(
         host.saveFile.Settings.sortMethod,
-        host.getTasksPlannedForDate(selectedDay));
+        host.getTasksByExecDate(selectedDay));
     Iterable<Task> tasksCompletedForDate =
         tasksForDate.where((element) => element.IsCompleted);
 
@@ -322,8 +224,17 @@ class _MainPageState extends State<MainPage> {
     taskWidgets.add(header);
 
     taskWidgets.addAll(tasksForDate
-        .map<Widget>((task) =>
-            buildTaskWidget(task, !onMobile || showLandscapeLayoutAnyway))
+        .map<Widget>((task) => TaskWidget(
+              host: host,
+              task: task,
+              compact: !onMobile || showLandscapeLayoutAnyway,
+              onTaskUpdate: updateTasks,
+              onDragStarted: () {
+                if (onMobile) {
+                  bottomNavSelectedIndex = 0;
+                }
+              },
+            ))
         .toList());
 
     Widget taskListWidget = DragTarget(

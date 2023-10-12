@@ -142,19 +142,19 @@ class _SchedulesPageState extends State<SchedulesPage> {
                 filled: true,
                 fillColor: widget.host
                     .getSubjectById(schedule.Subjects[index])
-                    ?.SubjectColorValue,
+                    ?.colorValue,
               ),
               items: subjects
                   .map((subject) => DropdownMenuItem(
                         value: subject,
-                        child: Text(subject.SubjectName),
+                        child: Text(subject.name),
                       ))
                   .toList(),
               value: widget.host.getSubjectById(schedule.Subjects[index]) ??
                   noSubject,
               onChanged: (value) {
                 setState(() {
-                  schedule.Subjects[index] = value?.SubjectID;
+                  schedule.Subjects[index] = value?.id;
                 });
               },
             ),

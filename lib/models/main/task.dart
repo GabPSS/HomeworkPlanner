@@ -11,7 +11,6 @@ class Task {
   static const String UntitledTaskText = "Untitled Task";
   static DateTime minimumDateTime = DateTime(1);
 
-  //TODO: Implement TaskStatus
   int TaskID = -1;
   int SubjectID = -1;
   String Name = "";
@@ -33,7 +32,11 @@ class Task {
   }
 
   bool get IsScheduled => ExecDate != null;
-  bool get IsOverdue => !IsCompleted && (DueDate != null ? DueDate!.compareTo(HelperFunctions.getToday()) < 0 : false);
+  bool get IsOverdue =>
+      !IsCompleted &&
+      (DueDate != null
+          ? DueDate!.compareTo(HelperFunctions.getToday()) < 0
+          : false);
 
   @override
   String toString() {
@@ -46,7 +49,7 @@ class Task {
 
   Task();
 
-  TaskStatus GetStatus() {
+  TaskStatus getStatus() {
     int status = 0;
     if (IsOverdue) {
       status = -10;
@@ -60,7 +63,7 @@ class Task {
     return EnumConverters.intToTaskStatus(status);
   }
 
-  Icon GetIcon([bool ignoreCompletedOrOverdue = false]) {
+  Icon getIcon([bool ignoreCompletedOrOverdue = false]) {
     IconData toReturn;
     toReturn = IsCompleted && !ignoreCompletedOrOverdue
         ? Icons.assignment_turned_in

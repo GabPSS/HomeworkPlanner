@@ -24,8 +24,8 @@ class TaskHost {
 
   String? getSubjectNameById(int id) {
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
-      if (saveFile.Subjects.Items[i].SubjectID == id) {
-        return saveFile.Subjects.Items[i].SubjectName;
+      if (saveFile.Subjects.Items[i].id == id) {
+        return saveFile.Subjects.Items[i].name;
       }
     }
     return null;
@@ -38,26 +38,19 @@ class TaskHost {
     }
 
     for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
-      if (saveFile.Subjects.Items[i].SubjectID == id) {
+      if (saveFile.Subjects.Items[i].id == id) {
         return saveFile.Subjects.Items[i];
       }
     }
     return null;
   }
 
-  List<Task> getTasksPlannedForDate(DateTime date) {
-    List<Task> tasks = List<Task>.empty(growable: true);
-    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (saveFile.Tasks.Items[i].ExecDate != null) {
-        DateTime execDate = saveFile.Tasks.Items[i].ExecDate!;
-        if (DateTime(execDate.year, execDate.month, execDate.day) ==
-            DateTime(date.year, date.month, date.day)) {
-          tasks.add(saveFile.Tasks.Items[i]);
-        }
-      }
-    }
-    return tasks;
-  }
+  List<Task> getTasksByExecDate(DateTime date) => saveFile.Tasks.Items
+      .where((element) => element.ExecDate == date)
+      .toList();
+
+  List<Task> getTasksByDueDate(DateTime date) =>
+      saveFile.Tasks.Items.where((element) => element.DueDate == date).toList();
 
   int getTaskIndexById(int id) {
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
@@ -76,6 +69,14 @@ class TaskHost {
     }
   }
 
+  void rescheduleDueDates(List<Task> tasks) {
+    for (var task in tasks) {
+      if (task.DueDate == null) continue;
+      task.DueDate =
+          getNextScheduledDateForSubject(task.SubjectID, task.DueDate!);
+    }
+  }
+
   static List<Task> sortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
@@ -90,8 +91,8 @@ class TaskHost {
         break;
       case SortMethod.Status:
         tasks.sort((Task x, Task y) =>
-            EnumConverters.taskStatusToInt(x.GetStatus()) -
-            EnumConverters.taskStatusToInt(y.GetStatus()));
+            EnumConverters.taskStatusToInt(x.getStatus()) -
+            EnumConverters.taskStatusToInt(y.getStatus()));
         break;
       case SortMethod.Subject:
         tasks.sort((Task x, Task y) => x.SubjectID - y.SubjectID);
@@ -144,8 +145,8 @@ class TaskHost {
   }
 
   void updateSubjectId(Subject subject, int newId) {
-    int oldId = subject.SubjectID;
-    subject.SubjectID = newId;
+    int oldId = subject.id;
+    subject.id = newId;
 
     for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
       if (saveFile.Tasks.Items[i].SubjectID == oldId) {
@@ -156,7 +157,7 @@ class TaskHost {
 
   void sortSubjectsByName() {
     saveFile.Subjects.Items
-        .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
+        .sort((Subject x, Subject y) => x.name.compareTo(y.name));
   }
 
   void cleanUp(BuildContext context) {
@@ -202,6 +203,7 @@ class TaskHost {
 
       String? path = result?.files.single.path;
       if (path != null) {
+        if (!context.mounted) return;
         _openFileFromPath(path, context, settings, onLoad);
       }
     } else {
@@ -222,10 +224,12 @@ class TaskHost {
               saveFilePath: path));
         });
       } catch (e) {
+        if (!context.mounted) return;
         _showReadWriteFailedDialog(context);
         settings.removeRecentFile(path);
       }
     } else {
+      if (!context.mounted) return;
       _showReadWriteFailedDialog(context);
       settings.removeRecentFile(path);
     }
@@ -255,6 +259,7 @@ class TaskHost {
         saveFilePath = path;
         String jsonData = _getJsonSaveFile();
         await File(path).writeAsString(jsonData);
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('File saved at $path')));
         settings.addRecentFile(path);
@@ -316,29 +321,36 @@ class TaskHost {
     return Map.fromIterables(daysOfWeek, daysAllowed);
   }
 
-  DateTime? getNextSubjectScheduledDate(
+  DateTime? getNextScheduledDateForSubject(
       int subjectId, DateTime searchStartDate) {
-    DateTime searchDate = searchStartDate.add(const Duration(days: 1));
+    DateTime startDate = searchStartDate.add(const Duration(days: 1));
 
-    int dayOfWeek = EnumConverters.weekdayToInt(searchDate.weekday);
-    int dayOffset = dayOfWeek;
+    int startDayOfWeek = EnumConverters.weekdayToInt(startDate.weekday);
+    int dayOfWeek = startDayOfWeek;
 
     do {
-      for (var i = 0; i < saveFile.Schedules.Items.length; i++) {
-        int? scheduledSubject = saveFile.Schedules.Items[i].Subjects[dayOffset];
-        if (scheduledSubject != null && scheduledSubject == subjectId) {
-          if (dayOfWeek > dayOffset) {
-            dayOffset += 7;
+      for (int scheduleHour = 0;
+          scheduleHour < saveFile.Schedules.Items.length;
+          scheduleHour++) {
+        int? scheduledSubjectId =
+            saveFile.Schedules.Items[scheduleHour].Subjects[dayOfWeek];
+        if (scheduledSubjectId != null && scheduledSubjectId == subjectId) {
+          if (dayOfWeek < startDayOfWeek) {
+            dayOfWeek += 7;
           }
-          dayOffset -= dayOfWeek;
-          return searchDate.add(Duration(days: dayOffset));
+          dayOfWeek -= startDayOfWeek;
+          DateTime? foundDate = startDate.add(Duration(days: dayOfWeek));
+          if (isClassCancelled(foundDate)) {
+            foundDate = getNextScheduledDateForSubject(subjectId, foundDate);
+          }
+          return foundDate;
         }
       }
-      dayOffset++;
-      if (dayOffset > 6) {
-        dayOffset = 0;
+      dayOfWeek++;
+      if (dayOfWeek > 6) {
+        dayOfWeek = 0; //Reset to sunday
       }
-    } while (dayOffset != dayOfWeek);
+    } while (dayOfWeek != startDayOfWeek);
 
     return null;
   }
@@ -348,4 +360,12 @@ class TaskHost {
       saveFile.DayNotes.where((element) =>
               element.Date == date && element.Cancelled == getCancelledNotes)
           .toList();
+
+  bool isClassCancelled(DateTime date) {
+    List<DayNote> notes = getNotesForDate(date);
+    for (var note in notes) {
+      if (note.noClass) return true;
+    }
+    return false;
+  }
 }

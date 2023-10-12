@@ -9,12 +9,12 @@ class SubjectList {
   List<Subject> Items = List.empty(growable: true);
 
   int add(String subject) {
-    return addSubject(Subject(SubjectName: subject));
+    return addSubject(Subject(name: subject));
   }
 
   int addSubject(Subject subject) {
     int subjectID = LastIndex + 1;
-    subject.SubjectID = subjectID;
+    subject.id = subjectID;
     Items.add(subject);
     LastIndex = subjectID;
     return subjectID;
@@ -26,7 +26,8 @@ class SubjectList {
       Items = items;
     }
   }
-  factory SubjectList.fromJson(Map<String, dynamic> json) => _$SubjectListFromJson(json);
+  factory SubjectList.fromJson(Map<String, dynamic> json) =>
+      _$SubjectListFromJson(json);
 
   Map<String, dynamic> toJson() => _$SubjectListToJson(this);
 }
