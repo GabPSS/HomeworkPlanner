@@ -86,49 +86,31 @@ class NoteDialog {
                         title: const Text('Class canceled'),
                         subtitle: const Text(
                             'Prevents due dates from being set to this day'),
-                        onChanged: (value) => setState(() {
+                        onChanged: (value) async {
                           if (value ?? false) {
                             List<Task> tasksByDueDate = host
                                 .getTasksByDueDate(note!.date)
                                 .where((element) => !element.isCompleted)
                                 .toList();
+
                             if (tasksByDueDate.isNotEmpty) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  var dialogContentWidgets = <Widget>[
-                                    const Text(
-                                        'Cancelling this day will affect the following tasks\' due dates:\n(Select all that apply)')
-                                  ];
-                                  dialogContentWidgets.addAll(
-                                      tasksByDueDate.map((e) => TaskWidget(
-                                          host: host,
-                                          task: e))); //TODO: Stopped here
-                                  return AlertDialog(
-                                    title: const Text(
-                                        'Select tasks to reschedule'),
-                                    content:
-                                        Column(children: dialogContentWidgets),
-                                    actions: [
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('Cancel')),
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: const Text('OK')),
-                                    ],
-                                  );
-                                },
-                              );
+                              List<Task>? result = await showCancellingDialog(
+                                  context, tasksByDueDate);
+                              if (result != null) {
+                                for (int i = 0; i < result.length; i++) {
+                                  host.rescheduleDueDates(result);
+                                }
+                                note!.noClass = value ?? false;
+                                setState(() {});
+                                update();
+                              }
+                              return;
                             }
                           }
                           note!.noClass = value ?? false;
                           update();
-                        }),
+                          setState(() {});
+                        },
                       ),
                     ),
                     Padding(
@@ -144,6 +126,57 @@ class NoteDialog {
             )
           ],
         );
+      },
+    );
+  }
+
+  Future<List<Task>?> showCancellingDialog(
+      BuildContext context, List<Task> tasksByDueDate) {
+    return showDialog<List<Task>>(
+      context: context,
+      builder: (context) {
+        List<Task> selectedTasks = List.empty(growable: true);
+        return StatefulBuilder(builder: (context, setState) {
+          List<Widget> dialogContentWidgets = <Widget>[
+            const Text(
+                'Cancelling this day will affect the following tasks\' due dates:\n(Select all that apply)')
+          ];
+
+          dialogContentWidgets.addAll(
+            tasksByDueDate.map(
+              (task) => TaskWidget(
+                selectionStyle: true,
+                denyDragging: true,
+                isSelected: selectedTasks.contains(task),
+                onSelected: (value) {
+                  return setState(
+                    () {
+                      if (value ?? false) {
+                        selectedTasks.add(task);
+                      } else {
+                        selectedTasks.remove(task);
+                      }
+                    },
+                  );
+                },
+                host: host,
+                task: task,
+              ),
+            ),
+          );
+
+          return AlertDialog(
+              title: const Text('Select tasks to reschedule'),
+              content: Column(children: dialogContentWidgets),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel')),
+                TextButton(
+                    onPressed: () => Navigator.pop(context, selectedTasks),
+                    child: const Text('OK'))
+              ]);
+        });
       },
     );
   }

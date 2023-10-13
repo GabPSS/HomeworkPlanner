@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:homeworkplanner/helperfunctions.dart';
@@ -331,10 +333,25 @@ class _MainPageState extends State<MainPage> {
         children: mobileHeaderChildren,
       );
     } else {
-      TextButton notesButton = TextButton(
-          onPressed: () => showDesktopNotesDialog(notesForDate),
+      Widget notesButton = PopupMenuButton(
+        tooltip: 'Show notes',
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
           child: Text(
-              "${notesForDate.length} ${notesForDate.length == 1 ? 'note' : 'notes'}"));
+              "${notesForDate.length} ${notesForDate.length == 1 ? 'note' : 'notes'}",
+              style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+        ),
+        itemBuilder: (context) {
+          return notesForDate
+              .map((e) => PopupMenuItem<DayNote>(
+                  value: e, child: buildDayNoteListTile(e, null, true)))
+              .toList();
+        },
+        onSelected: (value) {
+          NoteDialog(host, note: value, onUpdate: () => setState(() {}))
+              .show(context);
+        },
+      );
 
       List<Widget> headerRowChildren = <Widget>[
         Padding(
@@ -360,19 +377,21 @@ class _MainPageState extends State<MainPage> {
           [Function()? onUpdate]) =>
       notesForDate.map((note) => buildDayNoteListTile(note, onUpdate));
 
-  Widget buildDayNoteListTile(DayNote note, [Function()? onUpdate]) {
+  Widget buildDayNoteListTile(DayNote note,
+      [Function()? onUpdate, bool disableOnTap = false]) {
     return ListTile(
-      leading: Icon(note.cancelled ? Icons.error_outline : Icons.lightbulb),
-      title: Text(note.message),
-      onTap: () {
-        var dialog = NoteDialog(
-          host,
-          note: note,
-          onUpdate: onUpdate,
-        );
-        dialog.show(context);
-      },
-    );
+        leading: Icon(note.cancelled ? Icons.error_outline : Icons.lightbulb),
+        title: Text(note.message),
+        onTap: disableOnTap
+            ? null
+            : () {
+                var dialog = NoteDialog(
+                  host,
+                  note: note,
+                  onUpdate: onUpdate,
+                );
+                dialog.show(context);
+              });
   }
 
   AppBar buildMobileAppBar() {
@@ -538,7 +557,10 @@ class _MainPageState extends State<MainPage> {
                     MenuItemButton(
                         child: const Text('Close'),
                         onPressed: () => Navigator.pop(context)),
-                    const MenuItemButton(child: Text('Exit'))
+                    MenuItemButton(
+                      child: const Text('Exit'),
+                      onPressed: () => exit(0),
+                    )
                   ],
                   child: const Text('File'),
                 ),

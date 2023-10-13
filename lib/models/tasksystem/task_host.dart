@@ -356,14 +356,15 @@ class TaskHost {
   }
 
   List<DayNote> getNotesForDate(DateTime date,
-          [bool getCancelledNotes = false]) =>
+          [bool getCancelledNotes = false, bool getAnyNote = false]) =>
       saveFile.dayNotes
           .where((element) =>
-              element.date == date && element.cancelled == getCancelledNotes)
+              element.date == date &&
+              (element.cancelled == getCancelledNotes || getAnyNote))
           .toList();
 
   bool isClassCancelled(DateTime date) {
-    List<DayNote> notes = getNotesForDate(date);
+    List<DayNote> notes = getNotesForDate(date, true, true);
     for (var note in notes) {
       if (note.noClass) return true;
     }

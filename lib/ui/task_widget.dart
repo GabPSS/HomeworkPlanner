@@ -13,6 +13,9 @@ class TaskWidget extends StatefulWidget {
   final bool compact;
   final Task task;
   final Function()? onDragStarted;
+  final bool selectionStyle;
+  final bool isSelected;
+  final Function(bool? value)? onSelected;
 
   const TaskWidget(
       {super.key,
@@ -22,7 +25,10 @@ class TaskWidget extends StatefulWidget {
       this.onTaskUpdate,
       this.onMobile = false,
       this.denyDragging = false,
-      this.onDragStarted});
+      this.onDragStarted,
+      this.selectionStyle = false,
+      this.onSelected,
+      this.isSelected = false});
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
@@ -76,14 +82,9 @@ class _TaskWidgetState extends State<TaskWidget> {
     return ListTile(
       iconColor: tileColor,
       textColor: tileColor,
-      leading: IconButton(
-          padding: const EdgeInsets.all(0),
-          onPressed: () {
-            setState(() {
-              task.isCompleted = !task.isCompleted;
-            });
-          },
-          icon: task.getIcon()),
+      leading: widget.selectionStyle
+          ? buildSelectionButton(task)
+          : buildTaskIconButton(task),
       title: Text(
         taskTitle,
         style: TextStyle(
@@ -94,6 +95,11 @@ class _TaskWidgetState extends State<TaskWidget> {
       onTap: onTap,
     );
   }
+
+  IconButton buildTaskIconButton(Task task) => IconButton(
+      padding: const EdgeInsets.all(0),
+      onPressed: () => setState(() => task.isCompleted = !task.isCompleted),
+      icon: task.getIcon());
 
   Widget buildCompactTaskWidget(Function() onTap, String taskTitle,
       Color? tileColor, Task task, String dueDateString) {
@@ -148,4 +154,9 @@ class _TaskWidgetState extends State<TaskWidget> {
       widget.onDragStarted!();
     }
   }
+
+  Checkbox buildSelectionButton(Task task) => Checkbox(
+        value: widget.isSelected,
+        onChanged: (value) => widget.onSelected?.call(value),
+      );
 }

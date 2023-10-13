@@ -77,8 +77,6 @@ class EnumConverters {
     }
   }
 
-  //TODO: Add SortMethod conversion methods
-
   static int dayOfWeekToInt(DayOfWeek value) {
     switch (value) {
       case DayOfWeek.Sunday:
