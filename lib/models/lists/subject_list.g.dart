@@ -7,13 +7,13 @@ part of 'subject_list.dart';
 // **************************************************************************
 
 SubjectList _$SubjectListFromJson(Map<String, dynamic> json) => SubjectList()
-  ..LastIndex = json['LastIndex'] as int
-  ..Items = (json['Items'] as List<dynamic>)
+  ..lastIndex = json['LastIndex'] as int
+  ..items = (json['Items'] as List<dynamic>)
       .map((e) => Subject.fromJson(e as Map<String, dynamic>))
       .toList();
 
 Map<String, dynamic> _$SubjectListToJson(SubjectList instance) =>
     <String, dynamic>{
-      'LastIndex': instance.LastIndex,
-      'Items': instance.Items,
+      'LastIndex': instance.lastIndex,
+      'Items': instance.items,
     };

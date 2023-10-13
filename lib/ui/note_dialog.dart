@@ -20,7 +20,7 @@ class NoteDialog {
 
   void show(BuildContext context) {
     if (_isNoteBeingAdded) {
-      note = DayNote(Date: HelperFunctions.getToday(), Message: "");
+      note = DayNote(date: HelperFunctions.getToday(), message: "");
     }
     showDialog(
       context: context,
@@ -45,12 +45,12 @@ class NoteDialog {
                             icon: Icon(Icons.date_range)),
                         onDateSelected: (value) {
                           setState(() {
-                            note!.Date = value;
+                            note!.date = value;
                           });
                           update();
                         },
                         mode: DateTimeFieldPickerMode.date,
-                        selectedDate: note!.Date),
+                        selectedDate: note!.date),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
                       child: TextFormField(
@@ -58,10 +58,10 @@ class NoteDialog {
                             icon: Icon(Icons.description_outlined),
                             border: OutlineInputBorder(),
                             labelText: 'Description'),
-                        initialValue: note!.Message,
+                        initialValue: note!.message,
                         maxLines: 3,
                         onChanged: (value) {
-                          note!.Message = value;
+                          note!.message = value;
                           update();
                         },
                       ),
@@ -69,12 +69,12 @@ class NoteDialog {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(32, 16, 0, 0),
                       child: CheckboxListTile(
-                        value: note!.Cancelled,
+                        value: note!.cancelled,
                         title: const Text('Cancel day'),
                         subtitle: const Text(
                             'Prevents tasks from being added to this day in planning'),
                         onChanged: (value) => setState(() {
-                          note!.Cancelled = value ?? false;
+                          note!.cancelled = value ?? false;
                           update();
                         }),
                       ),
@@ -89,8 +89,8 @@ class NoteDialog {
                         onChanged: (value) => setState(() {
                           if (value ?? false) {
                             List<Task> tasksByDueDate = host
-                                .getTasksByDueDate(note!.Date)
-                                .where((element) => !element.IsCompleted)
+                                .getTasksByDueDate(note!.date)
+                                .where((element) => !element.isCompleted)
                                 .toList();
                             if (tasksByDueDate.isNotEmpty) {
                               showDialog(
@@ -152,7 +152,7 @@ class NoteDialog {
     return [
       IconButton(
           onPressed: () {
-            host.saveFile.DayNotes.remove(note);
+            host.saveFile.dayNotes.remove(note);
             Navigator.pop(context);
             update();
           },
@@ -170,7 +170,7 @@ class NoteDialog {
     return TextButton(
         onPressed: () {
           if (_isNoteBeingAdded) {
-            host.saveFile.DayNotes.add(note!);
+            host.saveFile.dayNotes.add(note!);
           }
           Navigator.pop(context);
           update();

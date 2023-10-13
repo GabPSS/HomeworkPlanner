@@ -5,25 +5,27 @@ part 'subject_list.g.dart';
 
 @JsonSerializable()
 class SubjectList {
-  int LastIndex = -1;
-  List<Subject> Items = List.empty(growable: true);
+  @JsonKey(name: 'LastIndex')
+  int lastIndex = -1;
+  @JsonKey(name: 'Items')
+  List<Subject> items = List.empty(growable: true);
 
   int add(String subject) {
     return addSubject(Subject(name: subject));
   }
 
   int addSubject(Subject subject) {
-    int subjectID = LastIndex + 1;
+    int subjectID = lastIndex + 1;
     subject.id = subjectID;
-    Items.add(subject);
-    LastIndex = subjectID;
+    items.add(subject);
+    lastIndex = subjectID;
     return subjectID;
   }
 
-  SubjectList({int lastIndex = -1, List<Subject>? items}) {
-    LastIndex = lastIndex;
-    if (items != null) {
-      Items = items;
+  SubjectList({int startLastIndex = -1, List<Subject>? startItems}) {
+    lastIndex = startLastIndex;
+    if (startItems != null) {
+      items = startItems;
     }
   }
   factory SubjectList.fromJson(Map<String, dynamic> json) =>

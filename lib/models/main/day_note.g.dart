@@ -7,15 +7,15 @@ part of 'day_note.dart';
 // **************************************************************************
 
 DayNote _$DayNoteFromJson(Map<String, dynamic> json) => DayNote(
-      Date: DateTime.parse(json['Date'] as String),
-      Message: json['Message'] as String,
-      Cancelled: json['Cancelled'] as bool? ?? false,
+      date: DateTime.parse(json['Date'] as String),
+      message: json['Message'] as String,
+      cancelled: json['Cancelled'] as bool? ?? false,
       noClass: json['noClass'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$DayNoteToJson(DayNote instance) => <String, dynamic>{
-      'Date': instance.Date.toIso8601String(),
-      'Message': instance.Message,
-      'Cancelled': instance.Cancelled,
+      'Date': instance.date.toIso8601String(),
+      'Message': instance.message,
+      'Cancelled': instance.cancelled,
       'noClass': instance.noClass,
     };

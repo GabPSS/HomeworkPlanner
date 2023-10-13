@@ -100,13 +100,13 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildAllTasksPanel() {
     List<Task> tasks =
-        TaskHost.sortTasks(host.saveFile.Settings.sortMethod, allTasks);
+        TaskHost.sortTasks(host.saveFile.settings.sortMethod, allTasks);
 
     List<Widget> widgets = List.empty(growable: true);
     widgets.add(Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
-          "All tasks (${tasks.where((element) => !element.IsCompleted).length})"),
+          "All tasks (${tasks.where((element) => !element.isCompleted).length})"),
     ));
 
     for (Task task in tasks) {
@@ -125,11 +125,11 @@ class _MainPageState extends State<MainPage> {
     return ListView(children: widgets);
   }
 
-  List<Task> get allTasks => host.saveFile.Tasks.Items
+  List<Task> get allTasks => host.saveFile.tasks.items
       .where((element) =>
-          host.saveFile.Settings.DisplayPreviousTasks ||
-          !(element.IsCompleted &&
-              element.DateCompleted!.isBefore(HelperFunctions.getToday())))
+          host.saveFile.settings.displayPreviousTasks ||
+          !(element.isCompleted &&
+              element.dateCompleted!.isBefore(HelperFunctions.getToday())))
       .toList();
 
   Widget buildPlannerViewPanel() {
@@ -141,7 +141,7 @@ class _MainPageState extends State<MainPage> {
       List<Widget> cols;
       mobileDaysDisplayedList = List.empty(growable: true);
 
-      int rowCount = host.saveFile.Settings.FutureWeeks + 1;
+      int rowCount = host.saveFile.settings.futureWeeks + 1;
 
       DateTime selectedDay = HelperFunctions.getThisSaturday();
 
@@ -151,7 +151,7 @@ class _MainPageState extends State<MainPage> {
         tmpDaysDisplayed = List.empty(growable: true);
 
         selectedDay = HelperFunctions.iterateThroughWeekFromDate(
-          host.saveFile.Settings.DaysToDisplay.toDouble(),
+          host.saveFile.settings.daysToDisplay.toDouble(),
           selectedDay,
           (date) {
             var dateWidget = buildTaskListForDate(
@@ -198,10 +198,10 @@ class _MainPageState extends State<MainPage> {
     List<DayNote> cancelledNotes = host.getNotesForDate(selectedDay, true);
 
     List<Task> tasksForDate = TaskHost.sortTasks(
-        host.saveFile.Settings.sortMethod,
+        host.saveFile.settings.sortMethod,
         host.getTasksByExecDate(selectedDay));
     Iterable<Task> tasksCompletedForDate =
-        tasksForDate.where((element) => element.IsCompleted);
+        tasksForDate.where((element) => element.isCompleted);
 
     Widget header = buildTaskListHeader(
         selectedDay,
@@ -246,7 +246,7 @@ class _MainPageState extends State<MainPage> {
       onAccept: (data) {
         setState(() {
           if (data is Task) {
-            data.ExecDate = HelperFunctions.getDateFromDateTime(selectedDay);
+            data.execDate = HelperFunctions.getDateFromDateTime(selectedDay);
           }
         });
       },
@@ -362,8 +362,8 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildDayNoteListTile(DayNote note, [Function()? onUpdate]) {
     return ListTile(
-      leading: Icon(note.Cancelled ? Icons.error_outline : Icons.lightbulb),
-      title: Text(note.Message),
+      leading: Icon(note.cancelled ? Icons.error_outline : Icons.lightbulb),
+      title: Text(note.message),
       onTap: () {
         var dialog = NoteDialog(
           host,
@@ -621,7 +621,7 @@ class _MainPageState extends State<MainPage> {
   void createTask() {
     Task task = Task();
     setState(() {
-      host.saveFile.Tasks.Add(task);
+      host.saveFile.tasks.add(task);
     });
     TaskEditor.show(
         context: context,

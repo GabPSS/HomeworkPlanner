@@ -7,29 +7,27 @@ part of 'task.dart';
 // **************************************************************************
 
 Task _$TaskFromJson(Map<String, dynamic> json) => Task()
-  ..TaskID = json['TaskID'] as int
-  ..SubjectID = json['SubjectID'] as int
-  ..Name = json['Name'] as String
-  ..DueDate =
+  ..id = json['TaskID'] as int
+  ..subjectID = json['SubjectID'] as int
+  ..name = json['Name'] as String
+  ..dueDate =
       json['DueDate'] == null ? null : DateTime.parse(json['DueDate'] as String)
-  ..Description = json['Description'] as String
-  ..ExecDate = json['ExecDate'] == null
+  ..description = json['Description'] as String
+  ..execDate = json['ExecDate'] == null
       ? null
       : DateTime.parse(json['ExecDate'] as String)
-  ..DateCompleted = json['DateCompleted'] == null
+  ..dateCompleted = json['DateCompleted'] == null
       ? null
       : DateTime.parse(json['DateCompleted'] as String)
-  ..IsImportant = json['IsImportant'] as bool
-  ..IsCompleted = json['IsCompleted'] as bool;
+  ..isImportant = json['IsImportant'] as bool;
 
 Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
-      'TaskID': instance.TaskID,
-      'SubjectID': instance.SubjectID,
-      'Name': instance.Name,
-      'DueDate': instance.DueDate?.toIso8601String(),
-      'Description': instance.Description,
-      'ExecDate': instance.ExecDate?.toIso8601String(),
-      'DateCompleted': instance.DateCompleted?.toIso8601String(),
-      'IsImportant': instance.IsImportant,
-      'IsCompleted': instance.IsCompleted,
+      'TaskID': instance.id,
+      'SubjectID': instance.subjectID,
+      'Name': instance.name,
+      'DueDate': instance.dueDate?.toIso8601String(),
+      'Description': instance.description,
+      'ExecDate': instance.execDate?.toIso8601String(),
+      'DateCompleted': instance.dateCompleted?.toIso8601String(),
+      'IsImportant': instance.isImportant,
     };

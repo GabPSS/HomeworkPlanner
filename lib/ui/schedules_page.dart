@@ -29,8 +29,8 @@ class _SchedulesPageState extends State<SchedulesPage> {
               title: const Text('Add schedule'),
               onTap: () {
                 setState(() {
-                  widget.host.saveFile.Schedules.Items.add(
-                      Schedule(StartTime: "00:00:00", EndTime: "00:00:00"));
+                  widget.host.saveFile.schedules.items.add(
+                      Schedule(startTime: "00:00:00", endTime: "00:00:00"));
                 });
               },
             )
@@ -50,7 +50,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
 
     List<Widget> daysOfWeekWidgets = List.empty(growable: true);
     HelperFunctions.iterateThroughWeekFromDate(
-      widget.host.saveFile.Schedules.DaysToDisplay.toDouble(),
+      widget.host.saveFile.schedules.daysToDisplay.toDouble(),
       HelperFunctions.getThisSaturday(),
       (day) {
         daysOfWeekWidgets.add(Center(
@@ -82,9 +82,9 @@ class _SchedulesPageState extends State<SchedulesPage> {
 
     List<Subject> subjects = List.empty(growable: true);
     subjects.add(noSubject);
-    subjects.addAll(widget.host.saveFile.Subjects.Items);
+    subjects.addAll(widget.host.saveFile.subjects.items);
 
-    schedules.addAll(widget.host.saveFile.Schedules.Items.map((schedule) {
+    schedules.addAll(widget.host.saveFile.schedules.items.map((schedule) {
       List<Widget> cols = List.empty(growable: true);
       var formKey = GlobalKey<FormState>();
       cols.add(Padding(
@@ -103,7 +103,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
                           : "Incorrect time format",
                   onChanged: (value) {
                     if (formKey.currentState!.validate()) {
-                      schedule.startTime =
+                      schedule.startTimeValue =
                           HelperFunctions.stringToDuration(value);
                     }
                   },
@@ -121,7 +121,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
                           : "Incorrect time format",
                   onChanged: (value) {
                     if (formKey.currentState!.validate()) {
-                      schedule.endTime =
+                      schedule.endTimeValue =
                           HelperFunctions.stringToDuration(value);
                     }
                   },
@@ -133,7 +133,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
           ),
         ),
       ));
-      for (int index = 0; index < schedule.Subjects.length; index++) {
+      for (int index = 0; index < schedule.subjects.length; index++) {
         if (daysToDisplay.contains(index)) {
           cols.add(Padding(
             padding: const EdgeInsets.all(4.0),
@@ -141,7 +141,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: widget.host
-                    .getSubjectById(schedule.Subjects[index])
+                    .getSubjectById(schedule.subjects[index])
                     ?.colorValue,
               ),
               items: subjects
@@ -150,11 +150,11 @@ class _SchedulesPageState extends State<SchedulesPage> {
                         child: Text(subject.name),
                       ))
                   .toList(),
-              value: widget.host.getSubjectById(schedule.Subjects[index]) ??
+              value: widget.host.getSubjectById(schedule.subjects[index]) ??
                   noSubject,
               onChanged: (value) {
                 setState(() {
-                  schedule.Subjects[index] = value?.id;
+                  schedule.subjects[index] = value?.id;
                 });
               },
             ),
@@ -166,7 +166,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
         child: IconButton(
             onPressed: () {
               setState(() {
-                widget.host.saveFile.Schedules.Items.remove(schedule);
+                widget.host.saveFile.schedules.items.remove(schedule);
               });
             },
             icon: const Icon(Icons.delete)),
@@ -197,12 +197,12 @@ class _SchedulesPageState extends State<SchedulesPage> {
           if (value != null && value) {
             //Get days to display, convert value to DaysToInclude, add
 
-            widget.host.saveFile.Schedules.DaysToDisplay +=
+            widget.host.saveFile.schedules.daysToDisplay +=
                 EnumConverters.daysToIncludeToInt(
                     EnumConverters.dayOfWeekToDaysToInclude(
                         EnumConverters.intToDayOfWeek(i)));
           } else {
-            widget.host.saveFile.Schedules.DaysToDisplay -=
+            widget.host.saveFile.schedules.daysToDisplay -=
                 EnumConverters.daysToIncludeToInt(
                     EnumConverters.dayOfWeekToDaysToInclude(
                         EnumConverters.intToDayOfWeek(i)));

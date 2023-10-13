@@ -8,42 +8,53 @@ part 'task.g.dart';
 @JsonSerializable()
 class Task {
   //Class constants
-  static const String UntitledTaskText = "Untitled Task";
+  static const String untitledTaskText = "Untitled Task";
   static DateTime minimumDateTime = DateTime(1);
 
-  int TaskID = -1;
-  int SubjectID = -1;
-  String Name = "";
-  DateTime? DueDate;
-  String Description = "";
-  DateTime? ExecDate;
-  DateTime? DateCompleted;
-  bool IsImportant = false;
+  @JsonKey(name: 'TaskID')
+  int id = -1;
+  @JsonKey(name: 'SubjectID')
+  int subjectID = -1;
+  @JsonKey(name: 'Name')
+  String name = "";
+  @JsonKey(name: 'DueDate')
+  DateTime? dueDate;
+  @JsonKey(name: 'Description')
+  String description = "";
+  @JsonKey(name: 'ExecDate')
+  DateTime? execDate;
+  @JsonKey(name: 'DateCompleted')
+  DateTime? dateCompleted;
+  @JsonKey(name: 'IsImportant')
+  bool isImportant = false;
 
-  bool get IsCompleted => DateCompleted != null;
-  set IsCompleted(bool value) {
-    DateCompleted = DateCompleted == null
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isCompleted => dateCompleted != null;
+  set isCompleted(bool value) {
+    dateCompleted = dateCompleted == null
         ? value
             ? HelperFunctions.getToday()
             : null
         : !value
             ? null
-            : DateCompleted; //TODO: Check if using DateTime.now() doesn't interfer with anything
+            : dateCompleted;
   }
 
-  bool get IsScheduled => ExecDate != null;
-  bool get IsOverdue =>
-      !IsCompleted &&
-      (DueDate != null
-          ? DueDate!.compareTo(HelperFunctions.getToday()) < 0
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isScheduled => execDate != null;
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  bool get isOverdue =>
+      !isCompleted &&
+      (dueDate != null
+          ? dueDate!.compareTo(HelperFunctions.getToday()) < 0
           : false);
 
   @override
   String toString() {
-    if (Name != "") {
-      return Name;
+    if (name != "") {
+      return name;
     } else {
-      return Task.UntitledTaskText;
+      return Task.untitledTaskText;
     }
   }
 
@@ -51,13 +62,13 @@ class Task {
 
   TaskStatus getStatus() {
     int status = 0;
-    if (IsOverdue) {
+    if (isOverdue) {
       status = -10;
-    } else if (IsCompleted) {
+    } else if (isCompleted) {
       status = 70;
     } else {
-      status = IsScheduled ? status + 10 : status;
-      status = IsImportant ? status + 20 : status;
+      status = isScheduled ? status + 10 : status;
+      status = isImportant ? status + 20 : status;
     }
 
     return EnumConverters.intToTaskStatus(status);
@@ -65,15 +76,15 @@ class Task {
 
   Icon getIcon([bool ignoreCompletedOrOverdue = false]) {
     IconData toReturn;
-    toReturn = IsCompleted && !ignoreCompletedOrOverdue
+    toReturn = isCompleted && !ignoreCompletedOrOverdue
         ? Icons.assignment_turned_in
-        : IsOverdue && !ignoreCompletedOrOverdue
+        : isOverdue && !ignoreCompletedOrOverdue
             ? Icons.assignment_late
-            : IsScheduled && IsImportant
+            : isScheduled && isImportant
                 ? Icons.label_important
-                : IsImportant
+                : isImportant
                     ? Icons.label_important_outline
-                    : IsScheduled
+                    : isScheduled
                         ? Icons.assignment
                         : Icons.assignment_outlined;
     return Icon(toReturn, size: 32);

@@ -40,13 +40,13 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
         appBar: AppBar(
           title: Text(widget.isAdding
               ? "Create task"
-              : (widget.task.Name != ""
-                  ? "Edit '${widget.task.Name}'"
+              : (widget.task.name != ""
+                  ? "Edit '${widget.task.name}'"
                   : "Edit task")),
           actions: [
             IconButton(
                 onPressed: () {
-                  widget.host.saveFile.Tasks.Items.remove(widget.task);
+                  widget.host.saveFile.tasks.items.remove(widget.task);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Task deleted')));
@@ -143,7 +143,7 @@ class TaskEditor {
 
   CheckboxListTile buildImportantCheckbox(Task task) {
     return CheckboxListTile(
-      value: task.IsImportant,
+      value: task.isImportant,
       onChanged: (value) {
         if (value != null) {
           taskMarkedImportant(task, value);
@@ -155,7 +155,7 @@ class TaskEditor {
 
   CheckboxListTile buildCompletedCheckbox(Task task) {
     return CheckboxListTile(
-      value: task.IsCompleted,
+      value: task.isCompleted,
       onChanged: (value) {
         if (value != null) {
           taskCompleted(task, value);
@@ -173,11 +173,11 @@ class TaskEditor {
           labelText: 'Description'),
       maxLines: host.settings.mobileLayout ? 15 : 5,
       keyboardType: TextInputType.multiline,
-      initialValue: task.Description,
+      initialValue: task.description,
       onChanged: (value) {
         setState(
           () {
-            task.Description = value.trim();
+            task.description = value.trim();
           },
         );
         onTaskUpdated();
@@ -194,23 +194,23 @@ class TaskEditor {
               labelText: 'Schedule date',
               icon: Icon(Icons.schedule)),
           mode: DateTimeFieldPickerMode.date,
-          selectedDate: task.ExecDate,
+          selectedDate: task.execDate,
           onDateSelected: (value) {
             setState(() {
-              task.ExecDate = value;
+              task.execDate = value;
             });
             onTaskUpdated();
           },
         ),
       ),
     ].toList(growable: true);
-    if (task.IsScheduled) {
+    if (task.isScheduled) {
       scheduleDateRowWidgets.add(Padding(
         padding: const EdgeInsets.all(4.0),
         child: TextButton(
             onPressed: () {
               setState(() {
-                task.ExecDate = null;
+                task.execDate = null;
               });
               onTaskUpdated();
             },
@@ -227,10 +227,10 @@ class TaskEditor {
         border: OutlineInputBorder(),
         labelText: 'Name',
       ),
-      initialValue: task.Name,
+      initialValue: task.name,
       onChanged: (value) {
         setState(() {
-          task.Name = value.trim();
+          task.name = value.trim();
         });
         onTaskUpdated();
       },
@@ -243,10 +243,10 @@ class TaskEditor {
         child: buildDueDateWidget(task, context),
       ),
     ].toList(growable: true);
-    if (task.SubjectID != -1 && task.SubjectID != -123) {
+    if (task.subjectID != -1 && task.subjectID != -123) {
       dueDateRowWidgets.add(buildNextDateButton(task, context));
     }
-    if (task.DueDate != null) {
+    if (task.dueDate != null) {
       dueDateRowWidgets.add(buildClearDateButton(task));
     }
     return dueDateRowWidgets;
@@ -258,7 +258,7 @@ class TaskEditor {
       child: TextButton(
           onPressed: () {
             setState(() {
-              task.DueDate = null;
+              task.dueDate = null;
             });
             onTaskUpdated();
           },
@@ -271,12 +271,12 @@ class TaskEditor {
       padding: const EdgeInsets.all(4.0),
       child: TextButton(
           onPressed: () {
-            assert(task.SubjectID != -1 && task.SubjectID != -123);
+            assert(task.subjectID != -1 && task.subjectID != -123);
             setState(() {
               DateTime? nextDate = host.getNextScheduledDateForSubject(
-                  task.SubjectID, task.DueDate ?? HelperFunctions.getToday());
+                  task.subjectID, task.dueDate ?? HelperFunctions.getToday());
               if (nextDate != null) {
-                task.DueDate = nextDate;
+                task.dueDate = nextDate;
               } else {
                 showSubjectNotScheduledDialog(context);
               }
@@ -321,9 +321,9 @@ class TaskEditor {
       Subject editSubjects,
       Subject noSubject,
       BuildContext context) {
-    Subject? selectedSubject = task.SubjectID == -1
+    Subject? selectedSubject = task.subjectID == -1
         ? noSubject
-        : (host.getSubjectById(task.SubjectID) ?? noSubject);
+        : (host.getSubjectById(task.subjectID) ?? noSubject);
 
     return DropdownButtonFormField(
       decoration: const InputDecoration(
@@ -336,9 +336,9 @@ class TaskEditor {
         setState(
           () {
             if (value != null) {
-              task.SubjectID = value.id;
+              task.subjectID = value.id;
               if (value.id == editSubjects.id) {
-                task.SubjectID = noSubject.id;
+                task.subjectID = noSubject.id;
               }
               selectedSubject = value;
             }
@@ -360,13 +360,13 @@ class TaskEditor {
         labelText: 'Due date',
       ),
       mode: DateTimeFieldPickerMode.date,
-      selectedDate: task.DueDate,
+      selectedDate: task.dueDate,
       onDateSelected: (value) {
         if (host.isClassCancelled(value)) {
           showClassCancelledDialog(context, task, value);
         } else {
           setState(() {
-            task.DueDate = value;
+            task.dueDate = value;
           });
         }
         onTaskUpdated();
@@ -393,7 +393,7 @@ class TaskEditor {
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
-                    task.DueDate = value;
+                    task.dueDate = value;
                   });
                 },
                 child: const Text('Proceed'))
@@ -416,7 +416,7 @@ class TaskEditor {
       child: Text(editSubjects.name),
     ));
     List<DropdownMenuItem<Subject>>? subjectWidgetsObtained =
-        host.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
+        host.saveFile.subjects.items.map<DropdownMenuItem<Subject>>(
       (e) {
         return DropdownMenuItem<Subject>(
           value: e,
@@ -479,7 +479,7 @@ class TaskEditor {
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        host.saveFile.Tasks.Items.remove(task);
+                        host.saveFile.tasks.items.remove(task);
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Task deleted')));
                       },
@@ -510,14 +510,14 @@ class TaskEditor {
 
   void taskCompleted(Task task, bool value) {
     setState(() {
-      task.IsCompleted = value;
+      task.isCompleted = value;
     });
     onTaskUpdated();
   }
 
   void taskMarkedImportant(Task task, bool value) {
     setState(() {
-      task.IsImportant = value;
+      task.isImportant = value;
     });
     onTaskUpdated();
   }

@@ -40,25 +40,25 @@ class _TaskWidgetState extends State<TaskWidget> {
   Widget _buildTaskWidget(Task task, BuildContext context,
       [bool compact = false]) {
     String taskTitle;
-    String dueDateString = (task.DueDate != null
-        ? "Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+    String dueDateString = (task.dueDate != null
+        ? "Due ${DateFormat.yMMMd().format(task.dueDate!)}"
         : "No due date");
 
-    String subjectPrefix = (Subject.isIdValid(task.SubjectID, widget.host)
-        ? "${widget.host.getSubjectNameById(task.SubjectID)} - "
+    String subjectPrefix = (Subject.isIdValid(task.subjectID, widget.host)
+        ? "${widget.host.getSubjectNameById(task.subjectID)} - "
         : "");
 
     taskTitle = subjectPrefix + task.toString();
 
     if (!compact) {
-      String dueSuffix = task.DueDate != null
-          ? " - Due ${DateFormat.yMMMd().format(task.DueDate!)}"
+      String dueSuffix = task.dueDate != null
+          ? " - Due ${DateFormat.yMMMd().format(task.dueDate!)}"
           : "";
       taskTitle += dueSuffix;
     }
 
     Color? tileColor =
-        task.IsCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
+        task.isCompleted ? const Color.fromRGBO(180, 180, 180, 1) : null;
 
     onTap() {
       TaskEditor.show(
@@ -80,17 +80,17 @@ class _TaskWidgetState extends State<TaskWidget> {
           padding: const EdgeInsets.all(0),
           onPressed: () {
             setState(() {
-              task.IsCompleted = !task.IsCompleted;
+              task.isCompleted = !task.isCompleted;
             });
           },
           icon: task.getIcon()),
       title: Text(
         taskTitle,
         style: TextStyle(
-            decoration: task.IsCompleted ? TextDecoration.lineThrough : null),
+            decoration: task.isCompleted ? TextDecoration.lineThrough : null),
       ),
       subtitle:
-          Text(task.Description != "" ? task.Description : "No description"),
+          Text(task.description != "" ? task.description : "No description"),
       onTap: onTap,
     );
   }
@@ -110,7 +110,7 @@ class _TaskWidgetState extends State<TaskWidget> {
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                     decoration:
-                        task.IsCompleted ? TextDecoration.lineThrough : null)),
+                        task.isCompleted ? TextDecoration.lineThrough : null)),
             Text(dueDateString, style: TextStyle(color: tileColor))
           ],
         ),
@@ -143,7 +143,7 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   void dragStarted(Task task) {
     widget.onTaskUpdate?.call();
-    task.ExecDate = null;
+    task.execDate = null;
     if (widget.onDragStarted != null) {
       widget.onDragStarted!();
     }

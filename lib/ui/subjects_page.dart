@@ -44,15 +44,15 @@ class _SubjectsPageState extends State<SubjectsPage> {
   Widget build(BuildContext context) {
     List<Widget> subjectWidgets = List<Widget>.empty(growable: true);
 
-    for (var i = 0; i < widget.host.saveFile.Subjects.Items.length; i++) {
-      subjectWidgets.add(Text(widget.host.saveFile.Subjects.Items[i].name));
+    for (var i = 0; i < widget.host.saveFile.subjects.items.length; i++) {
+      subjectWidgets.add(Text(widget.host.saveFile.subjects.items[i].name));
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Edit subjects')),
       body: ListView.builder(
         itemBuilder: (context, index) {
-          var subject = widget.host.saveFile.Subjects.Items[index];
+          var subject = widget.host.saveFile.subjects.items[index];
           return ListTile(
             leading: Icon(Icons.assignment_ind, color: subject.colorValue),
             title: Text(subject.name),
@@ -77,7 +77,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                             onPressed: () {
                               Navigator.pop(context);
                               setState(() {
-                                widget.host.saveFile.Subjects.Items
+                                widget.host.saveFile.subjects.items
                                     .remove(subject);
                               });
                               widget.onSubjectUpdate();
@@ -90,7 +90,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 icon: const Icon(Icons.delete)),
           );
         },
-        itemCount: widget.host.saveFile.Subjects.Items.length,
+        itemCount: widget.host.saveFile.subjects.items.length,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -121,7 +121,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
             onPressed: () {
               setState(() {
                 if (isAdding) {
-                  widget.host.saveFile.Subjects.addSubject(subject);
+                  widget.host.saveFile.subjects.addSubject(subject);
                 }
               });
               widget.onSubjectUpdate();

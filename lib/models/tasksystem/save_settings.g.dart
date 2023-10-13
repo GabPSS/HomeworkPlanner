@@ -7,9 +7,9 @@ part of 'save_settings.dart';
 // **************************************************************************
 
 SaveSettings _$SaveSettingsFromJson(Map<String, dynamic> json) => SaveSettings(
-      FutureWeeks: json['FutureWeeks'] as int? ?? 2,
-      DaysToDisplay: json['DaysToDisplay'] as int? ?? 62,
-      DisplayPreviousTasks: json['DisplayPreviousTasks'] as bool? ?? false,
+      futureWeeks: json['FutureWeeks'] as int? ?? 2,
+      daysToDisplay: json['DaysToDisplay'] as int? ?? 62,
+      displayPreviousTasks: json['DisplayPreviousTasks'] as bool? ?? false,
       sortMethod:
           $enumDecodeNullable(_$SortMethodEnumMap, json['SortMethod']) ??
               SortMethod.DueDate,
@@ -17,9 +17,9 @@ SaveSettings _$SaveSettingsFromJson(Map<String, dynamic> json) => SaveSettings(
 
 Map<String, dynamic> _$SaveSettingsToJson(SaveSettings instance) =>
     <String, dynamic>{
-      'FutureWeeks': instance.FutureWeeks,
-      'DaysToDisplay': instance.DaysToDisplay,
-      'DisplayPreviousTasks': instance.DisplayPreviousTasks,
+      'FutureWeeks': instance.futureWeeks,
+      'DaysToDisplay': instance.daysToDisplay,
+      'DisplayPreviousTasks': instance.displayPreviousTasks,
       'SortMethod': _$SortMethodEnumMap[instance.sortMethod]!,
     };
 

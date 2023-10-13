@@ -1,10 +1,44 @@
-enum TaskStatus { Overdue, None, Scheduled, ImportantUnscheduled, ImportantScheduled, Completed }
+// ignore_for_file: constant_identifier_names
 
-enum SortMethod { None, DueDate, ID, Alphabetically, Status, Subject, ExecDate, DateCompleted }
+enum TaskStatus {
+  Overdue,
+  None,
+  Scheduled,
+  ImportantUnscheduled,
+  ImportantScheduled,
+  Completed
+}
 
-enum DayOfWeek { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+enum SortMethod {
+  None,
+  DueDate,
+  ID,
+  Alphabetically,
+  Status,
+  Subject,
+  ExecDate,
+  DateCompleted
+}
 
-enum DaysToInclude { Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday }
+enum DayOfWeek {
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday
+}
+
+enum DaysToInclude {
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday
+}
 
 class EnumConverters {
   static int taskStatusToInt(TaskStatus value) {
