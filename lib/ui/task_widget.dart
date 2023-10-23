@@ -5,30 +5,36 @@ import 'package:homeworkplanner/models/tasksystem/task_host.dart';
 import 'package:homeworkplanner/ui/task_page.dart';
 import 'package:intl/intl.dart';
 
-class TaskWidget extends StatefulWidget {
-  final TaskHost host;
-  final Function()? onTaskUpdate;
-  final bool onMobile;
-  final bool denyDragging;
-  final bool compact;
-  final Task task;
-  final Function()? onDragStarted;
-  final bool selectionStyle;
-  final bool isSelected;
-  final Function(bool? value)? onSelected;
+enum TaskStyle { normal, compact, display, selectable }
+//Normal: noDragging: False, compact: false, selectable: false,
+//Compact: noDragging: false, compact: true, selectable: false,
+//Display: noDragging: true, compact: false, selectable: false,
+//Selectable: noDragging: true, compact: false, selectable: true,
 
-  const TaskWidget(
-      {super.key,
-      required this.host,
-      required this.task,
-      this.compact = false,
-      this.onTaskUpdate,
-      this.onMobile = false,
-      this.denyDragging = false,
-      this.onDragStarted,
-      this.selectionStyle = false,
-      this.onSelected,
-      this.isSelected = false});
+class TaskWidget extends StatefulWidget {
+  final Function()? onTaskUpdate;
+  final Function()? onDragStarted;
+  final Function(bool? value)? onSelected;
+  final bool useLongPressDraggable;
+  final bool initialSelectedValue;
+  final TaskStyle style;
+  final TaskHost host;
+  final Task task;
+
+  bool get noDragging =>
+      style == TaskStyle.display || style == TaskStyle.selectable;
+
+  const TaskWidget({
+    super.key,
+    required this.host,
+    required this.task,
+    this.useLongPressDraggable = false,
+    this.onDragStarted,
+    this.onTaskUpdate,
+    this.onSelected,
+    this.style = TaskStyle.normal,
+    this.initialSelectedValue = false,
+  });
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
@@ -37,8 +43,9 @@ class TaskWidget extends StatefulWidget {
 class _TaskWidgetState extends State<TaskWidget> {
   @override
   Widget build(BuildContext context) {
-    var listTile = _buildTaskWidget(widget.task, context, widget.compact);
-    return widget.denyDragging
+    var listTile = _buildTaskWidget(
+        widget.task, context, widget.style == TaskStyle.compact);
+    return widget.noDragging
         ? listTile
         : _buildTaskDraggable(widget.task, listTile);
   }
@@ -82,7 +89,7 @@ class _TaskWidgetState extends State<TaskWidget> {
     return ListTile(
       iconColor: tileColor,
       textColor: tileColor,
-      leading: widget.selectionStyle
+      leading: widget.style == TaskStyle.selectable
           ? buildSelectionButton(task)
           : buildTaskIconButton(task),
       title: Text(
@@ -98,7 +105,10 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   IconButton buildTaskIconButton(Task task) => IconButton(
       padding: const EdgeInsets.all(0),
-      onPressed: () => setState(() => task.isCompleted = !task.isCompleted),
+      onPressed: () {
+        setState(() => task.isCompleted = !task.isCompleted);
+        widget.onTaskUpdate?.call();
+      },
       icon: task.getIcon());
 
   Widget buildCompactTaskWidget(Function() onTap, String taskTitle,
@@ -126,11 +136,11 @@ class _TaskWidgetState extends State<TaskWidget> {
 
   Widget buildTaskWidget(Task task, [bool compact = false]) {
     var listTile = _buildTaskWidget(task, context, compact);
-    return widget.denyDragging ? listTile : _buildTaskDraggable(task, listTile);
+    return widget.noDragging ? listTile : _buildTaskDraggable(task, listTile);
   }
 
   Draggable<Task> _buildTaskDraggable(Task task, Widget listTile) {
-    return widget.onMobile
+    return widget.useLongPressDraggable
         ? LongPressDraggable(
             data: task,
             dragAnchorStrategy: pointerDragAnchorStrategy,
@@ -156,7 +166,7 @@ class _TaskWidgetState extends State<TaskWidget> {
   }
 
   Checkbox buildSelectionButton(Task task) => Checkbox(
-        value: widget.isSelected,
+        value: widget.initialSelectedValue,
         onChanged: (value) => widget.onSelected?.call(value),
       );
 }

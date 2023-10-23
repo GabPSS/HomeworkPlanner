@@ -115,6 +115,7 @@ class _MainPageState extends State<MainPage> {
       widgets.add(TaskWidget(
         host: host,
         task: task,
+        useLongPressDraggable: onMobile,
         onTaskUpdate: updateTasks,
         onDragStarted: () {
           if (onMobile) {
@@ -229,7 +230,10 @@ class _MainPageState extends State<MainPage> {
         .map<Widget>((task) => TaskWidget(
               host: host,
               task: task,
-              compact: !onMobile || showLandscapeLayoutAnyway,
+              style: (!onMobile || showLandscapeLayoutAnyway)
+                  ? TaskStyle.compact
+                  : TaskStyle.normal,
+              useLongPressDraggable: onMobile,
               onTaskUpdate: updateTasks,
               onDragStarted: () {
                 if (onMobile) {

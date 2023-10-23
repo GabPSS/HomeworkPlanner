@@ -145,9 +145,8 @@ class NoteDialog {
           dialogContentWidgets.addAll(
             tasksByDueDate.map(
               (task) => TaskWidget(
-                selectionStyle: true,
-                denyDragging: true,
-                isSelected: selectedTasks.contains(task),
+                style: TaskStyle.selectable,
+                initialSelectedValue: selectedTasks.contains(task),
                 onSelected: (value) {
                   return setState(
                     () {
