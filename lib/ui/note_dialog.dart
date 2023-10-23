@@ -97,9 +97,7 @@ class NoteDialog {
                               List<Task>? result = await showCancellingDialog(
                                   context, tasksByDueDate);
                               if (result != null) {
-                                for (int i = 0; i < result.length; i++) {
-                                  host.rescheduleDueDates(result);
-                                }
+                                host.rescheduleDueDates(result);
                                 note!.noClass = value ?? false;
                                 setState(() {});
                                 update();
