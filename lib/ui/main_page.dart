@@ -6,6 +6,7 @@ import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/main/day_note.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/autoplan_dialog.dart';
 import 'package:homeworkplanner/ui/note_dialog.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
 import 'package:homeworkplanner/ui/schedules_page.dart';
@@ -575,6 +576,11 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const MenuItemButton(child: Text('Import...')),
                   MenuItemButton(
+                    child: const Text('Autoplan'),
+                    onPressed: () => AutoplanDialog.show(
+                        host, context, () => setState(() {})),
+                  ),
+                  MenuItemButton(
                     child: const Text('Unschedule all'),
                     onPressed: () => unscheduleAll(context),
                   ),
@@ -685,7 +691,7 @@ class _MainPageState extends State<MainPage> {
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => host.unscheduleAllTasks());
+                setState(() => host.unscheduleAllCompleted());
               },
               child: const Text('Unschedule')),
         ],

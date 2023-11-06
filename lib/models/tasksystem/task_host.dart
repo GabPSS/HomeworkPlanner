@@ -61,7 +61,7 @@ class TaskHost {
     return -1;
   }
 
-  void unscheduleAllTasks() {
+  void unscheduleAllCompleted() {
     for (int i = 0; i < saveFile.tasks.items.length; i++) {
       if (!saveFile.tasks.items[i].isCompleted) {
         saveFile.tasks.items[i].execDate = null;
@@ -173,6 +173,35 @@ class TaskHost {
     resetSubjectIDs();
     ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Savefile cleanup successful')));
+  }
+
+  void autoplan({bool replanAll = false, int minTasksPerDay = 3}) {
+    if (replanAll) unscheduleAllCompleted();
+    List<Task> unplanned = saveFile.tasks.items
+        .where((element) =>
+            element.isScheduled == false && element.dueDate != null)
+        .toList();
+
+    unplanned.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
+
+    Duration tomorrow = const Duration(days: 1);
+    DateTime iteratingDate = HelperFunctions.getToday();
+    int maxIterations = 10000;
+    int iteration = 0;
+    while (unplanned.isNotEmpty) {
+      if (iteration > maxIterations) break; //failsafe
+      Task task = unplanned[0];
+
+      if (task.dueDate!.isBefore(iteratingDate.add(tomorrow)) ||
+          task.dueDate! == iteratingDate.add(tomorrow) ||
+          getTasksByExecDate(iteratingDate).length < minTasksPerDay) {
+        task.execDate = iteratingDate;
+        unplanned.remove(task);
+        continue;
+      }
+
+      iteratingDate = iteratingDate.add(tomorrow);
+    }
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
