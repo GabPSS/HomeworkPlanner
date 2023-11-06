@@ -4,13 +4,22 @@ part 'day_note.g.dart';
 
 @JsonSerializable()
 class DayNote {
-  DateTime Date;
-  String Message;
-  bool Cancelled = false;
+  @JsonKey(name: 'Date')
+  DateTime date;
+  @JsonKey(name: 'Message')
+  String message;
+  @JsonKey(name: 'Cancelled')
+  bool cancelled = false;
+  bool noClass = false;
 
-  DayNote({required this.Date, required this.Message});
+  DayNote(
+      {required this.date,
+      required this.message,
+      this.cancelled = false,
+      this.noClass = false});
 
-  factory DayNote.fromJson(Map<String, dynamic> json) => _$DayNoteFromJson(json);
+  factory DayNote.fromJson(Map<String, dynamic> json) =>
+      _$DayNoteFromJson(json);
 
   Map<String, dynamic> toJson() => _$DayNoteToJson(this);
 }

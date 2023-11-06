@@ -19,8 +19,8 @@ class _ReportsPageState extends State<ReportsPage> {
   Widget build(BuildContext context) {
     Widget pageContents;
 
-    List<Task> taskList = widget.host.saveFile.Tasks.Items
-        .where((element) => element.IsCompleted)
+    List<Task> taskList = widget.host.saveFile.tasks.items
+        .where((element) => element.isCompleted)
         .toList();
     if (taskList.isNotEmpty) {
       TaskHost.sortTasks(SortMethod.DateCompleted, taskList);
@@ -29,15 +29,15 @@ class _ReportsPageState extends State<ReportsPage> {
         itemBuilder: (context, index) {
           Task task = taskList[index];
           String? subject =
-              widget.host.getSubjectNameById(task.SubjectID) ?? "";
+              widget.host.getSubjectNameById(task.subjectID) ?? "";
           if (subject != "") {
             subject += " - ";
           }
           return ListTile(
-            leading: task.GetIcon(true),
-            title: Text("$subject${task.Name}"),
+            leading: task.getIcon(true),
+            title: Text("$subject${task.name}"),
             subtitle:
-                Text('Due: ${task.DueDate}, Completed: ${task.DateCompleted}'),
+                Text('Due: ${task.dueDate}, Completed: ${task.dateCompleted}'),
             onTap: () => TaskEditor.show(
                 context: context,
                 host: widget.host,

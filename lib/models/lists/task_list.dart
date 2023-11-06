@@ -5,24 +5,27 @@ part 'task_list.g.dart';
 
 @JsonSerializable()
 class TaskList {
-  int LastIndex = -1;
-  List<Task> Items = List.empty(growable: true);
+  @JsonKey(name: 'LastIndex')
+  int lastIndex = -1;
+  @JsonKey(name: 'Items')
+  List<Task> items = List.empty(growable: true);
 
-  void Add(Task item) {
-    int newIndex = LastIndex + 1;
-    item.TaskID = newIndex;
-    Items.add(item);
-    LastIndex = newIndex;
+  void add(Task item) {
+    int newIndex = lastIndex + 1;
+    item.id = newIndex;
+    items.add(item);
+    lastIndex = newIndex;
   }
 
-  TaskList({int lastIndex = -1, List<Task>? items}) {
-    LastIndex = lastIndex;
-    if (items != null) {
-      Items = items;
+  TaskList({int startLastIndex = -1, List<Task>? startItems}) {
+    lastIndex = startLastIndex;
+    if (startItems != null) {
+      items = startItems;
     }
   }
 
-  factory TaskList.fromJson(Map<String, dynamic> json) => _$TaskListFromJson(json);
+  factory TaskList.fromJson(Map<String, dynamic> json) =>
+      _$TaskListFromJson(json);
 
   Map<String, dynamic> toJson() => _$TaskListToJson(this);
 }

@@ -5,26 +5,33 @@ part 'schedule.g.dart';
 
 @JsonSerializable()
 class Schedule {
-  String StartTime;
-  String EndTime;
+  @JsonKey(name: 'StartTime')
+  String startTime;
+  @JsonKey(name: 'EndTime')
+  String endTime;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Duration get startTime => HelperFunctions.stringToDuration(StartTime);
-  set startTime(value) => StartTime = HelperFunctions.durationToString(value);
+  Duration get startTimeValue => HelperFunctions.stringToDuration(startTime);
+  set startTimeValue(value) =>
+      startTime = HelperFunctions.durationToString(value);
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Duration get endTime => HelperFunctions.stringToDuration(EndTime);
-  set endTime(value) => EndTime = HelperFunctions.durationToString(value);
+  Duration get endTimeValue => HelperFunctions.stringToDuration(endTime);
+  set endTimeValue(value) => endTime = HelperFunctions.durationToString(value);
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  String get shortStartTime => HelperFunctions.durationToString(startTime, true);
+  String get shortStartTime =>
+      HelperFunctions.durationToString(startTimeValue, true);
   @JsonKey(includeFromJson: false, includeToJson: false)
-  String get shortEndTime => HelperFunctions.durationToString(endTime, true);
+  String get shortEndTime =>
+      HelperFunctions.durationToString(endTimeValue, true);
 
-  List<int?> Subjects = List.filled(7, null);
+  @JsonKey(name: 'Subjects')
+  List<int?> subjects = List.filled(7, null);
 
-  Schedule({required this.StartTime, required this.EndTime});
+  Schedule({required this.startTime, required this.endTime});
 
-  factory Schedule.fromJson(Map<String, dynamic> json) => _$ScheduleFromJson(json);
+  factory Schedule.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleFromJson(json);
 
   Map<String, dynamic> toJson() => _$ScheduleToJson(this);
 }

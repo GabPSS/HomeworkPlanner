@@ -44,20 +44,18 @@ class _SubjectsPageState extends State<SubjectsPage> {
   Widget build(BuildContext context) {
     List<Widget> subjectWidgets = List<Widget>.empty(growable: true);
 
-    for (var i = 0; i < widget.host.saveFile.Subjects.Items.length; i++) {
-      subjectWidgets
-          .add(Text(widget.host.saveFile.Subjects.Items[i].SubjectName));
+    for (var i = 0; i < widget.host.saveFile.subjects.items.length; i++) {
+      subjectWidgets.add(Text(widget.host.saveFile.subjects.items[i].name));
     }
 
     return Scaffold(
       appBar: AppBar(title: const Text('Edit subjects')),
       body: ListView.builder(
         itemBuilder: (context, index) {
-          var subject = widget.host.saveFile.Subjects.Items[index];
+          var subject = widget.host.saveFile.subjects.items[index];
           return ListTile(
-            leading:
-                Icon(Icons.assignment_ind, color: subject.SubjectColorValue),
-            title: Text(subject.SubjectName),
+            leading: Icon(Icons.assignment_ind, color: subject.colorValue),
+            title: Text(subject.name),
             onTap: () {
               showSubjectEditorDialog(context, subject);
             },
@@ -66,7 +64,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text("Delete '${subject.SubjectName}'?"),
+                      title: Text("Delete '${subject.name}'?"),
                       content: const Text(
                           "You won't be able to recover it once it's gone"),
                       actions: [
@@ -79,7 +77,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                             onPressed: () {
                               Navigator.pop(context);
                               setState(() {
-                                widget.host.saveFile.Subjects.Items
+                                widget.host.saveFile.subjects.items
                                     .remove(subject);
                               });
                               widget.onSubjectUpdate();
@@ -92,7 +90,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
                 icon: const Icon(Icons.delete)),
           );
         },
-        itemCount: widget.host.saveFile.Subjects.Items.length,
+        itemCount: widget.host.saveFile.subjects.items.length,
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -123,7 +121,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
             onPressed: () {
               setState(() {
                 if (isAdding) {
-                  widget.host.saveFile.Subjects.addSubject(subject);
+                  widget.host.saveFile.subjects.addSubject(subject);
                 }
               });
               widget.onSubjectUpdate();
@@ -137,9 +135,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextFormField(
-                initialValue: subject.SubjectName,
+                initialValue: subject.name,
                 onChanged: (value) {
-                  subject.SubjectName = value;
+                  subject.name = value;
                 },
                 decoration: const InputDecoration(
                   icon: Icon(Icons.assignment_ind),
@@ -152,9 +150,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
               padding: const EdgeInsets.all(16.0),
               child: ColorPicker(
                 enableAlpha: false,
-                pickerColor: subject.SubjectColorValue,
+                pickerColor: subject.colorValue,
                 onColorChanged: (value) {
-                  subject.SubjectColorValue = value;
+                  subject.colorValue = value;
                 },
               ),
             ),

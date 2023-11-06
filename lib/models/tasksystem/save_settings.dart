@@ -5,16 +5,19 @@ part 'save_settings.g.dart';
 
 @JsonSerializable()
 class SaveSettings {
-  int FutureWeeks;
-  int DaysToDisplay;
-  bool DisplayPreviousTasks;
+  @JsonKey(name: 'FutureWeeks')
+  int futureWeeks;
+  @JsonKey(name: 'DaysToDisplay')
+  int daysToDisplay;
+  @JsonKey(name: 'DisplayPreviousTasks')
+  bool displayPreviousTasks;
   @JsonKey(name: "SortMethod")
   SortMethod sortMethod;
 
   SaveSettings(
-      {this.FutureWeeks = 2,
-      this.DaysToDisplay = 62,
-      this.DisplayPreviousTasks = false,
+      {this.futureWeeks = 2,
+      this.daysToDisplay = 62,
+      this.displayPreviousTasks = false,
       this.sortMethod = SortMethod.DueDate});
 
   factory SaveSettings.fromJson(Map<String, dynamic> json) =>

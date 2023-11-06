@@ -9,12 +9,16 @@ part 'save_file.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class SaveFile {
-  TaskList Tasks = TaskList();
-  SubjectList Subjects = SubjectList();
-  ScheduleList Schedules = ScheduleList();
-  // DayNoteList DayNotes;
-  List<DayNote> DayNotes = List.empty(growable: true);
-  SaveSettings Settings = SaveSettings();
+  @JsonKey(name: 'Tasks')
+  TaskList tasks = TaskList();
+  @JsonKey(name: 'Subjects')
+  SubjectList subjects = SubjectList();
+  @JsonKey(name: 'Schedules')
+  ScheduleList schedules = ScheduleList();
+  @JsonKey(name: 'DayNotes')
+  List<DayNote> dayNotes = List.empty(growable: true);
+  @JsonKey(name: 'Settings')
+  SaveSettings settings = SaveSettings();
 
   factory SaveFile.fromJson(Map<String, dynamic> json) =>
       _$SaveFileFromJson(json);

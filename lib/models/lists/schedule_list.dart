@@ -5,16 +5,19 @@ part 'schedule_list.g.dart';
 
 @JsonSerializable()
 class ScheduleList {
-  int DaysToDisplay = 62;
-  List<Schedule> Items = List.empty(growable: true);
+  @JsonKey(name: 'DaysToDisplay')
+  int daysToDisplay = 62;
+  @JsonKey(name: 'Items')
+  List<Schedule> items = List.empty(growable: true);
 
-  ScheduleList({List<Schedule>? items}) {
-    if (items != null) {
-      Items = items;
+  ScheduleList({List<Schedule>? scheduleItems}) {
+    if (scheduleItems != null) {
+      items = scheduleItems;
     }
   }
 
-  factory ScheduleList.fromJson(Map<String, dynamic> json) => _$ScheduleListFromJson(json);
+  factory ScheduleList.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleListFromJson(json);
 
   Map<String, dynamic> toJson() => _$ScheduleListToJson(this);
 }

@@ -40,13 +40,13 @@ class _TaskEditorPageState extends State<TaskEditorPage> {
         appBar: AppBar(
           title: Text(widget.isAdding
               ? "Create task"
-              : (widget.task.Name != ""
-                  ? "Edit '${widget.task.Name}'"
+              : (widget.task.name != ""
+                  ? "Edit '${widget.task.name}'"
                   : "Edit task")),
           actions: [
             IconButton(
                 onPressed: () {
-                  widget.host.saveFile.Tasks.Items.remove(widget.task);
+                  widget.host.saveFile.tasks.items.remove(widget.task);
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Task deleted')));
@@ -79,158 +79,29 @@ class TaskEditor {
   List<Widget> build(BuildContext context, Task task) {
     Subject noSubject = Subject.noSubjectTemplate();
     Subject editSubjects = Subject.editSubjectsTemplate();
-    Subject? selectedSubject = task.SubjectID == -1
-        ? noSubject
-        : (host.getSubjectById(task.SubjectID) ?? noSubject);
 
-    List<DropdownMenuItem<Subject>>? subjectWidgets =
-        List.empty(growable: true);
+    List<DropdownMenuItem<Subject>>? subjectItems =
+        getSubjectItems(noSubject, editSubjects);
 
-    subjectWidgets.add(DropdownMenuItem(
-      value: noSubject,
-      child: Text(noSubject.SubjectName),
-    ));
-    subjectWidgets.add(DropdownMenuItem(
-      value: editSubjects,
-      child: Text(editSubjects.SubjectName),
-    ));
-    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained =
-        host.saveFile.Subjects.Items.map<DropdownMenuItem<Subject>>(
-      (e) {
-        return DropdownMenuItem<Subject>(
-          value: e,
-          child: Text(e.toString()),
-        );
-      },
-    ).toList();
-    subjectWidgets.addAll(subjectWidgetsObtained);
+    DropdownButtonFormField<Subject> subjectsDropdownWidget =
+        buildSubjectsDropdown(
+            subjectItems, task, editSubjects, noSubject, context);
 
-    var dueDateWidget = DateTimeField(
-      decoration: const InputDecoration(
-        icon: Icon(Icons.date_range),
-        border: OutlineInputBorder(),
-        labelText: 'Due date',
-      ),
-      mode: DateTimeFieldPickerMode.date,
-      selectedDate: task.DueDate,
-      onDateSelected: (value) {
-        setState(() {
-          task.DueDate = value;
-        });
-        onTaskUpdated();
-      },
-    );
+    List<Widget> dueDateRowWidgets = buildDueDateRowWidgets(task, context);
 
-    var subjectsDropdownWidget = DropdownButtonFormField(
-      decoration: const InputDecoration(
-          icon: Icon(Icons.assignment_ind_outlined),
-          border: OutlineInputBorder(),
-          labelText: 'Subject'),
-      items: subjectWidgets,
-      value: selectedSubject,
-      onChanged: (value) {
-        setState(
-          () {
-            if (value != null) {
-              task.SubjectID = value.SubjectID;
-              if (value.SubjectID == editSubjects.SubjectID) {
-                task.SubjectID = noSubject.SubjectID;
-              }
-              selectedSubject = value;
-            }
-          },
-        );
-        if (value == editSubjects) {
-          SubjectsPage.show(context, host, () => setState(() {}));
-        }
-        onTaskUpdated();
-      },
-    );
+    List<Widget> mainWidgets =
+        buildMainWidgets(task, subjectsDropdownWidget, dueDateRowWidgets);
+    return mainWidgets;
+  }
 
-    var dueDateRowWidgets = <Widget>[
-      Expanded(
-        child: dueDateWidget,
-      ),
-    ].toList(growable: true);
-    if (task.SubjectID != -1 && task.SubjectID != -123) {
-      dueDateRowWidgets.add(
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: TextButton(
-              onPressed: () {
-                assert(task.SubjectID != -1 && task.SubjectID != -123);
-                setState(() {
-                  DateTime? nextDate = host.getNextSubjectScheduledDate(
-                      task.SubjectID,
-                      task.DueDate ?? HelperFunctions.getToday());
-                  if (nextDate != null) {
-                    task.DueDate = nextDate;
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Subject not scheduled'),
-                        content: const Text(
-                            "Couldn't find the selected subject in the list of schedules. Try adding it, then try again."),
-                        actions: [
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          SchedulesPage(host: host),
-                                    ));
-                              },
-                              child: const Text('View schedules')),
-                          TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('OK'))
-                        ],
-                      ),
-                    );
-                  }
-                });
-                onTaskUpdated();
-              },
-              child: const Text('NEXT')),
-        ),
-      );
-    }
-    if (task.DueDate != null) {
-      dueDateRowWidgets.add(Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: TextButton(
-            onPressed: () {
-              setState(() {
-                task.DueDate = null;
-              });
-              onTaskUpdated();
-            },
-            child: const Text('CLEAR')),
-      ));
-    }
-
-    List<Widget> buildWidgets = <Widget>[
+  List<Widget> buildMainWidgets(
+      Task task,
+      DropdownButtonFormField<Subject> subjectsDropdownWidget,
+      List<Widget> dueDateRowWidgets) {
+    List<Widget> mainWidgets = <Widget>[
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-        child: TextFormField(
-          decoration: const InputDecoration(
-            icon: Icon(Icons.assignment_outlined),
-            border: OutlineInputBorder(),
-            labelText: 'Name',
-          ),
-          initialValue: task.Name,
-          onChanged: (value) {
-            setState(() {
-              task.Name = value.trim();
-            });
-            onTaskUpdated();
-          },
-        ),
+        child: buildNameWidget(task),
       ),
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -245,92 +116,317 @@ class TaskEditor {
     ].toList(growable: true);
 
     if (host.settings.mobileLayout) {
-      List<Widget> scheduleDateRowWidgets = <Widget>[
-        Expanded(
-          child: DateTimeField(
-            decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Schedule date',
-                icon: Icon(Icons.schedule)),
-            mode: DateTimeFieldPickerMode.date,
-            selectedDate: task.ExecDate,
-            onDateSelected: (value) {
-              setState(() {
-                task.ExecDate = value;
-              });
-              onTaskUpdated();
-            },
-          ),
-        ),
-      ].toList(growable: true);
-      if (task.IsScheduled) {
-        scheduleDateRowWidgets.add(Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: TextButton(
-              onPressed: () {
-                setState(() {
-                  task.ExecDate = null;
-                });
-                onTaskUpdated();
-              },
-              child: const Text('CLEAR')),
-        ));
-      }
-      buildWidgets.add(Padding(
+      mainWidgets.add(Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Row(
-          children: scheduleDateRowWidgets,
+          children: buildScheduleDateRowWidgets(task),
         ),
       ));
     }
 
-    buildWidgets.addAll(<Widget>[
+    mainWidgets.addAll(<Widget>[
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: TextFormField(
+        child: buildDescriptionWidget(task),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(48, 0, 0, 0),
+        child: buildCompletedCheckbox(task),
+      ),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(48, 0, 0, 0),
+        child: buildImportantCheckbox(task),
+      )
+    ]);
+    return mainWidgets;
+  }
+
+  CheckboxListTile buildImportantCheckbox(Task task) {
+    return CheckboxListTile(
+      value: task.isImportant,
+      onChanged: (value) {
+        if (value != null) {
+          taskMarkedImportant(task, value);
+        }
+      },
+      title: const Text('Important'),
+    );
+  }
+
+  CheckboxListTile buildCompletedCheckbox(Task task) {
+    return CheckboxListTile(
+      value: task.isCompleted,
+      onChanged: (value) {
+        if (value != null) {
+          taskCompleted(task, value);
+        }
+      },
+      title: const Text('Completed'),
+    );
+  }
+
+  TextFormField buildDescriptionWidget(Task task) {
+    return TextFormField(
+      decoration: const InputDecoration(
+          icon: Icon(Icons.description_outlined),
+          border: OutlineInputBorder(),
+          labelText: 'Description'),
+      maxLines: host.settings.mobileLayout ? 15 : 5,
+      keyboardType: TextInputType.multiline,
+      initialValue: task.description,
+      onChanged: (value) {
+        setState(
+          () {
+            task.description = value.trim();
+          },
+        );
+        onTaskUpdated();
+      },
+    );
+  }
+
+  List<Widget> buildScheduleDateRowWidgets(Task task) {
+    List<Widget> scheduleDateRowWidgets = <Widget>[
+      Expanded(
+        child: DateTimeField(
           decoration: const InputDecoration(
-              icon: Icon(Icons.description_outlined),
               border: OutlineInputBorder(),
-              labelText: 'Description'),
-          maxLines: host.settings.mobileLayout ? 15 : 5,
-          keyboardType: TextInputType.multiline,
-          initialValue: task.Description,
-          onChanged: (value) {
-            setState(
-              () {
-                task.Description = value.trim();
-              },
-            );
+              labelText: 'Schedule date',
+              icon: Icon(Icons.schedule)),
+          mode: DateTimeFieldPickerMode.date,
+          selectedDate: task.execDate,
+          onDateSelected: (value) {
+            setState(() {
+              task.execDate = value;
+            });
             onTaskUpdated();
           },
         ),
       ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(48, 0, 0, 0),
-        child: CheckboxListTile(
-          value: task.IsCompleted,
-          onChanged: (value) {
-            if (value != null) {
-              taskCompleted(task, value);
-            }
-          },
-          title: const Text('Completed'),
-        ),
+    ].toList(growable: true);
+    if (task.isScheduled) {
+      scheduleDateRowWidgets.add(Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: TextButton(
+            onPressed: () {
+              setState(() {
+                task.execDate = null;
+              });
+              onTaskUpdated();
+            },
+            child: const Text('CLEAR')),
+      ));
+    }
+    return scheduleDateRowWidgets;
+  }
+
+  TextFormField buildNameWidget(Task task) {
+    return TextFormField(
+      decoration: const InputDecoration(
+        icon: Icon(Icons.assignment_outlined),
+        border: OutlineInputBorder(),
+        labelText: 'Name',
       ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(48, 0, 0, 0),
-        child: CheckboxListTile(
-          value: task.IsImportant,
-          onChanged: (value) {
+      initialValue: task.name,
+      onChanged: (value) {
+        setState(() {
+          task.name = value.trim();
+        });
+        onTaskUpdated();
+      },
+    );
+  }
+
+  List<Widget> buildDueDateRowWidgets(Task task, BuildContext context) {
+    List<Widget> dueDateRowWidgets = <Widget>[
+      Expanded(
+        child: buildDueDateWidget(task, context),
+      ),
+    ].toList(growable: true);
+    if (task.subjectID != -1 && task.subjectID != -123) {
+      dueDateRowWidgets.add(buildNextDateButton(task, context));
+    }
+    if (task.dueDate != null) {
+      dueDateRowWidgets.add(buildClearDateButton(task));
+    }
+    return dueDateRowWidgets;
+  }
+
+  Padding buildClearDateButton(Task task) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: TextButton(
+          onPressed: () {
+            setState(() {
+              task.dueDate = null;
+            });
+            onTaskUpdated();
+          },
+          child: const Text('CLEAR')),
+    );
+  }
+
+  Padding buildNextDateButton(Task task, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(4.0),
+      child: TextButton(
+          onPressed: () {
+            assert(task.subjectID != -1 && task.subjectID != -123);
+            setState(() {
+              DateTime? nextDate = host.getNextScheduledDateForSubject(
+                  task.subjectID, task.dueDate ?? HelperFunctions.getToday());
+              if (nextDate != null) {
+                task.dueDate = nextDate;
+              } else {
+                showSubjectNotScheduledDialog(context);
+              }
+            });
+            onTaskUpdated();
+          },
+          child: const Text('NEXT')),
+    );
+  }
+
+  Future<dynamic> showSubjectNotScheduledDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Subject not scheduled'),
+        content: const Text(
+            "Couldn't find the selected subject in the list of schedules. Try adding it, then try again."),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SchedulesPage(host: host),
+                    ));
+              },
+              child: const Text('View schedules')),
+          TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'))
+        ],
+      ),
+    );
+  }
+
+  DropdownButtonFormField<Subject> buildSubjectsDropdown(
+      List<DropdownMenuItem<Subject>> subjectWidgets,
+      Task task,
+      Subject editSubjects,
+      Subject noSubject,
+      BuildContext context) {
+    Subject? selectedSubject = task.subjectID == -1
+        ? noSubject
+        : (host.getSubjectById(task.subjectID) ?? noSubject);
+
+    return DropdownButtonFormField(
+      decoration: const InputDecoration(
+          icon: Icon(Icons.assignment_ind_outlined),
+          border: OutlineInputBorder(),
+          labelText: 'Subject'),
+      items: subjectWidgets,
+      value: selectedSubject,
+      onChanged: (value) {
+        setState(
+          () {
             if (value != null) {
-              taskMarkedImportant(task, value);
+              task.subjectID = value.id;
+              if (value.id == editSubjects.id) {
+                task.subjectID = noSubject.id;
+              }
+              selectedSubject = value;
             }
           },
-          title: const Text('Important'),
-        ),
-      )
-    ]);
-    return buildWidgets;
+        );
+        if (value == editSubjects) {
+          SubjectsPage.show(context, host, () => setState(() {}));
+        }
+        onTaskUpdated();
+      },
+    );
+  }
+
+  DateTimeField buildDueDateWidget(Task task, BuildContext context) {
+    return DateTimeField(
+      decoration: const InputDecoration(
+        icon: Icon(Icons.date_range),
+        border: OutlineInputBorder(),
+        labelText: 'Due date',
+      ),
+      mode: DateTimeFieldPickerMode.date,
+      selectedDate: task.dueDate,
+      onDateSelected: (value) {
+        if (host.isClassCancelled(value)) {
+          showClassCancelledDialog(context, task, value);
+        } else {
+          setState(() {
+            task.dueDate = value;
+          });
+        }
+        onTaskUpdated();
+      },
+    );
+  }
+
+  Future<dynamic> showClassCancelledDialog(
+      BuildContext context, Task task, DateTime value) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Proceed with cancelled class date?'),
+          content: const Text(
+              'Class is cancelled for this date, are you sure you want to set it anyway?\nIgnore if homework is to be sent via online platforms'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Cancel')),
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    task.dueDate = value;
+                  });
+                },
+                child: const Text('Proceed'))
+          ],
+        );
+      },
+    );
+  }
+
+  List<DropdownMenuItem<Subject>> getSubjectItems(
+      Subject noSubject, Subject editSubjects) {
+    List<DropdownMenuItem<Subject>> subjectWidgets = List.empty(growable: true);
+
+    subjectWidgets.add(DropdownMenuItem(
+      value: noSubject,
+      child: Text(noSubject.name),
+    ));
+    subjectWidgets.add(DropdownMenuItem(
+      value: editSubjects,
+      child: Text(editSubjects.name),
+    ));
+    List<DropdownMenuItem<Subject>>? subjectWidgetsObtained =
+        host.saveFile.subjects.items.map<DropdownMenuItem<Subject>>(
+      (e) {
+        return DropdownMenuItem<Subject>(
+          value: e,
+          child: Text(e.toString()),
+        );
+      },
+    ).toList();
+    subjectWidgets.addAll(subjectWidgetsObtained);
+
+    return subjectWidgets;
   }
 
   static void show(
@@ -383,7 +479,7 @@ class TaskEditor {
                   IconButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        host.saveFile.Tasks.Items.remove(task);
+                        host.saveFile.tasks.items.remove(task);
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Task deleted')));
                       },
@@ -414,14 +510,14 @@ class TaskEditor {
 
   void taskCompleted(Task task, bool value) {
     setState(() {
-      task.IsCompleted = value;
+      task.isCompleted = value;
     });
     onTaskUpdated();
   }
 
   void taskMarkedImportant(Task task, bool value) {
     setState(() {
-      task.IsImportant = value;
+      task.isImportant = value;
     });
     onTaskUpdated();
   }

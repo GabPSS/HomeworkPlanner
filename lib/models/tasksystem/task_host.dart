@@ -23,9 +23,9 @@ class TaskHost {
   TaskHost({required this.settings, required this.saveFile, this.saveFilePath});
 
   String? getSubjectNameById(int id) {
-    for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
-      if (saveFile.Subjects.Items[i].SubjectID == id) {
-        return saveFile.Subjects.Items[i].SubjectName;
+    for (int i = 0; i < saveFile.subjects.items.length; i++) {
+      if (saveFile.subjects.items[i].id == id) {
+        return saveFile.subjects.items[i].name;
       }
     }
     return null;
@@ -37,31 +37,24 @@ class TaskHost {
       return null;
     }
 
-    for (int i = 0; i < saveFile.Subjects.Items.length; i++) {
-      if (saveFile.Subjects.Items[i].SubjectID == id) {
-        return saveFile.Subjects.Items[i];
+    for (int i = 0; i < saveFile.subjects.items.length; i++) {
+      if (saveFile.subjects.items[i].id == id) {
+        return saveFile.subjects.items[i];
       }
     }
     return null;
   }
 
-  List<Task> getTasksPlannedForDate(DateTime date) {
-    List<Task> tasks = List<Task>.empty(growable: true);
-    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (saveFile.Tasks.Items[i].ExecDate != null) {
-        DateTime execDate = saveFile.Tasks.Items[i].ExecDate!;
-        if (DateTime(execDate.year, execDate.month, execDate.day) ==
-            DateTime(date.year, date.month, date.day)) {
-          tasks.add(saveFile.Tasks.Items[i]);
-        }
-      }
-    }
-    return tasks;
-  }
+  List<Task> getTasksByExecDate(DateTime date) => saveFile.tasks.items
+      .where((element) => element.execDate == date)
+      .toList();
+
+  List<Task> getTasksByDueDate(DateTime date) =>
+      saveFile.tasks.items.where((element) => element.dueDate == date).toList();
 
   int getTaskIndexById(int id) {
-    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (saveFile.Tasks.Items[i].TaskID == id) {
+    for (int i = 0; i < saveFile.tasks.items.length; i++) {
+      if (saveFile.tasks.items[i].id == id) {
         return i;
       }
     }
@@ -69,47 +62,55 @@ class TaskHost {
   }
 
   void unscheduleAllTasks() {
-    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (!saveFile.Tasks.Items[i].IsCompleted) {
-        saveFile.Tasks.Items[i].ExecDate = null;
+    for (int i = 0; i < saveFile.tasks.items.length; i++) {
+      if (!saveFile.tasks.items[i].isCompleted) {
+        saveFile.tasks.items[i].execDate = null;
       }
+    }
+  }
+
+  void rescheduleDueDates(List<Task> tasks) {
+    for (var task in tasks) {
+      if (task.dueDate == null) continue;
+      task.dueDate =
+          getNextScheduledDateForSubject(task.subjectID, task.dueDate!);
     }
   }
 
   static List<Task> sortTasks(SortMethod sortMethod, List<Task> tasks) {
     switch (sortMethod) {
       case SortMethod.DueDate:
-        tasks.sort((Task x, Task y) => y.DueDate == null && x.DueDate == null
+        tasks.sort((Task x, Task y) => y.dueDate == null && x.dueDate == null
             ? 0
-            : y.DueDate == null
+            : y.dueDate == null
                 ? 1
-                : x.DueDate == null
+                : x.dueDate == null
                     ? -1
-                    : x.DueDate!.compareTo(y.DueDate!));
+                    : x.dueDate!.compareTo(y.dueDate!));
         break;
       case SortMethod.ID:
-        tasks.sort((Task x, Task y) => x.TaskID - y.TaskID);
+        tasks.sort((Task x, Task y) => x.id - y.id);
         break;
       case SortMethod.Alphabetically:
-        tasks.sort((Task x, Task y) => x.Name.compareTo(y.Name));
+        tasks.sort((Task x, Task y) => x.name.compareTo(y.name));
         break;
       case SortMethod.Status:
         tasks.sort((Task x, Task y) =>
-            EnumConverters.taskStatusToInt(x.GetStatus()) -
-            EnumConverters.taskStatusToInt(y.GetStatus()));
+            EnumConverters.taskStatusToInt(x.getStatus()) -
+            EnumConverters.taskStatusToInt(y.getStatus()));
         break;
       case SortMethod.Subject:
-        tasks.sort((Task x, Task y) => x.SubjectID - y.SubjectID);
+        tasks.sort((Task x, Task y) => x.subjectID - y.subjectID);
         break;
       case SortMethod.ExecDate:
-        tasks.sort((Task x, Task y) => y.ExecDate != null
-            ? (x.ExecDate != null ? x.ExecDate!.compareTo(y.ExecDate!) : 1)
+        tasks.sort((Task x, Task y) => y.execDate != null
+            ? (x.execDate != null ? x.execDate!.compareTo(y.execDate!) : 1)
             : -1);
         break;
       case SortMethod.DateCompleted:
-        tasks.sort((Task x, Task y) => y.DateCompleted != null
-            ? (x.DateCompleted != null
-                ? x.DateCompleted!.compareTo(y.DateCompleted!)
+        tasks.sort((Task x, Task y) => y.dateCompleted != null
+            ? (x.dateCompleted != null
+                ? x.dateCompleted!.compareTo(y.dateCompleted!)
                 : 1)
             : -1);
         break;
@@ -120,28 +121,28 @@ class TaskHost {
   }
 
   void removeCompletedTasks() =>
-      saveFile.Tasks.Items.removeWhere((task) => task.IsCompleted);
+      saveFile.tasks.items.removeWhere((task) => task.isCompleted);
 
-  void removeAllTasks() => saveFile.Tasks = TaskList();
+  void removeAllTasks() => saveFile.tasks = TaskList();
 
   void resetTaskIDs() {
     int i;
-    for (i = 0; i < saveFile.Tasks.Items.length; i++) {
-      saveFile.Tasks.Items[i].TaskID = i;
+    for (i = 0; i < saveFile.tasks.items.length; i++) {
+      saveFile.tasks.items[i].id = i;
     }
-    saveFile.Tasks.LastIndex = i - 1;
+    saveFile.tasks.lastIndex = i - 1;
   }
 
   void resetSubjectIDs([int? startIndex]) {
-    startIndex ??= saveFile.Subjects.LastIndex + 1;
+    startIndex ??= saveFile.subjects.lastIndex + 1;
 
     int newId = startIndex;
-    for (int count = 0; count < saveFile.Subjects.Items.length; count++) {
-      updateSubjectId(saveFile.Subjects.Items[count], newId);
+    for (int count = 0; count < saveFile.subjects.items.length; count++) {
+      updateSubjectId(saveFile.subjects.items[count], newId);
       newId++;
     }
 
-    saveFile.Subjects.LastIndex = newId;
+    saveFile.subjects.lastIndex = newId;
 
     if (startIndex != 0) {
       resetSubjectIDs(0);
@@ -149,24 +150,24 @@ class TaskHost {
   }
 
   void updateSubjectId(Subject subject, int newId) {
-    int oldId = subject.SubjectID;
-    subject.SubjectID = newId;
+    int oldId = subject.id;
+    subject.id = newId;
 
-    for (int i = 0; i < saveFile.Tasks.Items.length; i++) {
-      if (saveFile.Tasks.Items[i].SubjectID == oldId) {
-        saveFile.Tasks.Items[i].SubjectID = newId;
+    for (int i = 0; i < saveFile.tasks.items.length; i++) {
+      if (saveFile.tasks.items[i].subjectID == oldId) {
+        saveFile.tasks.items[i].subjectID = newId;
       }
     }
   }
 
   void sortSubjectsByName() {
-    saveFile.Subjects.Items
-        .sort((Subject x, Subject y) => x.SubjectName.compareTo(y.SubjectName));
+    saveFile.subjects.items
+        .sort((Subject x, Subject y) => x.name.compareTo(y.name));
   }
 
   void cleanUp(BuildContext context) {
-    saveFile.Tasks.Items =
-        sortTasks(SortMethod.Alphabetically, saveFile.Tasks.Items);
+    saveFile.tasks.items =
+        sortTasks(SortMethod.Alphabetically, saveFile.tasks.items);
     resetTaskIDs();
     sortSubjectsByName();
     resetSubjectIDs();
@@ -177,7 +178,7 @@ class TaskHost {
   static List<Task> filterCompletedTasks(List<Task> tasks) {
     List<Task> completedTasks = List<Task>.empty(growable: true);
     for (int i = 0; i < tasks.length; i++) {
-      if (tasks[i].IsCompleted) {
+      if (tasks[i].isCompleted) {
         completedTasks.add(tasks[i]);
       }
     }
@@ -187,7 +188,7 @@ class TaskHost {
   static List<Task> filterRemainingTasks(List<Task> tasks) {
     List<Task> remainingTasks = List<Task>.empty(growable: true);
     for (int i = 0; i < tasks.length; i++) {
-      if (!tasks[i].IsCompleted) {
+      if (!tasks[i].isCompleted) {
         remainingTasks.add(tasks[i]);
       }
     }
@@ -207,6 +208,7 @@ class TaskHost {
 
       String? path = result?.files.single.path;
       if (path != null) {
+        if (!context.mounted) return;
         _openFileFromPath(path, context, settings, onLoad);
       }
     } else {
@@ -227,10 +229,12 @@ class TaskHost {
               saveFilePath: path));
         });
       } catch (e) {
+        if (!context.mounted) return;
         _showReadWriteFailedDialog(context);
         settings.removeRecentFile(path);
       }
     } else {
+      if (!context.mounted) return;
       _showReadWriteFailedDialog(context);
       settings.removeRecentFile(path);
     }
@@ -260,6 +264,7 @@ class TaskHost {
         saveFilePath = path;
         String jsonData = _getJsonSaveFile();
         await File(path).writeAsString(jsonData);
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('File saved at $path')));
         settings.addRecentFile(path);
@@ -313,7 +318,7 @@ class TaskHost {
     ];
     List<bool> daysAllowed = [false, false, false, false, false, false, false];
     HelperFunctions.iterateThroughWeekFromThisSaturday(
-      saveFile.Schedules.DaysToDisplay.toDouble(),
+      saveFile.schedules.daysToDisplay.toDouble(),
       (day) {
         daysAllowed[EnumConverters.weekdayToInt(day.weekday)] = true;
       },
@@ -321,36 +326,53 @@ class TaskHost {
     return Map.fromIterables(daysOfWeek, daysAllowed);
   }
 
-  DateTime? getNextSubjectScheduledDate(
+  DateTime? getNextScheduledDateForSubject(
       int subjectId, DateTime searchStartDate) {
-    DateTime searchDate = searchStartDate.add(const Duration(days: 1));
+    DateTime startDate = searchStartDate.add(const Duration(days: 1));
 
-    int dayOfWeek = EnumConverters.weekdayToInt(searchDate.weekday);
-    int dayOffset = dayOfWeek;
+    int startDayOfWeek = EnumConverters.weekdayToInt(startDate.weekday);
+    int dayOfWeek = startDayOfWeek;
 
     do {
-      for (var i = 0; i < saveFile.Schedules.Items.length; i++) {
-        int? scheduledSubject = saveFile.Schedules.Items[i].Subjects[dayOffset];
-        if (scheduledSubject != null && scheduledSubject == subjectId) {
-          if (dayOfWeek > dayOffset) {
-            dayOffset += 7;
+      for (int scheduleHour = 0;
+          scheduleHour < saveFile.schedules.items.length;
+          scheduleHour++) {
+        int? scheduledSubjectId =
+            saveFile.schedules.items[scheduleHour].subjects[dayOfWeek];
+        if (scheduledSubjectId != null && scheduledSubjectId == subjectId) {
+          if (dayOfWeek < startDayOfWeek) {
+            dayOfWeek += 7;
           }
-          dayOffset -= dayOfWeek;
-          return searchDate.add(Duration(days: dayOffset));
+          dayOfWeek -= startDayOfWeek;
+          DateTime? foundDate = startDate.add(Duration(days: dayOfWeek));
+          if (isClassCancelled(foundDate)) {
+            foundDate = getNextScheduledDateForSubject(subjectId, foundDate);
+          }
+          return foundDate;
         }
       }
-      dayOffset++;
-      if (dayOffset > 6) {
-        dayOffset = 0;
+      dayOfWeek++;
+      if (dayOfWeek > 6) {
+        dayOfWeek = 0; //Reset to sunday
       }
-    } while (dayOffset != dayOfWeek);
+    } while (dayOfWeek != startDayOfWeek);
 
     return null;
   }
 
   List<DayNote> getNotesForDate(DateTime date,
-          [bool getCancelledNotes = false]) =>
-      saveFile.DayNotes.where((element) =>
-              element.Date == date && element.Cancelled == getCancelledNotes)
+          [bool getCancelledNotes = false, bool getAnyNote = false]) =>
+      saveFile.dayNotes
+          .where((element) =>
+              element.date == date &&
+              (element.cancelled == getCancelledNotes || getAnyNote))
           .toList();
+
+  bool isClassCancelled(DateTime date) {
+    List<DayNote> notes = getNotesForDate(date, true, true);
+    for (var note in notes) {
+      if (note.noClass) return true;
+    }
+    return false;
+  }
 }

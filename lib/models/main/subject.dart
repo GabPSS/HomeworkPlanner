@@ -10,14 +10,17 @@ part 'subject.g.dart';
 class Subject {
   static const String defaultMissingSubjectText = "(No subject)";
 
-  int SubjectID;
-  String SubjectName;
-  int SubjectColor = 0xFFABABAB;
+  @JsonKey(name: 'SubjectID')
+  int id;
+  @JsonKey(name: 'SubjectName')
+  String name;
+  @JsonKey(name: 'SubjectColor')
+  int color = 0xFFABABAB;
 
   @JsonKey(includeFromJson: false, includeToJson: false)
-  Color get SubjectColorValue => Color(SubjectColor);
-  set SubjectColorValue(Color value) {
-    SubjectColor = value.value;
+  Color get colorValue => Color(color);
+  set colorValue(Color value) {
+    color = value.value;
   }
 
   static bool isIdValid(int? id, TaskHost host) => id == null
@@ -26,19 +29,18 @@ class Subject {
           ? false
           : true;
 
-  Subject({this.SubjectName = "", this.SubjectID = 0}) {
+  Subject({this.name = "", this.id = 0}) {
     setRandomColor();
   }
 
-  Subject.editSubjectsTemplate(
-      {this.SubjectName = "(Edit subjects)", this.SubjectID = -123});
+  Subject.editSubjectsTemplate({this.name = "(Edit subjects)", this.id = -123});
 
   Subject.noSubjectTemplate(
-      {this.SubjectID = -1, this.SubjectName = defaultMissingSubjectText});
+      {this.id = -1, this.name = defaultMissingSubjectText});
 
   @override
   String toString() {
-    return SubjectName;
+    return name;
   }
 
   void setRandomColor() {
@@ -49,7 +51,7 @@ class Subject {
     v = random.nextInt(35) + 55;
     s /= 100;
     v /= 100;
-    SubjectColorValue = HSVColor.fromAHSV(1, h, s, v).toColor();
+    colorValue = HSVColor.fromAHSV(1, h, s, v).toColor();
   }
 
   factory Subject.fromJson(Map<String, dynamic> json) =>
