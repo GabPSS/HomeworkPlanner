@@ -17,11 +17,10 @@ class AutoplanDialog {
               title: const Text('Replan everything'),
               subtitle: const Text('Unschedules all tasks before replanning'),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: Text(
                 'Minimum tasks per day:',
-                style: Theme.of(context).primaryTextTheme.titleMedium,
               ),
             ),
             Slider(
