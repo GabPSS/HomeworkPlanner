@@ -554,7 +554,7 @@ class _MainPageState extends State<MainPage> {
                         menuChildren: recentFilesList,
                         child: const Text('Recent files')),
                     MenuItemButton(
-                        onPressed: () => setState(() => host.save(context)),
+                        onPressed: () => host.save(context),
                         child: const Text('Save')),
                     MenuItemButton(
                         onPressed: () => setState(() => host.saveAs(context)),
@@ -576,7 +576,7 @@ class _MainPageState extends State<MainPage> {
                   ),
                   const MenuItemButton(child: Text('Import...')),
                   MenuItemButton(
-                    child: const Text('Autoplan'),
+                    child: const Text('Autoplan...'),
                     onPressed: () => AutoplanDialog.show(
                         host, context, () => setState(() {})),
                   ),
@@ -618,6 +618,11 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Clean up...'),
                     onPressed: () => cleanUp(context),
+                  ),
+                  MenuItemButton(
+                    child: const Text('Autoplan...'),
+                    onPressed: () => AutoplanDialog.show(
+                        host, context, () => setState(() {})),
                   ),
                   MenuItemButton(
                       child: const Text('Class schedules...'),
@@ -691,7 +696,7 @@ class _MainPageState extends State<MainPage> {
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => host.unscheduleAllCompleted());
+                setState(() => host.unschedulePendingTasks());
               },
               child: const Text('Unschedule')),
         ],

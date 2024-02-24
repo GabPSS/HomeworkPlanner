@@ -61,7 +61,7 @@ class TaskHost {
     return -1;
   }
 
-  void unscheduleAllCompleted() {
+  void unschedulePendingTasks() {
     for (int i = 0; i < saveFile.tasks.items.length; i++) {
       if (!saveFile.tasks.items[i].isCompleted) {
         saveFile.tasks.items[i].execDate = null;
@@ -176,7 +176,7 @@ class TaskHost {
   }
 
   void autoplan({bool replanAll = false, int minTasksPerDay = 3}) {
-    if (replanAll) unscheduleAllCompleted();
+    if (replanAll) unschedulePendingTasks();
     List<Task> unplanned = saveFile.tasks.items
         .where((element) =>
             element.isScheduled == false && element.dueDate != null)
@@ -184,24 +184,49 @@ class TaskHost {
 
     unplanned.sort((a, b) => a.dueDate!.compareTo(b.dueDate!));
 
-    Duration tomorrow = const Duration(days: 1);
-    DateTime iteratingDate = HelperFunctions.getToday();
-    int maxIterations = 10000;
+    //if Today is not a valid date, get the next one after it
+    DateTime? iteratingDate =
+        getNextValidDate(HelperFunctions.getToday().add(Duration(days: -1)));
+    if (iteratingDate == null) return;
+    DateTime? nextValidDate = getNextValidDate(iteratingDate);
+    if (nextValidDate == null) return;
+    int maxIterations = 10000 + unplanned.length;
     int iteration = 0;
     while (unplanned.isNotEmpty) {
-      if (iteration > maxIterations) break; //failsafe
+      if (iteration > maxIterations) throw Error(); //failsafe
       Task task = unplanned[0];
 
-      if (task.dueDate!.isBefore(iteratingDate.add(tomorrow)) ||
-          task.dueDate! == iteratingDate.add(tomorrow) ||
-          getTasksByExecDate(iteratingDate).length < minTasksPerDay) {
+      if (task.dueDate!.isBefore(nextValidDate!) ||
+          task.dueDate! == nextValidDate ||
+          getTasksByExecDate(iteratingDate!).length < minTasksPerDay) {
         task.execDate = iteratingDate;
         unplanned.remove(task);
         continue;
       }
 
-      iteratingDate = iteratingDate.add(tomorrow);
+      iteratingDate = nextValidDate;
+      nextValidDate = getNextValidDate(iteratingDate);
+      if (nextValidDate == null) return;
+      iteration++;
     }
+  }
+
+  ///Given a date, return the closest valid date following it
+  DateTime? getNextValidDate(DateTime iteratingDate) {
+    Iterable<bool> validDays = getValidDaysOfWeek().values;
+
+    int initialDayOfWeek = EnumConverters.dayOfWeekToInt(
+        EnumConverters.weekdayToDayOfWeek(iteratingDate.weekday));
+
+    for (int difference = 1; difference <= 7; difference++) {
+      int check = initialDayOfWeek + difference;
+      if (check >= 7) check -= 7;
+      if (validDays.elementAt(check)) {
+        return iteratingDate.add(Duration(days: difference));
+      }
+    }
+
+    return null;
   }
 
   static List<Task> filterCompletedTasks(List<Task> tasks) {
@@ -335,7 +360,7 @@ class TaskHost {
     Share.shareXFiles([xFile]);
   }
 
-  Map<String, bool> getScheduleDaysOfWeek() {
+  Map<String, bool> getValidDaysOfWeek() {
     List<String> daysOfWeek = [
       "Sunday",
       "Monday",
