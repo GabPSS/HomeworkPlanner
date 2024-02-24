@@ -6,6 +6,7 @@ import 'package:homeworkplanner/helperfunctions.dart';
 import 'package:homeworkplanner/main.dart';
 import 'package:homeworkplanner/models/main/day_note.dart';
 import 'package:homeworkplanner/models/main/task.dart';
+import 'package:homeworkplanner/ui/autoplan_dialog.dart';
 import 'package:homeworkplanner/ui/note_dialog.dart';
 import 'package:homeworkplanner/ui/reports_page.dart';
 import 'package:homeworkplanner/ui/schedules_page.dart';
@@ -553,7 +554,7 @@ class _MainPageState extends State<MainPage> {
                         menuChildren: recentFilesList,
                         child: const Text('Recent files')),
                     MenuItemButton(
-                        onPressed: () => setState(() => host.save(context)),
+                        onPressed: () => host.save(context),
                         child: const Text('Save')),
                     MenuItemButton(
                         onPressed: () => setState(() => host.saveAs(context)),
@@ -574,6 +575,11 @@ class _MainPageState extends State<MainPage> {
                     child: const Text('New...'),
                   ),
                   const MenuItemButton(child: Text('Import...')),
+                  MenuItemButton(
+                    child: const Text('Autoplan...'),
+                    onPressed: () => AutoplanDialog.show(
+                        host, context, () => setState(() {})),
+                  ),
                   MenuItemButton(
                     child: const Text('Unschedule all'),
                     onPressed: () => unscheduleAll(context),
@@ -612,6 +618,11 @@ class _MainPageState extends State<MainPage> {
                   MenuItemButton(
                     child: const Text('Clean up...'),
                     onPressed: () => cleanUp(context),
+                  ),
+                  MenuItemButton(
+                    child: const Text('Autoplan...'),
+                    onPressed: () => AutoplanDialog.show(
+                        host, context, () => setState(() {})),
                   ),
                   MenuItemButton(
                       child: const Text('Class schedules...'),
@@ -685,7 +696,7 @@ class _MainPageState extends State<MainPage> {
           TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => host.unscheduleAllTasks());
+                setState(() => host.unschedulePendingTasks());
               },
               child: const Text('Unschedule')),
         ],

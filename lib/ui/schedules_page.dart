@@ -186,7 +186,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
 
   List<CheckboxListTile> getDaysOfWeek(Function(void Function()) setState) {
     List<CheckboxListTile> checkboxes = List.empty(growable: true);
-    var scheduleDaysOfWeek = widget.host.getScheduleDaysOfWeek();
+    var scheduleDaysOfWeek = widget.host.getValidDaysOfWeek();
 
     for (var i = 0; i < scheduleDaysOfWeek.length; i++) {
       checkboxes.add(CheckboxListTile(
