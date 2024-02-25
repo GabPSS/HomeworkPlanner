@@ -212,8 +212,9 @@ class TaskHost {
   }
 
   ///Given a date, return the closest valid date following it
-  DateTime? getNextValidDate(DateTime iteratingDate) {
-    Iterable<bool> validDays = getValidDaysOfWeek().values;
+  DateTime? getNextValidDate(DateTime iteratingDate,
+      [bool forClassSchedules = false]) {
+    Iterable<bool> validDays = getValidDaysOfWeek(forClassSchedules).values;
 
     int initialDayOfWeek = EnumConverters.dayOfWeekToInt(
         EnumConverters.weekdayToDayOfWeek(iteratingDate.weekday));
@@ -360,7 +361,7 @@ class TaskHost {
     Share.shareXFiles([xFile]);
   }
 
-  Map<String, bool> getValidDaysOfWeek() {
+  Map<String, bool> getValidDaysOfWeek([bool forClassSchedules = true]) {
     List<String> daysOfWeek = [
       "Sunday",
       "Monday",
@@ -372,7 +373,10 @@ class TaskHost {
     ];
     List<bool> daysAllowed = [false, false, false, false, false, false, false];
     HelperFunctions.iterateThroughWeekFromThisSaturday(
-      saveFile.schedules.daysToDisplay.toDouble(),
+      (forClassSchedules
+              ? saveFile.schedules.daysToDisplay
+              : saveFile.settings.daysToDisplay)
+          .toDouble(),
       (day) {
         daysAllowed[EnumConverters.weekdayToInt(day.weekday)] = true;
       },

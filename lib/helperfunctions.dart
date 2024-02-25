@@ -15,10 +15,8 @@ class HelperFunctions {
   }
 
   static DateTime getSunday(DateTime dateTime) {
-    DayOfWeek dayOfWeek = EnumConverters.weekdayToDayOfWeek(dateTime.weekday);
-
     return dateTime
-        .add(Duration(days: 0 - EnumConverters.dayOfWeekToInt(dayOfWeek)));
+        .add(Duration(days: 0 - EnumConverters.weekdayToInt(dateTime.weekday)));
   }
 
   static DateTime getDateFromDateTime(DateTime dateTime) =>
